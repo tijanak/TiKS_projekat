@@ -1,0 +1,10 @@
+26.11.
+Prosle kroz dokument.
+Instalirale NUnit Test Runner.
+Tica napravila projekat?
+
+Zbog da bi mogo .ps1 da se instalira
+dotnet tool update --global PowerShell
+pwsh playwright.ps1 install
+
+Treba playwright da predjemo lol
