@@ -11,7 +11,10 @@ builder.Services.AddCors(options =>
         policy.AllowAnyHeader()
               .AllowAnyMethod()
               .WithOrigins("https://localhost:5100/",
-                           "https://localhost:5100/");
+                                        "http://localhost:4000",
+                                        "http://127.0.0.1:4000",
+                                        "https://localhost:4000",
+                                        "https://127.0.0.1:4000");
     });
 });
 builder.Services.AddDbContext<TestContext>(options =>
@@ -28,6 +31,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 
 app.UseCors("CORS");
 app.UseHttpsRedirection();
