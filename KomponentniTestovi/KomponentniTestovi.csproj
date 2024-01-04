@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\WebApp\Backend\Backend.csproj" />
+    <ProjectReference Include="..\WebApp\Backend\Backend.csproj" />
   </ItemGroup>
 
 </Project>

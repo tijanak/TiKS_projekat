@@ -9,6 +9,5 @@ public class Novost
     public string? Tekst { get; set; }
     public DateTime Datum { get; set; }
     public string? Slika { get; set; }
-    public Slucaj? Slucaj { get; set; }
-    public Lokacija? Lokacija { get; set; }
+    public Slucaj Slucaj { get; set; } = null!;
 }

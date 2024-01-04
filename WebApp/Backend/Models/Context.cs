@@ -1,16 +1,22 @@
 namespace Backend.Models;
 
-public class TestContext : DbContext
+public class ProjectContext : DbContext
 {
-    public DbSet<Test> Testovi { get; set; }
     public DbSet<Korisnik> Korisnici { get; set; }
+    public DbSet<Slucaj> Slucajevi { get; set; }
+    public DbSet<Lokacija> Lokacije { get; set; }
+    public DbSet<Kategorija> Kategorije { get; set; }
 
-    public TestContext(DbContextOptions options) : base(options)
+    public DbSet<Donacija> Donacije { get; set; }
+    public ProjectContext(DbContextOptions options) : base(options)
     {
 
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Slucaj>().HasOne(t => t.Lokacija).WithOne(t => t.Slucaj);
+        modelBuilder.Entity<Lokacija>().HasOne(t => t.Slucaj).WithOne(t => t.Lokacija);
         base.OnModelCreating(modelBuilder);
     }
+
 }

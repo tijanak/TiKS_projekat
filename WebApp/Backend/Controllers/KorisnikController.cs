@@ -4,8 +4,8 @@ namespace Backend.Controllers;
 [Route("[controller]")]
 public class KorisnikController : ControllerBase
 {
-    public TestContext Context { get; set; }
-    public KorisnikController(TestContext context)
+    public ProjectContext Context { get; set; }
+    public KorisnikController(ProjectContext context)
     {
         Context = context;
     }

@@ -9,5 +9,5 @@ public class Zivotinja
     public string? Ime { get; set; }
     [MaxLength(50)]
     public string? Vrsta { get; set; }
-    public Slucaj? Slucaj { get; set; }
+    public Slucaj Slucaj { get; set; } = null!;
 }

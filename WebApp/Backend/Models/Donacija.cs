@@ -6,6 +6,6 @@ public class Donacija
     [Required]
     public int ID { get; set; }
     public int Kolicina { get; set; }
-    public Slucaj? Slucaj { get; set; }
-    public Korisnik? Korisnik { get; set; }
+    public Slucaj Slucaj { get; set; } = null!;
+    public Korisnik Korisnik { get; set; } = null!;
 }
