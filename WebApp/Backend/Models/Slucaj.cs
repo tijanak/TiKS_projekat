@@ -12,10 +12,13 @@ public class Slucaj
     public string? Opis { get; set; }
     [MaxLength(200)]
     public string? Slika { get; set; }
+    public int LokacijaId { get; set; }
     public Lokacija? Lokacija { get; set; }
     public List<Novost>? Novosti { get; set; }
-    public Korisnik Korisnik { get; set; } = null!;
-    public List<Kategorija> Kategorija { get; set; } = null!;
+    public Korisnik? Korisnik { get; set; }
+    public List<Kategorija>? Kategorija { get; set; }
+
+    public int ZivotinjaId { get; set; }
     public Zivotinja? Zivotinja { get; set; }
     public List<Trosak>? Troskovi { get; set; }
     public List<Donacija>? Donacije { get; set; }

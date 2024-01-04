@@ -14,8 +14,6 @@ public class ProjectContext : DbContext
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Slucaj>().HasOne(t => t.Lokacija).WithOne(t => t.Slucaj);
-        modelBuilder.Entity<Lokacija>().HasOne(t => t.Slucaj).WithOne(t => t.Lokacija);
         base.OnModelCreating(modelBuilder);
     }
 
