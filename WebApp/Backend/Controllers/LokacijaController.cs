@@ -40,7 +40,7 @@ public class LokacijaController : ControllerBase
         {
             Context.Lokacije.Add(lokacija);
             await Context.SaveChangesAsync();
-            return Ok($"ID:{lokacija.ID}");
+            return Ok(lokacija.ID);
         }
         catch (Exception e)
         {

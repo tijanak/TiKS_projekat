@@ -31,15 +31,25 @@ public class DonacijaController : ControllerBase
         }
 
     }
-    [Route("Post")]
+    [Route("Post/{idKorisnika}/{idSlucaja}")]
     [HttpPost]
-    public async Task<ActionResult> Dodaj([FromBody] Donacija donacija)
+    public async Task<ActionResult> Dodaj([FromBody] Donacija donacija, int idKorisnika, int idSlucaja)
     {
+        if (donacija.Kolicina <= 0)
+            return BadRequest("Količina mora biti pozitivna");
+        var korisnik = await Context.Korisnici.FindAsync(idKorisnika);
+        if (korisnik == null)
+            return BadRequest($"Korisnik sa id-jem {idKorisnika} ne postoji u bazi");
+        donacija.Korisnik = korisnik;
+        var slucaj = await Context.Slucajevi.FindAsync(idSlucaja);
+        if (slucaj == null)
+            return BadRequest($"Slucaj sa id-jem {idSlucaja} ne postoji u bazi");
+        donacija.Slucaj = slucaj;
         try
         {
             Context.Donacije.Add(donacija);
             await Context.SaveChangesAsync();
-            return Ok($"ID: {donacija.ID}");
+            return Ok(donacija.ID);
         }
         catch (Exception e)
         {

@@ -10,19 +10,7 @@ namespace KomponentniTestovi
         [OneTimeSetUp]
         public void Setup()
         {
-            string connectionString;
-            if (ConfigurationManager.ConnectionStrings["db_connection_string"] != null)
-            {
-                connectionString = ConfigurationManager.ConnectionStrings["db_connection_string"].ConnectionString;
-            }
-            else
-            {
-                throw new Exception("Connection string not set");
-            }
-            var optionsBuilder = new DbContextOptionsBuilder<ProjectContext>();
-            optionsBuilder.UseSqlServer(connectionString);
-            var _context = new ProjectContext(optionsBuilder.Options);
-            controller= new LokacijaController(_context);
+            controller= new LokacijaController(getDbContext());
         }
 
         [Test]

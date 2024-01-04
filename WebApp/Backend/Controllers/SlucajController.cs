@@ -40,7 +40,7 @@ public class SlucajController : ControllerBase
         {
             Context.Slucajevi.Add(slucaj);
             await Context.SaveChangesAsync();
-            return Ok($"ID:{slucaj.ID}");
+            return Ok(slucaj.ID);
         }
         catch (Exception e)
         {
