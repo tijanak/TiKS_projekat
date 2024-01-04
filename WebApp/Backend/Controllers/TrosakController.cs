@@ -1,4 +1,4 @@
-/* namespace Backend.Controllers;
+namespace Backend.Controllers;
 
 [ApiController]
 [Route("[controller]")]
@@ -12,11 +12,11 @@ public class TrosakController : ControllerBase
     }
 
     [HttpGet("preuzmitrosak/{id}")]
-    public async Task<ActionResult> PreuzmiTrosak(int id){
+    public ActionResult PreuzmiTrosak(int id){
         try{
-            var t = await Context.Troskovi.Where(t => t.id==id).FirstOrDefault();
+            var t = Context.Troskovi.Where(t => t.ID==id).FirstOrDefault();
             if(t == null){
-                return NotFound("Trazeni trosak ne postoji. ;)")
+                return NotFound("Trazeni trosak ne postoji.");
             }
             return Ok(t);
         }
@@ -60,7 +60,7 @@ public class TrosakController : ControllerBase
             if(t==null){
                 return NotFound("Nema svakako");
             }
-            await Context.Novosti.Remove(id);
+            Context.Troskovi.Remove(t);
             await Context.SaveChangesAsync();
             return Ok();
         }
@@ -68,4 +68,4 @@ public class TrosakController : ControllerBase
             return BadRequest(e);
         }
     }
-} */
+}

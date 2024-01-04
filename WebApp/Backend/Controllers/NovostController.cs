@@ -1,4 +1,4 @@
-/* namespace Backend.Controllers;
+namespace Backend.Controllers;
 
 [ApiController]
 [Route("[controller]")]
@@ -11,12 +11,12 @@ public class NovostController : ControllerBase
         this.Context=Context;
     }
 
-    [HttpGet("preuzminovost")]
-    public async Task<ActionResult<Novost>> PreuzmiNovost([FromBody] int ID){
+    [HttpGet("preuzminovost/{id}")]
+    public ActionResult<Novost> PreuzmiNovost(int id){
         try{
-            Novost n = await Context.Novosti.Where(n=>n.id==ID).FirstOrDefault();
+            var n = Context.Novosti.Where(n=>n.ID==id).FirstOrDefault();
             if(n == null){
-                return NotFound("Trazena novost ne postoji")
+                return NotFound("Trazena novost ne postoji");
             }
             return Ok(n);
         }
@@ -28,9 +28,9 @@ public class NovostController : ControllerBase
     [HttpPost("dodajnovost")]
     public async Task<ActionResult> DodajNovost([FromBody] Novost n){
         try{
-            await Context.Korisnici.AddAsync(n);
+            await Context.Novosti.AddAsync(n);
             await Context.SaveChangesAsync();
-            return Ok();
+            return Created();
         }
         catch(Exception e){
             return BadRequest(e);
@@ -61,12 +61,12 @@ public class NovostController : ControllerBase
             if(n==null){
                 return NotFound("Nema svakako");
             }
-            await Context.Novosti.Remove(id);
+            Context.Novosti.Remove(n);
             await Context.SaveChangesAsync();
             return Ok();
-        }
+        }       
         catch(Exception e){
             return BadRequest(e);
         }
     }
-} */
+}

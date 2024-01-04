@@ -1,4 +1,4 @@
-/* namespace Backend.Controllers;
+namespace Backend.Controllers;
 
 [ApiController]
 [Route("[controller]")]
@@ -7,17 +7,18 @@ public class ZivotinjaController : ControllerBase
 {
     public ProjectContext Context{get; set;}
 
-    public TrosakController(ProjectContext Context){
+    public ZivotinjaController(ProjectContext Context){
         this.Context=Context;
     }
 
     [HttpGet("preuzmizivotinju/{id}")]
-    public async Task<ActionResult> PreuzmiZivotinju(int id){
+    public ActionResult PreuzmiZivotinju(int id){
         try{
-            var z = await Context.Zivotinje.Where(z => z.id==id).FirstOrDefault();
+            var z = Context.Zivotinje.Where(z => z.ID==id).FirstOrDefault();
             if(z == null){
-                return NotFound("Zivotinja ne postoji. ;)")
+                return NotFound("Zivotinja ne postoji. ;)");
             }
+            
             return Ok(z);
         }
         catch(Exception e){
@@ -37,14 +38,14 @@ public class ZivotinjaController : ControllerBase
         }
     }
     [HttpPut]
-    public async Task<ActionResult> IzmeniZivotinju([FromBody] Zivotinja z){
+    public async Task<ActionResult> IzmeniZivotinju([FromBody] Zivotinja zivotinja){
         try{
-            var staro = await Context.Zivotinje.FindAsync(z.ID);
+            var staro  = Context.Zivotinje.Where(z => z.ID== zivotinja.ID).FirstOrDefault();
             if(staro==null){
                 return NotFound("Pogresan ID");
             }
-            staro.Namena=n.Namena;
-            staro.Kolicina=n.Kolicina;
+            staro.Ime=zivotinja.Ime;
+            staro.Vrsta=zivotinja.Vrsta;
             Context.Zivotinje.Update(staro);
             await Context.SaveChangesAsync();
             return Ok();
@@ -54,13 +55,13 @@ public class ZivotinjaController : ControllerBase
         }
     }
     [HttpDelete]
-    public async Task<ActionResult> UkloniTrosak([FromBody] int id){
+    public async Task<ActionResult> UkloniZivotinju([FromBody] int id){
         try{
             var z = await Context.Zivotinje.FindAsync(id);
             if(z==null){
                 return NotFound("Nema svakako");
             }
-            await Context.Zivotinje.Remove(id);
+            Context.Zivotinje.Remove(z);
             await Context.SaveChangesAsync();
             return Ok();
         }
@@ -68,4 +69,4 @@ public class ZivotinjaController : ControllerBase
             return BadRequest(e);
         }
     }
-} */
+}

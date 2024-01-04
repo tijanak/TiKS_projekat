@@ -1,28 +1,28 @@
-/* namespace Backend.Controllers;
+namespace Backend.Controllers;
 [ApiController]
 [Route("[controller]")]
 public class KorisnikController : ControllerBase
 {
     public ProjectContext Context { get; set; }
-    public KorisnikController(ProjectContext context)
-===={
+    public KorisnikController(ProjectContext Context)
+    {
         this.Context = Context;
     }
 
     [Route("preuzmikorisnika/{id}")]
     [HttpGet]
-    public async Task<ActionResult<Korisnik>> PreuzmiKorisnika(int id)
+    public ActionResult PreuzmiKorisnika(int id)
     {
         try
         {
-            Korisnik korisnik = await Context.Korisnici.Where(k => k.ID == id).FirstOrDefault();
+            var korisnik = Context.Korisnici.Where(k => k.ID == id).FirstOrDefault();
             if (korisnik != null)
             {
                 return Ok(korisnik);
             }
             else
             {
-                return NotFound("Trazeni korisnik ne postoji");
+                return BadRequest("Trazeni korisnik ne postoji");
             }
         }
         catch (Exception e)
@@ -34,13 +34,13 @@ public class KorisnikController : ControllerBase
 
 
     [HttpPost]
-    public async Task<ActionResult<int>> DodajKorisnika([FromBody] Korisnik korisnik)
+    public async Task<ActionResult> DodajKorisnika([FromBody] Korisnik korisnik)
     {
         try
         {
-            var id = await Context.Korisnici.AddAsync(korisnik);
+            Context.Korisnici.Add(korisnik);
             await Context.SaveChangesAsync();
-            return Created(korisnik.ID);
+            return Ok(korisnik.ID);
         }
         catch (Exception e)
         {
@@ -53,18 +53,18 @@ public class KorisnikController : ControllerBase
         {
             try
             {
-                Korisnik stariKorisnik = await Context.Korisnici.FindAsync(korisnik.ID);
+                var stari_korisnik = await Context.Korisnici.FindAsync(korisnik.ID);
 
-                if(stariKorisnik!=null){
-                    stariKorisnik.Username = korisnik.Username;
-                    stariKorisnik.Password = korisnik.Password;
-                    stariKorisnik.Slucajevi = korisnik.Slucajevi;   //surely ovako nece raditi
-                    Context.Korisnici.Update(stariKorisnik);
+                if(stari_korisnik!=null){
+                    stari_korisnik.Username = korisnik.Username;
+                    stari_korisnik.Password = korisnik.Password;
+                    stari_korisnik.Slucajevi = korisnik.Slucajevi;
+                    Context.Korisnici.Update(stari_korisnik);
                     await Context.SaveChangesAsync();
                     return Ok();
                 }
                 else{
-                    NotFound("Trazeni korisnik ne postoji");
+                    return NotFound("Trazeni korisnik ne postoji");
                 }
             }
             catch (Exception e)
@@ -78,24 +78,24 @@ public class KorisnikController : ControllerBase
 public async Task<ActionResult<Korisnik>> UkloniKorisnika([FromBody] int ID){
 
     try
+        {
+            var korisnik = await Context.Korisnici.FindAsync(ID);
+            
+            if(korisnik!=null)
             {
-                var korisnik = await Context.Korisnici.FindAsync(ID);
-                
-                if(korisnik!=null)
-                {
-                    Context.Korisnici.Remove(korisnik);
-                    await Context.Korisnici.SaveChangesAsync();
-                    return Ok(korisnik);
-                }
-                else{
-                    NotFound("Trazeni korisnik svakako ne postoji");
-                }
-                
+                Context.Korisnici.Remove(korisnik);
+                await Context.SaveChangesAsync();
+                return Ok(korisnik);
             }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
+            else{
+                return NotFound("Trazeni korisnik svakako ne postoji");
             }
+            
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
 }
 
-} */
+}
