@@ -38,9 +38,10 @@ public class KategorijaController : ControllerBase
     {
         try
         {
+
             Context.Kategorije.Add(kategorija);
             await Context.SaveChangesAsync();
-            return Ok($"ID:{kategorija.ID}");
+            return Ok(kategorija.ID);
         }
         catch (Exception e)
         {
