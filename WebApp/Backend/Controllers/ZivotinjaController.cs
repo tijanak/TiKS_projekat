@@ -1,4 +1,4 @@
-namespace Backend.Controllers;
+/* namespace Backend.Controllers;
 
 [ApiController]
 [Route("[controller]")]
@@ -68,4 +68,4 @@ public class ZivotinjaController : ControllerBase
             return BadRequest(e);
         }
     }
-}
+} */

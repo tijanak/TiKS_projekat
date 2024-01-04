@@ -48,7 +48,7 @@ public class KategorijaController : ControllerBase
         }
     }
     [Route("Delete/{id}")]
-    [HttpPost]
+    [HttpDelete]
     public async Task<ActionResult> Obrisi(int id)
     {
         try
@@ -73,7 +73,7 @@ public class KategorijaController : ControllerBase
         }
     }
     [Route("Update/{id}")]
-    [HttpPost]
+    [HttpPut]
     public async Task<ActionResult> Azuriraj(int id, [FromQuery] string? tip)
     {
         try

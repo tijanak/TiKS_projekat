@@ -1,4 +1,4 @@
-namespace Backend.Controllers;
+/* namespace Backend.Controllers;
 [ApiController]
 [Route("[controller]")]
 public class KorisnikController : ControllerBase
@@ -98,4 +98,4 @@ public async Task<ActionResult<Korisnik>> UkloniKorisnika([FromBody] int ID){
             }
 }
 
-}
+} */

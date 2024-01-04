@@ -48,7 +48,7 @@ public class LokacijaController : ControllerBase
         }
     }
     [Route("Delete/{id}")]
-    [HttpPost]
+    [HttpDelete]
     public async Task<ActionResult> Obrisi(int id)
     {
         try
@@ -73,7 +73,7 @@ public class LokacijaController : ControllerBase
         }
     }
     [Route("Update/{id}")]
-    [HttpPost]
+    [HttpPut]
     public async Task<ActionResult> Azuriraj(int id, [FromQuery] int? longitude, [FromQuery] int? latitude, [FromQuery] int? idSlucaja)
     {
         try

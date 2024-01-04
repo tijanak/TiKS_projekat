@@ -47,7 +47,7 @@ public class DonacijaController : ControllerBase
         }
     }
     [Route("Delete/{id}")]
-    [HttpPost]
+    [HttpDelete]
     public async Task<ActionResult> Obrisi(int id)
     {
         try
@@ -72,7 +72,7 @@ public class DonacijaController : ControllerBase
         }
     }
     [Route("Update/{id}")]
-    [HttpPost]
+    [HttpPut]
     public async Task<ActionResult> Azuriraj(int id, [FromQuery] int? kolicina, [FromQuery] int? idKorisnika, [FromQuery] int? idSlucaja)
     {
 

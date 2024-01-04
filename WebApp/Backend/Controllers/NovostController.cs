@@ -1,4 +1,4 @@
-namespace Backend.Controllers;
+/* namespace Backend.Controllers;
 
 [ApiController]
 [Route("[controller]")]
@@ -69,4 +69,4 @@ public class NovostController : ControllerBase
             return BadRequest(e);
         }
     }
-}
+} */
