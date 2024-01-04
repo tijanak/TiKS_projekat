@@ -8,3 +8,11 @@ dotnet tool update --global PowerShell
 pwsh playwright.ps1 install
 
 Treba playwright da predjemo lol
+
+
+
+2.1.
+Modelovale podatke neophodne za sajt [Volim zivotinje]
+Napravile ER/klasni dijagram
+Napravile modele u samom projektu
+Podelile sta koja radi za kontrolere i testove
