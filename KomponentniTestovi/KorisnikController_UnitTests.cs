@@ -8,24 +8,18 @@ namespace KomponentniTestovi
         [OneTimeSetUp]
         public void Setup()
         {
-            string connectionString;
-            if (ConfigurationManager.ConnectionStrings["db_connection_string"] != null)
-            {
-                connectionString = ConfigurationManager.ConnectionStrings["db_connection_string"].ConnectionString;
-            }
-            else
-            {
-                throw new Exception("Connection string not set");
-            }
-            var optionsBuilder = new DbContextOptionsBuilder<ProjectContext>();
-            optionsBuilder.UseSqlServer(connectionString);
-            var _context = new ProjectContext(optionsBuilder.Options);
-            controller = new KorisnikController(_context);
+            //string connectionString;
+            //connectionString = "Server = (localdb)\\ProjekatTestiranje; Database = UdomljavanjeZivotinja";
+            //var optionsBuilder = new DbContextOptionsBuilder<ProjectContext>();
+            //optionsBuilder.UseSqlServer(connectionString);
+            //var _context = new ProjectContext(optionsBuilder.Options);
+            controller = new KorisnikController(getDbContext());
         }
 
         [Test]
         public async Task DodajKorisnika_Test()
         {
+            //
             Korisnik k = new Korisnik();
             k.ID = 0;
             k.Username = "username";
@@ -44,7 +38,19 @@ namespace KomponentniTestovi
         {
             int id = 0;
             var actionresult = controller.PreuzmiKorisnika(0);
-            Assert.IsInstanceOf<BadRequestObjectResult>(actionresult);
+            Assert.IsInstanceOf<OkObjectResult>(actionresult);
+        }
+
+        [Test]
+        public void IzmeniKorisnika_Test()
+        {
+            
+        }
+
+        [Test]
+        public void ObrisiKorisnika_Test()
+        {
+
         }
     }
 }
