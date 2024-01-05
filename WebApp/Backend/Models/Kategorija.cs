@@ -7,5 +7,6 @@ public class Kategorija
     public int ID { get; set; }
     [MaxLength(50)]
     public string? Tip { get; set; }
+    [JsonIgnore]
     public List<Slucaj>? Slucajevi { get; set; }
 }

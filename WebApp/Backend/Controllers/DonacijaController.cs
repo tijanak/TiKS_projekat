@@ -11,18 +11,19 @@ public class DonacijaController : ControllerBase
     }
     [Route("Get/{id}")]
     [HttpGet]
-    public ActionResult Preuzmi(int id)
+    public async Task<ActionResult> Preuzmi(int id)
     {
+        if (id < 0) return BadRequest("ID ne može biti negativan");
         try
         {
-            var donacija = Context.Donacije.Where(p => p.ID == id).FirstOrDefault();
+            var donacija = await Context.Donacije.Where(p => p.ID == id).FirstOrDefaultAsync();
             if (donacija != null)
             {
                 return Ok(donacija);
             }
             else
             {
-                return BadRequest($"Ne postoji donacija sa id-jem {id}");
+                return NotFound($"Ne postoji donacija sa id-jem {id}");
             }
         }
         catch (Exception e)
@@ -35,6 +36,7 @@ public class DonacijaController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> Dodaj([FromBody] Donacija donacija, int idKorisnika, int idSlucaja)
     {
+        if (donacija == null) return BadRequest("Donacija ne sme da bude null");
         if (donacija.Kolicina <= 0)
             return BadRequest("Količina mora biti pozitivna");
         var korisnik = await Context.Korisnici.FindAsync(idKorisnika);
@@ -47,9 +49,14 @@ public class DonacijaController : ControllerBase
         donacija.Slucaj = slucaj;
         try
         {
-            Context.Donacije.Add(donacija);
+
+            Donacija toAdd = new Donacija();
+            toAdd.Kolicina = donacija.Kolicina;
+            toAdd.Korisnik = donacija.Korisnik;
+            toAdd.Slucaj = donacija.Slucaj;
+            Context.Donacije.Add(toAdd);
             await Context.SaveChangesAsync();
-            return Ok(donacija.ID);
+            return Ok(toAdd.ID);
         }
         catch (Exception e)
         {
@@ -60,6 +67,7 @@ public class DonacijaController : ControllerBase
     [HttpDelete]
     public async Task<ActionResult> Obrisi(int id)
     {
+        if (id < 0) return BadRequest("ID mora biti pozitivan");
         try
         {
             var donacija = Context.Donacije.Where(p => p.ID == id).FirstOrDefault();
@@ -72,7 +80,7 @@ public class DonacijaController : ControllerBase
             }
             else
             {
-                return BadRequest($"Ne postoji donacija sa id-jem {id}");
+                return NotFound($"Ne postoji donacija sa id-jem {id}");
             }
 
         }
@@ -85,6 +93,7 @@ public class DonacijaController : ControllerBase
     [HttpPut]
     public async Task<ActionResult> Azuriraj(int id, [FromQuery] int? kolicina, [FromQuery] int? idKorisnika, [FromQuery] int? idSlucaja)
     {
+        if (id < 0) return BadRequest("ID ne može biti negativan");
 
         try
         {
@@ -93,6 +102,7 @@ public class DonacijaController : ControllerBase
             {
                 if (kolicina.HasValue)
                 {
+                    if (kolicina <= 0) return BadRequest("Količina mora da bude pozitivna");
                     donacija.Kolicina = (int)kolicina;
                 }
                 if (idKorisnika.HasValue)
@@ -124,7 +134,7 @@ public class DonacijaController : ControllerBase
             }
             else
             {
-                return BadRequest($"Ne postoji donacija sa id-jem {id}");
+                return NotFound($"Ne postoji donacija sa id-jem {id}");
             }
 
         }

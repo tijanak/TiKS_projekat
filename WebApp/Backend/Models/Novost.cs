@@ -9,5 +9,6 @@ public class Novost
     public string? Tekst { get; set; }
     public DateTime Datum { get; set; }
     public string? Slika { get; set; }
+    [JsonIgnore]
     public Slucaj? Slucaj { get; set; }
 }

@@ -8,5 +8,6 @@ public class Trosak
     [MaxLength(50)]
     public string? Namena { get; set; }
     public int Kolicina { get; set; }
+    [JsonIgnore]
     public Slucaj? Slucaj { get; set; }
 }

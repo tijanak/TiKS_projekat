@@ -9,5 +9,6 @@ public class Zivotinja
     public string? Ime { get; set; }
     [MaxLength(50)]
     public string? Vrsta { get; set; }
+    [JsonIgnore]
     public Slucaj Slucaj { get; set; } = null!;
 }

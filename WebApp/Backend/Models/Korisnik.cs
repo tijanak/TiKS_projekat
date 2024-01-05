@@ -9,6 +9,8 @@ public class Korisnik
     public string? Username { get; set; }
     [MaxLength(50)]
     public string? Password { get; set; }
+    [JsonIgnore]
     public List<Slucaj>? Slucajevi { get; set; }
+    [JsonIgnore]
     public List<Donacija>? Donacije { get; set; }
 }

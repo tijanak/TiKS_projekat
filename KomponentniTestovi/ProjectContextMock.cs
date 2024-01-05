@@ -28,6 +28,8 @@ namespace KomponentniTestovi
             dbContextMock.CreateDbSetMock(x => x.Novosti, novosti);
             dbContextMock.CreateDbSetMock(x => x.Troskovi, troskovi);
             dbContextMock.CreateDbSetMock(x => x.Zivotinje, zivotinje);
+            
+
             return dbContextMock.Object;
         }
     }
