@@ -21,7 +21,7 @@ namespace KomponentniTestovi
         
         [Test]
         [TestCase(500,1,-1)]
-        [TestCase(-int.MaxValue, 1, 2)]
+        [TestCase(int.MinValue, 1, 2)]
         [TestCase(500, 0, 1)]
         public async Task PostTest1(int kolicina,int idSlucaj,int idKorisnik)
         {
@@ -57,7 +57,7 @@ namespace KomponentniTestovi
         }
         [Test]
         [TestCase(-1)]
-        [TestCase(-int.MaxValue)]
+        [TestCase(int.MinValue)]
         public async Task GetTest1(int id)
         {
             
@@ -93,7 +93,7 @@ namespace KomponentniTestovi
             Assert.IsInstanceOf<NotFoundObjectResult>(result);
         }
         [Test]
-        [TestCase(-int.MaxValue)]
+        [TestCase(int.MinValue)]
 
         public async Task DeleteTest2(int id)
         {
@@ -131,7 +131,7 @@ namespace KomponentniTestovi
         [TestCase(80, null, null, 3)]
         [TestCase(80, null, 5, 2)]
         [TestCase(90, -50, null, 2)]
-        [TestCase(90, null, -int.MaxValue, null)]
+        [TestCase(90, null, int.MinValue, null)]
         [TestCase(-1, null, null, null)]
         public async Task UpdateTest2(int id, int? kolicina, int? idKorisnika, int? idSlucaja)
         {

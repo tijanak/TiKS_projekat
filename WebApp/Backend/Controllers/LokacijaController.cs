@@ -11,11 +11,12 @@ public class LokacijaController : ControllerBase
     }
     [Route("Get/{id}")]
     [HttpGet]
-    public ActionResult Preuzmi(int id)
+    public async Task<ActionResult> Preuzmi(int id)
     {
+        if (id < 0) return BadRequest("ID ne može biti negativan");
         try
         {
-            var lokacija = Context.Lokacije.Where(p => p.ID == id).FirstOrDefault();
+            var lokacija = await Context.Lokacije.Where(p => p.ID == id).FirstOrDefaultAsync();
             if (lokacija != null)
             {
                 return Ok(lokacija);
@@ -23,7 +24,7 @@ public class LokacijaController : ControllerBase
             }
             else
             {
-                return BadRequest($"Ne postoji lokacija sa id-jem {id}");
+                return NotFound($"Ne postoji lokacija sa id-jem {id}");
             }
         }
         catch (Exception e)
@@ -32,10 +33,16 @@ public class LokacijaController : ControllerBase
         }
 
     }
-    [Route("Post")]
+    [Route("Post/{idSlucaja}")]
     [HttpPost]
-    public async Task<ActionResult> Dodaj([FromBody] Lokacija lokacija)
+    public async Task<ActionResult> Dodaj([FromBody] Lokacija lokacija, int idSlucaja)
     {
+        if (lokacija == null) return BadRequest("Lokacija ne sme da bude null");
+        if (lokacija.Latitude < -90 || lokacija.Latitude > 90) return BadRequest("Latituda mora biti u opsegu [-90,90]");
+        if (lokacija.Longitude < -180 || lokacija.Longitude >= 180) return BadRequest("Longituda mora biti u opsegu [-180,180)");
+        var slucaj = await Context.Slucajevi.FindAsync(idSlucaja);
+        if (slucaj == null) return BadRequest($"Ne postoji slučaj sa idjem {idSlucaja}");
+        lokacija.Slucaj = slucaj;
         try
         {
             Context.Lokacije.Add(lokacija);
@@ -51,6 +58,7 @@ public class LokacijaController : ControllerBase
     [HttpDelete]
     public async Task<ActionResult> Obrisi(int id)
     {
+        if (id < 0) return BadRequest("ID ne može biti negativan");
         try
         {
             var lokacija = Context.Lokacije.Where(p => p.ID == id).FirstOrDefault();
@@ -63,7 +71,7 @@ public class LokacijaController : ControllerBase
             }
             else
             {
-                return BadRequest($"Ne postoji lokacija sa id-jem {id}");
+                return NotFound($"Ne postoji lokacija sa id-jem {id}");
             }
 
         }
@@ -74,7 +82,7 @@ public class LokacijaController : ControllerBase
     }
     [Route("Update/{id}")]
     [HttpPut]
-    public async Task<ActionResult> Azuriraj(int id, [FromQuery] int? longitude, [FromQuery] int? latitude, [FromQuery] int? idSlucaja)
+    public async Task<ActionResult> Azuriraj(int id, [FromQuery] double? longitude, [FromQuery] double? latitude, [FromQuery] int? idSlucaja)
     {
         try
         {
@@ -83,11 +91,14 @@ public class LokacijaController : ControllerBase
             {
                 if (longitude.HasValue)
                 {
-                    lokacija.Longitude = (int)longitude;
+
+                    if (longitude < -180 || longitude >= 180) return BadRequest("Longituda mora biti u opsegu [-180,180)");
+                    lokacija.Longitude = (double)longitude;
                 }
                 if (latitude.HasValue)
                 {
-                    lokacija.Latitude = (int)latitude;
+                    if (latitude < -90 || latitude > 90) return BadRequest("Latituda mora biti u opsegu [-90,90]");
+                    lokacija.Latitude = (double)latitude;
                 }
                 if (idSlucaja.HasValue)
                 {
@@ -106,7 +117,7 @@ public class LokacijaController : ControllerBase
             }
             else
             {
-                return BadRequest($"Ne postoji lokacija sa id-jem {id}");
+                return NotFound($"Ne postoji lokacija sa id-jem {id}");
             }
 
         }
