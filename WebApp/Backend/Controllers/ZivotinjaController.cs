@@ -14,11 +14,11 @@ public class ZivotinjaController : ControllerBase
     [HttpGet("preuzmizivotinju/{id}")]
     public ActionResult PreuzmiZivotinju(int id){
         try{
-            var z = Context.Zivotinje.Where(z => z.ID==id).FirstOrDefault();
-            if(z == null){
+            var zivotinja = Context.Zivotinje.Where(z => z.ID==id).FirstOrDefault();
+            if(zivotinja == null){
                 return NotFound("Zivotinja ne postoji.");
             }
-            return Ok(z);
+            return Ok(zivotinja);
         }
         catch(Exception e){
             return BadRequest(e);
@@ -29,13 +29,14 @@ public class ZivotinjaController : ControllerBase
     public async Task<ActionResult> DodajZivotinju([FromQuery] Zivotinja z, [FromQuery]int idSlucaja){
         try{
 
-            if(z.ID==null) return BadRequest("Fali ID"); //smara, ali treba da ostane provera
-
-            var s = Context.Slucajevi.Where(s=>s.ID==idSlucaja).FirstOrDefault();
-            if(s==null)
-                return NotFound("Slucaj ne postoji u bazi");
+            if(z==null) return BadRequest("fali zivotinja");
+            if(z.Ime==null || z.Ime.Length>50) return BadRequest("predugacko ime zivotinje");
+            if(z.Vrsta==null || z.Vrsta.Length>50) return BadRequest("predugacko ime vrste");
             
+            var s = Context.Slucajevi.Where(s=>s.ID==idSlucaja).FirstOrDefault();
+            if(s==null) return NotFound("Slucaj ne postoji u bazi");
             z.Slucaj=s;
+
             await Context.Zivotinje.AddAsync(z);
             await Context.SaveChangesAsync();
             return Ok(z);
@@ -54,21 +55,26 @@ public class ZivotinjaController : ControllerBase
             }
             if(ime!=null)
                 {
-                    staro.Ime=ime;
-                    nesto_menjano=true;
+                    if(ime.Length>0&&ime.Length<=50){
+                        staro.Ime=ime;
+                        nesto_menjano=true;
+                    }
+                    else return BadRequest("duzina imena mora biti izmedju 0 i 50 karaktera");
                 }
 
             if(vrsta!=null)    
                 {
-                    staro.Vrsta=vrsta;
-                    nesto_menjano=true;
+                    if(vrsta.Length>0&&vrsta.Length<=50){
+                        staro.Vrsta=vrsta;
+                        nesto_menjano=true;
+                    }
+                    else return BadRequest("duzina vrste mora biti izmedju 0 i 50 karaktera");
                 }
 
             if(idSlucaja!=null)
             {
                 var s = Context.Slucajevi.Where(s=>s.ID==idSlucaja).FirstOrDefault();
-                if(s==null)
-                return NotFound(idSlucaja);
+                if(s==null) return NotFound(idSlucaja);
                 staro.Slucaj=s;
                 nesto_menjano=true;
             }
@@ -77,6 +83,8 @@ public class ZivotinjaController : ControllerBase
                 Context.Zivotinje.Update(staro);
                 await Context.SaveChangesAsync();
             }
+            else return BadRequest("nijedna vrednost nije promenjena");
+            
             return Ok(staro);
         }
         catch(Exception e){

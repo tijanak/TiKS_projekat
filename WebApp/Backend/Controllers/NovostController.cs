@@ -13,7 +13,7 @@ public class NovostController : ControllerBase
     }
 
     [HttpGet("preuzminovost/{id}")]
-    public ActionResult<Novost> PreuzmiNovost(int id)
+    public ActionResult PreuzmiNovost(int id)
     {
         try
         {
@@ -31,13 +31,26 @@ public class NovostController : ControllerBase
     }
 
     [HttpPost("dodajnovost")]
-    public async Task<ActionResult> DodajNovost([FromBody] Novost n)
+    public async Task<ActionResult> DodajNovost([FromQuery] Novost n, [FromQuery] int? id_slucaja)
     {
         try
         {
+            if(null == n) return BadRequest("fali novost");
+            if (n.Tekst==null||n.Tekst.Length==0||n.Tekst.Length>5000) return BadRequest("Tekst je predugacak. Max 5000 karaktera");
+            if(n.Slika==null ||n.Slika.Length==0) return BadRequest("Fali slika");
+            if(null==id_slucaja) return BadRequest("fali id slucaja");
+            
+            var slucaj = await Context.Slucajevi.FindAsync(id_slucaja);
+            if (slucaj==null) return NotFound("id_slucaja los");
+            n.Slucaj=slucaj;
+
+            var poslednja_novost = Context.Novosti.Where(n=>n.Slucaj!.ID==id_slucaja).LastOrDefault();
+            if(poslednja_novost!=null && poslednja_novost.Datum.CompareTo(n.Datum)>0)
+                return BadRequest("Ne mozete dodati retrospektivno novosti");
+                
             await Context.Novosti.AddAsync(n);
             await Context.SaveChangesAsync();
-            return Created();
+            return Ok(n);
         }
         catch (Exception e)
         {
@@ -46,28 +59,54 @@ public class NovostController : ControllerBase
     }
 
     [HttpPut("izmeninovost")]
-    public async Task<ActionResult> IzmeniNovost([FromBody] Novost n)
+    public async Task<ActionResult> IzmeniNovost([FromQuery] int id_novosti, [FromQuery] string? tekst, [FromQuery] DateTime? datum, [FromQuery] int? id_slucaja)
     {
         try
         {
-            var stara_novost = await Context.Novosti.FindAsync(n.ID);
-            if (stara_novost == null)
-            {
+            var stara_novost = await Context.Novosti.FindAsync(id_novosti);
+            bool nesto_menjano=false;
+            if (stara_novost == null){
                 return NotFound("Pogresan ID");
             }
-            stara_novost.Tekst = n.Tekst;
-            stara_novost.Slika = n.Slika;
-            Context.Novosti.Update(stara_novost);
-            await Context.SaveChangesAsync();
-            return Ok();
+            if(tekst!=null){
+                if(tekst.Length>0&&tekst.Length<5000){
+                    stara_novost.Tekst=tekst;
+                    nesto_menjano=true;
+                }
+                else return BadRequest("tekst neodgovarajuce duzine. mora biti 0<tekst<5000 karaktera");
+            }
+
+            if(datum!=null){
+                if(DateTime.Compare((DateTime)datum,DateTime.Today)<=0)
+                {
+                    stara_novost.Datum=(DateTime)datum;
+                    nesto_menjano=true;
+                }
+                else return BadRequest("nevalidan datum");
+            }
+
+            if(id_slucaja!=null){
+                var slucaj = await Context.Slucajevi.FindAsync(id_slucaja);
+                if(slucaj==null) return NotFound("los id slucaja");
+                stara_novost.Slucaj=slucaj;
+                nesto_menjano=true;
+            }
+            if(nesto_menjano)
+            {
+                Context.Novosti.Update(stara_novost);
+                await Context.SaveChangesAsync();
+            }
+            else return BadRequest("morate promeniti nesto");
+            
+            return Ok(stara_novost);
         }
         catch (Exception e)
         {
             return BadRequest(e);
         }
     }
-    [HttpDelete("ukloninovost")]
-    public async Task<ActionResult> UkloniNovost([FromBody] int id)
+    [HttpDelete("ukloninovost/{id}")]
+    public async Task<ActionResult> UkloniNovost(int id)
     {
         try
         {
@@ -78,7 +117,7 @@ public class NovostController : ControllerBase
             }
             Context.Novosti.Remove(n);
             await Context.SaveChangesAsync();
-            return Ok();
+            return Ok(n);
         }
         catch (Exception e)
         {

@@ -3,6 +3,7 @@ namespace Backend.Models;
 
 public class Slucaj
 {
+<<<<<<< Updated upstream
     public Slucaj()
     {
         Donacije = new();
@@ -13,6 +14,9 @@ public class Slucaj
     }
     [Key]
     [Required]
+=======
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+>>>>>>> Stashed changes
     public int ID { get; set; }
     [MaxLength(50)]
     public string? Naziv { get; set; }

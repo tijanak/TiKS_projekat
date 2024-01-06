@@ -2,8 +2,7 @@ namespace Backend.Models;
 [Table("Lokacija")]
 public class Lokacija
 {
-    [Key]
-    [Required]
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int ID { get; set; }
     public double Longitude { get; set; }
     public double Latitude { get; set; }
