@@ -13,7 +13,7 @@ public class KategorijaController : ControllerBase
     [HttpGet]
     public async Task<ActionResult> Preuzmi(int id)
     {
-
+        if (id < 0) return BadRequest("ID ne može biti negativan");
         try
         {
             var kategorija = await Context.Kategorije.Where(p => p.ID == id).FirstOrDefaultAsync();
@@ -24,7 +24,7 @@ public class KategorijaController : ControllerBase
             }
             else
             {
-                return BadRequest($"Ne postoji kategorija sa id-jem {id}");
+                return NotFound($"Ne postoji kategorija sa id-jem {id}");
             }
         }
         catch (Exception e)

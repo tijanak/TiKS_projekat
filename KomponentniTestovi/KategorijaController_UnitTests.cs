@@ -13,7 +13,7 @@ namespace KomponentniTestovi
         public void Setup()
         {
             Slucaj[] slucajevi = { new Slucaj { ID = 1 }, new Slucaj { ID = 2 } };
-            Kategorija[] kategorije = { new Kategorija { ID=100,Prioritet=100} };
+            Kategorija[] kategorije = { new Kategorija { ID = 100, Prioritet = 100 }, new Kategorija { ID=101,Prioritet=5} };
             controller = new KategorijaController(getDbContext(slucajevi:slucajevi,kategorije:kategorije));
         }
 
@@ -49,6 +49,33 @@ namespace KomponentniTestovi
         {
             var result = await controller.Dodaj(null);
             Assert.IsInstanceOf<BadRequestObjectResult>(result);
+        }
+        [Test]
+        [TestCase(-1)]
+        [TestCase(int.MinValue)]
+        public async Task GetTest1(int id)
+        {
+
+            var actionresult = await controller.Preuzmi(id);
+            Assert.IsInstanceOf<BadRequestObjectResult>(actionresult);
+        }
+        [Test]
+        [TestCase(int.MaxValue)]
+        [TestCase(1)]
+        public async Task GetTest2(int id)
+        {
+
+            var actionresult = await controller.Preuzmi(id);
+            Assert.IsInstanceOf<NotFoundObjectResult>(actionresult);
+        }
+        [Test]
+        [TestCase(100)]
+        [TestCase(101)]
+        public async Task GetTest3(int id)
+        {
+
+            var actionresult = await controller.Preuzmi(id);
+            Assert.IsInstanceOf<OkObjectResult>(actionresult);
         }
     }
 }
