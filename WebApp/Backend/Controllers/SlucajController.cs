@@ -11,11 +11,12 @@ public class SlucajController : ControllerBase
     }
     [Route("Get/{id}")]
     [HttpGet]
-    public ActionResult Preuzmi(int id)
+    public async Task<ActionResult> Preuzmi(int id)
     {
+        if (id < 0) return BadRequest("ID ne može biti negativan");
         try
         {
-            var slucaj = Context.Slucajevi.Where(p => p.ID == id).FirstOrDefault();
+            var slucaj = await Context.Slucajevi.Where(p => p.ID == id).FirstOrDefaultAsync();
             if (slucaj != null)
             {
                 return Ok(slucaj);
@@ -23,7 +24,7 @@ public class SlucajController : ControllerBase
             }
             else
             {
-                return BadRequest($"Ne postoji slucaj sa id-jem {id}");
+                return NotFound($"Ne postoji slucaj sa id-jem {id}");
             }
         }
         catch (Exception e)
@@ -34,8 +35,18 @@ public class SlucajController : ControllerBase
     }
     [Route("Post")]
     [HttpPost]
-    public async Task<ActionResult> Dodaj([FromBody] Slucaj slucaj)
+    public async Task<ActionResult> Dodaj([FromBody] Slucaj slucaj, [FromBody] Lokacija? lokacija, [FromBody] Zivotinja? zivotinja, [FromQuery] int? idKorisnika)
     {
+        if (slucaj == null) return BadRequest("Slučaj ne može biti null");
+        if (lokacija == null) return BadRequest("Lokacija ne može biti null");
+        if (zivotinja == null) return BadRequest("Životinja ne može biti null");
+        if (idKorisnika == null) return BadRequest("ID korisnika ne može biti null");
+        var korisnik = Context.Korisnici.Where(k => k.ID == idKorisnika).FirstOrDefault();
+        if (korisnik == null) return BadRequest("Korisnik ne postoji");
+        slucaj.Zivotinja = zivotinja;
+        slucaj.Lokacija = lokacija;
+        slucaj.Korisnik = korisnik;
+        korisnik.Slucajevi.Add(slucaj);
         try
         {
             Context.Slucajevi.Add(slucaj);
@@ -51,6 +62,8 @@ public class SlucajController : ControllerBase
     [HttpDelete]
     public async Task<ActionResult> Obrisi(int id)
     {
+
+        if (id < 0) return BadRequest("ID ne može biti negativan");
         try
         {
             var slucaj = Context.Slucajevi.Where(p => p.ID == id).FirstOrDefault();
@@ -63,7 +76,7 @@ public class SlucajController : ControllerBase
             }
             else
             {
-                return BadRequest($"Ne postoji slucaj sa id-jem {id}");
+                return NotFound($"Ne postoji slucaj sa id-jem {id}");
             }
 
         }
@@ -74,7 +87,7 @@ public class SlucajController : ControllerBase
     }
     [Route("Update/{id}")]
     [HttpPut]
-    public async Task<ActionResult> Azuriraj(int id, [FromQuery] string naziv, [FromQuery] string? opis, [FromQuery] string? slika)
+    public async Task<ActionResult> Azuriraj(int id, [FromQuery] string? naziv, [FromQuery] string? opis, [FromQuery] int? idLokacija, [FromQuery] int? idKorisnika, [FromQuery] int? idZivotinja)
     {
         try
         {
@@ -83,22 +96,45 @@ public class SlucajController : ControllerBase
             {
                 if (naziv != null)
                 {
+                    if (string.IsNullOrEmpty(naziv) || string.IsNullOrWhiteSpace(naziv)) return BadRequest("Naziv ne može biti prazan");
+                    if (naziv.Length > 50) return BadRequest("Naziv ne može biti duži od 50 karaktera");
                     slucaj.Naziv = naziv;
                 }
                 if (opis != null)
                 {
+
+                    if (string.IsNullOrEmpty(opis) || string.IsNullOrWhiteSpace(opis)) return BadRequest("Opis ne može biti prazan");
+                    if (opis.Length > 500) return BadRequest("Opis ne može biti duži od 500 karaktera");
                     slucaj.Opis = opis;
                 }
-                if (slika != null)
+                if (idLokacija.HasValue)
                 {
-                    slucaj.Slika = slika;
+                    var lokacija = Context.Lokacije.Where(l => l.ID == idLokacija).FirstOrDefault();
+                    if (lokacija == null) return BadRequest($"Ne postoji lokacija sa idjem{idLokacija}");
+                    slucaj.Lokacija = lokacija;
+
+                }
+                if (idKorisnika.HasValue)
+                {
+                    var korisnik = Context.Korisnici.Where(k => k.ID == idKorisnika).FirstOrDefault();
+                    if (korisnik == null) return BadRequest($"Ne postoji lokacija sa idjem{idKorisnika}");
+                    if (slucaj.Korisnik != null) slucaj.Korisnik.Slucajevi.Remove(slucaj);
+                    slucaj.Korisnik = korisnik;
+
+                }
+                if (idZivotinja.HasValue)
+                {
+                    var zivotinja = Context.Zivotinje.Where(k => k.ID == idZivotinja).FirstOrDefault();
+                    if (zivotinja == null) return BadRequest($"Ne postoji lokacija sa idjem{idZivotinja}");
+                    slucaj.Zivotinja = zivotinja;
+
                 }
                 await Context.SaveChangesAsync();
                 return Ok($"Izmenjen slucaj {slucaj.ID}");
             }
             else
             {
-                return BadRequest($"Ne postoji slucaj sa id-jem {id}");
+                return NotFound($"Ne postoji slucaj sa id-jem {id}");
             }
 
         }

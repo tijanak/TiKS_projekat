@@ -12,5 +12,5 @@ public class Kategorija
 
     public double Prioritet { get; set; }
     [JsonIgnore]
-    public List<Slucaj>? Slucajevi { get; set; }
+    public List<Slucaj> Slucajevi { get; set; } = new();
 }

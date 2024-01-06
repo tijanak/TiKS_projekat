@@ -10,7 +10,7 @@ public class Korisnik
     [MaxLength(50)]
     public string? Password { get; set; }
     [JsonIgnore]
-    public List<Slucaj>? Slucajevi { get; set; }
+    public List<Slucaj> Slucajevi { get; set; } = new();
     [JsonIgnore]
-    public List<Donacija>? Donacije { get; set; }
+    public List<Donacija> Donacije { get; set; } = new();
 }

@@ -49,14 +49,11 @@ public class DonacijaController : ControllerBase
         donacija.Slucaj = slucaj;
         try
         {
-
-            Donacija toAdd = new Donacija();
-            toAdd.Kolicina = donacija.Kolicina;
-            toAdd.Korisnik = donacija.Korisnik;
-            toAdd.Slucaj = donacija.Slucaj;
-            Context.Donacije.Add(toAdd);
+            korisnik.Donacije.Add(donacija);
+            slucaj.Donacije.Add(donacija);
+            Context.Donacije.Add(donacija);
             await Context.SaveChangesAsync();
-            return Ok(toAdd.ID);
+            return Ok(donacija.ID);
         }
         catch (Exception e)
         {
@@ -122,7 +119,11 @@ public class DonacijaController : ControllerBase
                     var slucaj = await Context.Slucajevi.FindAsync(idSlucaja);
                     if (slucaj != null)
                     {
+                        if (donacija.Slucaj != null)
+                            donacija.Slucaj.Donacije.Remove(donacija);
+
                         donacija.Slucaj = slucaj;
+                        slucaj.Donacije.Add(donacija);
                     }
                     else
                     {

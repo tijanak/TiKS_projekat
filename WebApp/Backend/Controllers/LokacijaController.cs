@@ -42,10 +42,12 @@ public class LokacijaController : ControllerBase
         if (lokacija.Longitude < -180 || lokacija.Longitude >= 180) return BadRequest("Longituda mora biti u opsegu [-180,180)");
         var slucaj = await Context.Slucajevi.FindAsync(idSlucaja);
         if (slucaj == null) return BadRequest($"Ne postoji slučaj sa idjem {idSlucaja}");
-        lokacija.Slucaj = slucaj;
+
         try
         {
             Context.Lokacije.Add(lokacija);
+            slucaj.Lokacija = lokacija;
+            lokacija.Slucaj = slucaj;
             await Context.SaveChangesAsync();
             return Ok(lokacija.ID);
         }
@@ -105,6 +107,7 @@ public class LokacijaController : ControllerBase
                     var slucaj = await Context.Slucajevi.FindAsync(idSlucaja);
                     if (slucaj != null)
                     {
+                        slucaj.Lokacija = lokacija;
                         lokacija.Slucaj = slucaj;
                     }
                     else

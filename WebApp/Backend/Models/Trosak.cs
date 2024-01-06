@@ -9,5 +9,5 @@ public class Trosak
     public string? Namena { get; set; }
     public int Kolicina { get; set; }
     [JsonIgnore]
-    public Slucaj? Slucaj { get; set; }
+    public Slucaj Slucaj { get; set; } = null!;
 }

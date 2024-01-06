@@ -10,5 +10,5 @@ public class Novost
     public DateTime Datum { get; set; }
     public string? Slika { get; set; }
     [JsonIgnore]
-    public Slucaj? Slucaj { get; set; }
+    public Slucaj Slucaj { get; set; } = null!;
 }
