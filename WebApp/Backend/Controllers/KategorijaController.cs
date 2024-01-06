@@ -58,6 +58,7 @@ public class KategorijaController : ControllerBase
     [HttpDelete]
     public async Task<ActionResult> Obrisi(int id)
     {
+        if (id < 0) return BadRequest("ID ne može biti negativan");
         try
         {
             var kategorija = Context.Kategorije.Where(p => p.ID == id).FirstOrDefault();
@@ -70,7 +71,7 @@ public class KategorijaController : ControllerBase
             }
             else
             {
-                return BadRequest($"Ne postoji kategorija sa id-jem {id}");
+                return NotFound($"Ne postoji kategorija sa id-jem {id}");
             }
 
         }
@@ -81,20 +82,31 @@ public class KategorijaController : ControllerBase
     }
     [Route("Update/{id}")]
     [HttpPut]
-    public async Task<ActionResult> Azuriraj(int id, [FromQuery] string? tip)
+    public async Task<ActionResult> Azuriraj(int id, [FromQuery] string? tip, [FromQuery] double? prioritet)
     {
         try
         {
             var kategorija = Context.Kategorije.Where(p => p.ID == id).FirstOrDefault();
             if (kategorija != null)
             {
-                kategorija.Tip = tip;
+                if (tip != null)
+                {
+                    if (string.IsNullOrEmpty(tip) || string.IsNullOrWhiteSpace(tip)) return BadRequest("Tip ne može biti prazan");
+                    if (tip.Length > 50) return BadRequest("Maksimalna dužina za tip je 50");
+                    kategorija.Tip = tip;
+                }
+                if (prioritet.HasValue)
+                {
+                    var postoji = Context.Kategorije.Where(k => k.Prioritet == prioritet).FirstOrDefault();
+                    if (postoji != null && postoji.ID != id) return BadRequest($"Već postoji kategorija sa prioritetom {prioritet}");
+                    kategorija.Prioritet = (double)prioritet;
+                }
                 await Context.SaveChangesAsync();
                 return Ok($"Izmenjena kategorija {kategorija.ID}");
             }
             else
             {
-                return BadRequest($"Ne postoji kategorija sa id-jem {id}");
+                return NotFound($"Ne postoji kategorija sa id-jem {id}");
             }
 
         }
