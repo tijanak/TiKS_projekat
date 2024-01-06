@@ -2,7 +2,7 @@ namespace Backend.Models;
 [Table("Zivotinja")]
 public class Zivotinja
 {
-    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [Key, Required]
     public int ID { get; set; }
     [MaxLength(50)]
     public string? Ime { get; set; }

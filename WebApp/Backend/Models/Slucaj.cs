@@ -11,8 +11,7 @@ public class Slucaj
         Novosti = new();
         Slike = new();
     }
-    [Key]
-    [Required]
+[Key, Required]
     public int ID { get; set; }
     [MaxLength(50)]
     public string? Naziv { get; set; }

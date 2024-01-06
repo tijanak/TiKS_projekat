@@ -2,7 +2,7 @@ namespace Backend.Models;
 [Table("Korisnik")]
 public class Korisnik
 {
-    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [Key, Required]
     public int ID { get; set; }
     [MaxLength(50)]
     public string? Username { get; set; }

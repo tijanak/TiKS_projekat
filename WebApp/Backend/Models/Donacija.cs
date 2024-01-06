@@ -2,8 +2,7 @@ namespace Backend.Models;
 [Table("Donacija")]
 public class Donacija
 {
-    [Key]
-    [Required]
+    [Key, Required]
     public int ID { get; set; }
     public int Kolicina { get; set; }
     [JsonIgnore]
