@@ -68,7 +68,7 @@ public class KorisnikController : ControllerBase
                 
             var actionResult = PreuzmiKorisnika(id_korisnika);
             if(actionResult.GetType()!=typeof(OkObjectResult)) return NotFound("Nema takvog korisnika");
-            var actionResult_slucaj = slucaj_controller.Preuzmi(id_slucaja);
+            var actionResult_slucaj = await slucaj_controller.Preuzmi(id_slucaja);
             if(actionResult_slucaj.GetType()!=typeof(OkObjectResult)) return NotFound("Nema takvog slucaja");
 
             var korisnik = ((OkObjectResult)actionResult).Value;
