@@ -11,11 +11,12 @@ public class KategorijaController : ControllerBase
     }
     [Route("Get/{id}")]
     [HttpGet]
-    public ActionResult Preuzmi(int id)
+    public async Task<ActionResult> Preuzmi(int id)
     {
+
         try
         {
-            var kategorija = Context.Kategorije.Where(p => p.ID == id).FirstOrDefault();
+            var kategorija = await Context.Kategorije.Where(p => p.ID == id).FirstOrDefaultAsync();
             if (kategorija != null)
             {
                 return Ok(kategorija);
@@ -36,6 +37,11 @@ public class KategorijaController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> Dodaj([FromBody] Kategorija kategorija)
     {
+        if (kategorija == null) return BadRequest("Kategorija ne sme da bude null");
+        var postoji = Context.Kategorije.Where(k => k.Prioritet == kategorija.Prioritet).FirstOrDefault();
+        if (postoji != null) return BadRequest($"Već postoji kategorija sa prioritetom {kategorija.Prioritet}");
+        if (string.IsNullOrEmpty(kategorija.Tip) || string.IsNullOrWhiteSpace(kategorija.Tip)) return BadRequest("Tip ne može biti prazan");
+        if (kategorija.Tip.Length > 50) return BadRequest("Maksimalna dužina za tip je 50");
         try
         {
 

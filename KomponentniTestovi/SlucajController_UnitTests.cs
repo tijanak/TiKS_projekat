@@ -1,7 +1,5 @@
 ﻿
 
-using EntityFrameworkCoreMock;
-using Microsoft.AspNetCore.Mvc;
 
 namespace KomponentniTestovi
 {
