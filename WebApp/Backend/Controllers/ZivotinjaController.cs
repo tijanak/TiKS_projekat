@@ -15,9 +15,7 @@ public class ZivotinjaController : ControllerBase
     public ActionResult PreuzmiZivotinju(int id){
         try{
             var zivotinja = Context.Zivotinje.Where(z => z.ID==id).FirstOrDefault();
-            if(zivotinja == null){
-                return NotFound("Zivotinja ne postoji.");
-            }
+            if(zivotinja == null) return NotFound("Zivotinja ne postoji.");
             return Ok(zivotinja);
         }
         catch(Exception e){

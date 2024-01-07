@@ -2,7 +2,7 @@ namespace Backend.Models;
 [Table("Trosak")]
 public class Trosak
 {
-    [Key, Required]
+    [Key, Required, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int ID { get; set; }
     [MaxLength(50)]
     public string? Namena { get; set; }

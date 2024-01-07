@@ -4,7 +4,7 @@ namespace Backend.Models;
 [Index(nameof(Prioritet), IsUnique = true)]
 public class Kategorija
 {
-    [Key, Required]
+    [Key, Required, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int ID { get; set; }
     [MaxLength(50)]
     public string? Tip { get; set; }
