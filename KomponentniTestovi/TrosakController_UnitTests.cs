@@ -32,6 +32,7 @@ namespace KomponentniTestovi
         }
 
         [Order(1)]
+        [Repeat(3)]
         [TestCase("lekovi", 5000, 999)]
         [TestCase("hrana", 3000, 999)]
         [TestCase("igracke", 2000, 999)]
@@ -55,6 +56,8 @@ namespace KomponentniTestovi
         [Order(3)]
         [Test]
         [Sequential]
+        [Retry(2)]
+        [MaxTime(2000)]
         public async Task IzmeniTrosak_AssertOk([Random(200, 10000, 4)] int cena, [Range(1,4,1)] int id_troska)
         {
             var actionResult = await controller.IzmeniTrosak(id_troska, null, cena, null);

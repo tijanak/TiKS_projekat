@@ -22,13 +22,12 @@ public class KorisnikController : ControllerBase
         {
             var korisnik = Context.Korisnici.Where(k => k.ID == id).FirstOrDefault();
             if (korisnik != null) return Ok(korisnik);
-            return BadRequest("Trazeni korisnik ne postoji");
+            return NotFound("Trazeni korisnik ne postoji");
         }
         catch (Exception e)
         {
             return BadRequest(e.Message);
         }
-
     }
 
 
@@ -37,13 +36,13 @@ public class KorisnikController : ControllerBase
     {
         try
         {
-            if(korisnik.Username==null||korisnik.Username=="") return BadRequest("korisnik mora da ima username");
-            if(korisnik.Username.Length>50) return BadRequest("predugacko korisnicko ime");
+            if(korisnik.Username==null||korisnik.Username=="")          return BadRequest("korisnik mora da ima username");
+            if(korisnik.Username.Length>50)                             return BadRequest("predugacko korisnicko ime");
             var vec_postoji_korisnik_sa_username=Context.Korisnici.Where(k=>k.Username==korisnik.Username).FirstOrDefault();
-            if(vec_postoji_korisnik_sa_username!=null) return BadRequest("korisnicko ime zauzeto");
+            if(vec_postoji_korisnik_sa_username!=null)                  return BadRequest("korisnicko ime zauzeto");
             
-            if(korisnik.Password==null||korisnik.Password=="") return BadRequest("Korisnik mora da ima sifru");
-            if(korisnik.Password.Length>50) return BadRequest("predugacka lozinka");
+            if(korisnik.Password==null||korisnik.Password=="")          return BadRequest("Korisnik mora da ima sifru");
+            if(korisnik.Password.Length>50)                             return BadRequest("predugacka lozinka");
             
             if(null==korisnik.Donacije) korisnik.Donacije=new List<Donacija>();
             if(null==korisnik.Slucajevi) korisnik.Slucajevi=new List<Slucaj>();
@@ -51,9 +50,12 @@ public class KorisnikController : ControllerBase
             await Context.SaveChangesAsync();
             if(null!=id_donacije) {
                 var don_actionResult=await DodeliDonaciju(korisnik.ID,(int)id_donacije); 
-                if(don_actionResult.GetType()!=typeof(OkObjectResult)) return don_actionResult;
+                if(don_actionResult.GetType()!=typeof(OkObjectResult)) return BadRequest("Problemi sa dodelom donacije");
             }
-            if(null!=id_slucaja) return await DodeliSlucaj(korisnik.ID,(int)id_slucaja);
+            if(null!=id_slucaja) {
+                var sluc_actionResult= await DodeliSlucaj(korisnik.ID,(int)id_slucaja);
+                if(sluc_actionResult.GetType()!=typeof(OkObjectResult)) return BadRequest("Problemi sa dodelom donacije");
+                }
             return Ok(korisnik.ID);
         }
         catch (Exception e)
@@ -137,7 +139,7 @@ public class KorisnikController : ControllerBase
             var korisnik = ((OkObjectResult)actionResult).Value;
             if(korisnik==null) return NotFound("Nema takvog korisnika");
             Korisnik k = (Korisnik)korisnik;
-            if(k.Donacije==null) return BadRequest("Korisnik nije napravio tu donaciju");
+            if(k.Donacije==null) return BadRequest("Korisnik nije donirao nista");
             int i;
             for(i=0;i<k.Donacije.Count;i++)
                 if(k.Donacije[i].ID==id_donacije) break;
@@ -164,11 +166,11 @@ public class KorisnikController : ControllerBase
             var korisnik = ((OkObjectResult)actionResult).Value;
             if(korisnik==null) return NotFound("Nema takvog korisnika");
             Korisnik k = (Korisnik)korisnik;
-            if(k.Slucajevi==null) return BadRequest("Korisnik nije napravio tu donaciju");
+            if(k.Slucajevi==null || k.Slucajevi.Count==0) return BadRequest("Korisnik nema nijedan slucaj");
             int i;
             for(i=0;i<k.Slucajevi.Count;i++)
                 if(k.Slucajevi[i].ID==id_slucaja) break;
-            if(i==k.Slucajevi.Count) return BadRequest("Korisnik nije napravio tu donaciju");
+            if(i==k.Slucajevi.Count) return BadRequest("Ovaj slucaj nije korisnikov");
             
             k.Slucajevi.RemoveAt(i);
             await slucaj_controller.Obrisi(id_slucaja);
@@ -190,14 +192,16 @@ public class KorisnikController : ControllerBase
             var stari_korisnik = await Context.Korisnici.FindAsync(id_korisnika);
         
             if(stari_korisnik==null) return NotFound("Trazeni korisnik ne postoji");
-
-            if(null==username || username.Length<1||username.Length>50) return BadRequest("username mora biti izmedju 1 i 50 karaktera");
-            var vec_postoji_korisnik_sa_username=Context.Korisnici.Where(k=>k.Username==username).FirstOrDefault();
-            if(vec_postoji_korisnik_sa_username!=null) return BadRequest("korisnicko ime zauzeto");
-            stari_korisnik.Username = username;
-            
-            if(null==password || password.Length<1||password.Length>50) return BadRequest("password mora biti izmedju 1 i 50 karaktera");
-            stari_korisnik.Password = password;
+            if(null!=username){
+                if( username.Length<1||username.Length>50) return BadRequest("username mora biti izmedju 1 i 50 karaktera");
+                var vec_postoji_korisnik_sa_username=Context.Korisnici.Where(k=>k.Username==username).FirstOrDefault();
+                if(vec_postoji_korisnik_sa_username!=null) return BadRequest("korisnicko ime zauzeto");
+                stari_korisnik.Username = username;
+            }
+            if(null!=password){
+                if(password.Length<1||password.Length>50) return BadRequest("password mora biti izmedju 1 i 50 karaktera");
+                stari_korisnik.Password = password;
+            }
 
             Context.Korisnici.Update(stari_korisnik);
             await Context.SaveChangesAsync();
@@ -211,7 +215,7 @@ public class KorisnikController : ControllerBase
 
 
     [HttpDelete("uklonikorisnika/{ID}")]
-    public async Task<ActionResult<Korisnik>> UkloniKorisnika(int ID){
+    public async Task<ActionResult> UkloniKorisnika(int ID){
     try
         {
             var korisnik = await Context.Korisnici.FindAsync(ID);

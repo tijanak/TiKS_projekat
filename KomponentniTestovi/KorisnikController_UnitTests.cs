@@ -2,6 +2,7 @@
 namespace KomponentniTestovi
 {
     [TestFixture]
+    [TestOf(typeof(KorisnikController))]
     internal class KorisnikController_UnitTests
     {
         KorisnikController controller;
@@ -30,6 +31,8 @@ namespace KomponentniTestovi
             k.Username = username;
             k.Password = password;
             var actionResult = await controller.DodajKorisnika(k,id_donacije,id_slucaja);
+            if (actionResult.GetType() == typeof(OkObjectResult))
+                Assert.That(0, Is.LessThan((int)((OkObjectResult)actionResult).Value));
             Assert.IsInstanceOf<OkObjectResult>(actionResult);
         }
 
@@ -53,7 +56,7 @@ namespace KomponentniTestovi
 
         [Order(3)]
         [TestCase(500,250)]
-        [TestCase(2,302)]
+        [TestCase(2,251)]
         public async Task DodeliSlucaj_AssertOk(int id_korisnika, int id_slucaja)
         {
             var actionResult = await controller.DodeliSlucaj(id_korisnika, id_slucaja);
@@ -63,6 +66,7 @@ namespace KomponentniTestovi
         [Order(4)]
         [TestCase(500, 300)]
         [TestCase(1,301)]
+        [TestCase(1,302)]
         public async Task DodeliDonaciju_AssertOk(int id_korisnika, int id_donacije)
         {
             var actionResult = await controller.DodeliDonaciju(id_korisnika, id_donacije);
@@ -70,7 +74,7 @@ namespace KomponentniTestovi
         }
 
         [Order(5)]
-        [TestCase(2,302)]
+        [TestCase(2,251)]
         public async Task OduzmiSlucaj_AssertOk(int id_korisnika, int id_slucaja)
         {
             var actionResult = await controller.OduzmiSlucaj(id_korisnika, id_slucaja);
@@ -81,27 +85,56 @@ namespace KomponentniTestovi
         [TestCase(1,301)]
         public async Task OduzmiDonaciju_AssertOk(int id_korisnika, int id_donacije)
         {
-            var actionResult = await controller.OduzmiSlucaj(id_korisnika, id_donacije);
+            var actionResult = await controller.OduzmiDonaciju(id_korisnika, id_donacije);
             Assert.IsInstanceOf<OkObjectResult>(actionResult);
         }
 
-        //[TestCase(1)]
-        //public void PreuzmiKorisnika_AssertOk(int id)
-        //{
-        //    var actionresult = controller.PreuzmiKorisnika(id);
-        //    Assert.IsInstanceOf<OkObjectResult>(actionresult);
-        //}
+        [Order(7)]
+        [TestCase(2,"qwokka",null)]
+        [TestCase(3, null, "novasifra")]
+        public async Task IzmeniUsernamePassword_AssertOk(int id_korisnika,string?username, string? password)
+        {
+            var actionResult = await controller.IzmeniUsernamePassword(id_korisnika, username, password);
+            
+            TestContext.Out.WriteLine(((Korisnik)((OkObjectResult)actionResult).Value).Username);
+            if (actionResult.GetType() != typeof(OkObjectResult)) Assert.Fail("Nije Ok");
+                
+            if(null!=username)
+                Assert.That(username, Is.EqualTo(((Korisnik)((OkObjectResult)actionResult).Value).Username));
 
-        //[Test]
-        //public void IzmeniKorisnika_Test()
-        //{
+            Assert.NotNull(((Korisnik)((OkObjectResult)actionResult).Value).Password);
+        }
 
-        //}
+        [Test]
+        public async Task UkloniKorisnika_NotFound([Values(-1,-1000,15000)]int id_korisnika)
+        {
+            var actionResult = await controller.UkloniKorisnika(id_korisnika);
+            Assert.IsInstanceOf<NotFoundObjectResult>(actionResult);
+        }
 
-        //[Test]
-        //public void ObrisiKorisnika_Test()
-        //{
+        [TestCase(500), Order(9)]
+        public async Task UkloniKorisnika_Ok(int id_korisnika)
+        {
+            var actionResult = await controller.UkloniKorisnika(id_korisnika);
+            Assert.IsInstanceOf<OkObjectResult>(actionResult);
+        }
 
-        //}
+        [TestCase(1), Description("korisnik sa id-jem 1 se dodaje dinamicki, kad se pokrene samo ovaj test nema ga u bazi")]
+        [TestCase(-1)]
+        [Explicit("trenutno")]
+        public void PreuzmiKorisnika_NotFoundExplicit(int id)
+        {
+            var actionresult = controller.PreuzmiKorisnika(id);
+            Assert.IsInstanceOf<NotFoundObjectResult>(actionresult);
+        }
+
+        [TestCase(500)]
+        [Order(8)]
+        public void PreuzmiKorisnika_Ok(int id)
+        {
+            var actionresult = controller.PreuzmiKorisnika(id);
+            Assert.IsInstanceOf<OkObjectResult>(actionresult);
+        }
+
     }
 }

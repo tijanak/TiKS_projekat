@@ -2,6 +2,7 @@
 namespace KomponentniTestovi
 {
     [TestFixture]
+    [TestOf(typeof(ZivotinjaController))]
     internal class ZivotinjaController_UnitTests
     {
         ZivotinjaController controller;
@@ -22,9 +23,11 @@ namespace KomponentniTestovi
         }
 
         [Test, Order(2)]
+        [Timeout(1000)]
         public async Task DodajZivotinju_AssertOk()
         {
             Zivotinja z = new Zivotinja { Ime = "Tomica", Vrsta = "macka" };
+            TestContext.Out.WriteLine("ovaj test ima timeout od 1s");
             var actionResult = await controller.DodajZivotinju(z,1);
             Assert.IsInstanceOf<OkObjectResult>(actionResult);
         }
