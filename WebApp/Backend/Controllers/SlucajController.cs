@@ -35,20 +35,26 @@ public class SlucajController : ControllerBase
     }
     [Route("Post")]
     [HttpPost]
-    public async Task<ActionResult> Dodaj([FromBody] Slucaj slucaj, [FromBody] Lokacija? lokacija, [FromBody] Zivotinja? zivotinja, [FromQuery] int? idKorisnika)
+    public async Task<ActionResult> Dodaj([FromBody] Slucaj slucaj, [FromBody] Lokacija? lokacija, [FromBody] Zivotinja? zivotinja, [FromQuery] int? idKorisnika, [FromQuery] Kategorija kategorija)
     {
         if (slucaj == null) return BadRequest("Slučaj ne može biti null");
+        if (slucaj.Naziv ==null || slucaj.Naziv.Length>50) return BadRequest("Slučaj mora da ima naziv");
+        if (slucaj.Opis ==null || slucaj.Opis.Length>500) return BadRequest("Opis slučaja mora da bude do 500 karaktera");
         if (lokacija == null) return BadRequest("Lokacija ne može biti null");
-        if (zivotinja == null) return BadRequest("Životinja ne može biti null");
         if (idKorisnika == null) return BadRequest("ID korisnika ne može biti null");
-        var korisnik = Context.Korisnici.Where(k => k.ID == idKorisnika).FirstOrDefault();
-        if (korisnik == null) return BadRequest("Korisnik ne postoji");
-        slucaj.Zivotinja = zivotinja;
-        slucaj.Lokacija = lokacija;
-        slucaj.Korisnik = korisnik;
-        korisnik.Slucajevi.Add(slucaj);
+        if (kategorija == null) return BadRequest("Kategorija ne može biti null");
+        if (zivotinja == null) return BadRequest("Životinja ne može biti null");
         try
         {
+            var korisnik = Context.Korisnici.Where(k => k.ID == idKorisnika).FirstOrDefault();
+            if (korisnik == null) return BadRequest("Korisnik ne postoji");
+            
+            slucaj.Lokacija = lokacija;
+            slucaj.Korisnik = korisnik;
+            korisnik.Slucajevi.Add(slucaj);
+            slucaj.Kategorija.Add(kategorija);
+            slucaj.Zivotinja = zivotinja;
+        
             Context.Slucajevi.Add(slucaj);
             await Context.SaveChangesAsync();
             return Ok(slucaj.ID);
@@ -87,7 +93,7 @@ public class SlucajController : ControllerBase
     }
     [Route("Update/{id}")]
     [HttpPut]
-    public async Task<ActionResult> Azuriraj(int id, [FromQuery] string? naziv, [FromQuery] string? opis, [FromQuery] int? idLokacija, [FromQuery] int? idKorisnika, [FromQuery] int? idZivotinja)
+    public async Task<ActionResult> Azuriraj(int id, [FromQuery] string? naziv, [FromQuery] string? opis, [FromQuery] int? idLokacija, [FromQuery] int? idKorisnika, [FromQuery] int? idZivotinja, [FromQuery] int? idKategorija)
     {
         try
         {
@@ -117,7 +123,7 @@ public class SlucajController : ControllerBase
                 if (idKorisnika.HasValue)
                 {
                     var korisnik = Context.Korisnici.Where(k => k.ID == idKorisnika).FirstOrDefault();
-                    if (korisnik == null) return BadRequest($"Ne postoji lokacija sa idjem{idKorisnika}");
+                    if (korisnik == null) return BadRequest($"Ne postoji korisnik sa id-jem{idKorisnika}");
                     if (slucaj.Korisnik != null) slucaj.Korisnik.Slucajevi.Remove(slucaj);
                     slucaj.Korisnik = korisnik;
 
@@ -125,9 +131,14 @@ public class SlucajController : ControllerBase
                 if (idZivotinja.HasValue)
                 {
                     var zivotinja = Context.Zivotinje.Where(k => k.ID == idZivotinja).FirstOrDefault();
-                    if (zivotinja == null) return BadRequest($"Ne postoji lokacija sa idjem{idZivotinja}");
+                    if (zivotinja == null) return BadRequest($"Ne postoji zivotinja sa id-jem{idZivotinja}");
                     slucaj.Zivotinja = zivotinja;
 
+                }
+                if(idKategorija.HasValue)
+                {
+                    var kategorija = Context.Kategorije.Where(k=>k.ID==idKategorija).FirstOrDefault();
+                    if(kategorija==null) return BadRequest($"Ne postoji kategorija sa id-jem{idKategorija}");
                 }
                 await Context.SaveChangesAsync();
                 return Ok($"Izmenjen slucaj {slucaj.ID}");
