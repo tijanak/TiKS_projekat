@@ -2,6 +2,7 @@ import logo from "./logo.svg";
 import "./App.css";
 import "./Components/Test";
 import Joke from "./Components/Test";
+import { Post } from "./Components/Post";
 function App() {
   return (
     <div className="App">
@@ -17,6 +18,7 @@ function App() {
           rel="noopener noreferrer"
         >
           <Joke></Joke>
+          <Post id_posta={1}></Post>
         </a>
       </header>
     </div>

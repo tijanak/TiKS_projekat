@@ -35,7 +35,7 @@ public class SlucajController : ControllerBase
     }
     [Route("Post")]
     [HttpPost]
-    public async Task<ActionResult> Dodaj([FromBody] Slucaj slucaj, [FromBody] Lokacija? lokacija, [FromBody] Zivotinja? zivotinja, [FromQuery] int? idKorisnika, [FromQuery] Kategorija kategorija)
+    public async Task<ActionResult> Dodaj([FromBody] Slucaj slucaj, [FromQuery] Lokacija? lokacija, [FromQuery] Zivotinja? zivotinja, [FromQuery] int? idKorisnika, [FromQuery] Kategorija kategorija)
     {
         if (slucaj == null) return BadRequest("Slučaj ne može biti null");
         if (slucaj.Naziv ==null || slucaj.Naziv.Length>50) return BadRequest("Slučaj mora da ima naziv");
