@@ -4,6 +4,7 @@ using Backend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(ProjectContext))]
-    partial class ProjectContextModelSnapshot : ModelSnapshot
+    [Migration("20240120232831_v5")]
+    partial class v5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -165,7 +168,7 @@ namespace Backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ZivotinjaId")
+                    b.Property<int>("ZivotinjaId")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
@@ -177,8 +180,7 @@ namespace Backend.Migrations
                         .HasFilter("[LokacijaId] IS NOT NULL");
 
                     b.HasIndex("ZivotinjaId")
-                        .IsUnique()
-                        .HasFilter("[ZivotinjaId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("Slucaj");
                 });
@@ -286,7 +288,9 @@ namespace Backend.Migrations
 
                     b.HasOne("Backend.Models.Zivotinja", "Zivotinja")
                         .WithOne("Slucaj")
-                        .HasForeignKey("Backend.Models.Slucaj", "ZivotinjaId");
+                        .HasForeignKey("Backend.Models.Slucaj", "ZivotinjaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Korisnik");
 

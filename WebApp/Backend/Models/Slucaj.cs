@@ -11,14 +11,14 @@ public class Slucaj
         Novosti = new();
         Slike = new();
     }
-[Key, Required, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [Key, Required, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int ID { get; set; }
     [MaxLength(50)]
     public string? Naziv { get; set; }
     [MaxLength(500)]
     public string? Opis { get; set; }
     public List<string> Slike { get; set; }
-    public int LokacijaId { get; set; }
+    public int? LokacijaId { get; set; }
     [JsonIgnore]
     public Lokacija? Lokacija { get; set; }
     [JsonIgnore]
@@ -28,7 +28,7 @@ public class Slucaj
     [JsonIgnore]
     public List<Kategorija> Kategorija { get; set; }
 
-    public int ZivotinjaId { get; set; }
+    public int? ZivotinjaId { get; set; }
     public Zivotinja? Zivotinja { get; set; }
     [JsonIgnore]
     public List<Trosak> Troskovi { get; set; }
