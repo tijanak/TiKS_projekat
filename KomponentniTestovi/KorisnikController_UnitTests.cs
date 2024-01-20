@@ -22,72 +22,38 @@ namespace KomponentniTestovi
         }
 
         [Order(1)]
-        [TestCase("know","catsrule",null,null)]
-        [TestCase("sqrll","password123",null,250)]
-        [TestCase("howl","itsmycastle",300,null)]
-        public async Task DodajKorisnika_AssertOk(string username, string password,int? id_donacije,int? id_slucaja)
+        [TestCase("know","catsrule")]
+        [TestCase("sqrll","password123")]
+        [TestCase("howl","itsmycastle")]
+        [TestCase("username", "password")]
+        public async Task DodajKorisnika_AssertOk(string username, string password)
         {
             Korisnik k = new Korisnik();
             k.Username = username;
             k.Password = password;
-            var actionResult = await controller.DodajKorisnika(k,id_donacije,id_slucaja);
+            var actionResult = await controller.DodajKorisnika(k);
             if (actionResult.GetType() == typeof(OkObjectResult))
                 Assert.That(0, Is.LessThan((int)((OkObjectResult)actionResult).Value));
             Assert.IsInstanceOf<OkObjectResult>(actionResult);
         }
 
         [Order(2)]
-        [TestCase(null, null, null, null)]
-        [TestCase("", null, null, null)]
-        [TestCase("4GCuJ:#(_Cz]GighGv!3)Wav@Pqg&j]$xx@jWW&dM,#ugxQQcC1", null, null, null)]
-        [TestCase("username","",null,null)]
-        [TestCase("username", "4GCuJ:#(_Cz]GighGv!3)Wav@Pqg&j]$xx@jWW&dM,#ugxQQcC1", null,null)]
-        [TestCase("username","password",600,null)]
-        [TestCase("username", "password", null, 600)]
-        [TestCase("know", "password", null, null)]
-        public async Task DodajKorisnika_AssertNotOk(string username, string password, int? id_donacije, int? id_slucaja)
+        [TestCase(null, null)]
+        [TestCase("", null)]
+        [TestCase("4GCuJ:#(_Cz]GighGv!3)Wav@Pqg&j]$xx@jWW&dM,#ugxQQcC1", null)]
+        [TestCase("username", "")]
+        [TestCase("username", "4GCuJ:#(_Cz]GighGv!3)Wav@Pqg&j]$xx@jWW&dM,#ugxQQcC1")]
+        [TestCase("username", "password")]
+        [TestCase("know", "password")]
+        public async Task DodajKorisnika_AssertNotOk(string username, string password)
         {
             Korisnik k = new Korisnik();
             k.Username = username;
             k.Password = password;
-            var actionResult = await controller.DodajKorisnika(k, id_donacije, id_slucaja);
+            var actionResult = await controller.DodajKorisnika(k);
             Assert.IsNotInstanceOf<OkObjectResult>(actionResult);
         }
 
-        [Order(3)]
-        [TestCase(500,250)]
-        [TestCase(2,251)]
-        public async Task DodeliSlucaj_AssertOk(int id_korisnika, int id_slucaja)
-        {
-            var actionResult = await controller.DodeliSlucaj(id_korisnika, id_slucaja);
-            Assert.IsInstanceOf<OkObjectResult>(actionResult);
-        }
-
-        [Order(4)]
-        [TestCase(500, 300)]
-        [TestCase(1,301)]
-        [TestCase(1,302)]
-        public async Task DodeliDonaciju_AssertOk(int id_korisnika, int id_donacije)
-        {
-            var actionResult = await controller.DodeliDonaciju(id_korisnika, id_donacije);
-            Assert.IsInstanceOf<OkObjectResult>(actionResult);
-        }
-
-        [Order(5)]
-        [TestCase(2,251)]
-        public async Task OduzmiSlucaj_AssertOk(int id_korisnika, int id_slucaja)
-        {
-            var actionResult = await controller.OduzmiSlucaj(id_korisnika, id_slucaja);
-            Assert.IsInstanceOf<OkObjectResult>(actionResult);
-        }
-
-        [Order(6)]
-        [TestCase(1,301)]
-        public async Task OduzmiDonaciju_AssertOk(int id_korisnika, int id_donacije)
-        {
-            var actionResult = await controller.OduzmiDonaciju(id_korisnika, id_donacije);
-            Assert.IsInstanceOf<OkObjectResult>(actionResult);
-        }
 
         [Order(7)]
         [TestCase(2,"qwokka",null)]
