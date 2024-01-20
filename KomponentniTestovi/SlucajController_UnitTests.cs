@@ -1,6 +1,8 @@
 ﻿
 
 
+using Backend.Models;
+
 namespace KomponentniTestovi
 {
     [TestFixture]
@@ -10,35 +12,50 @@ namespace KomponentniTestovi
         [OneTimeSetUp]
         public void Setup()
         {
-
-            Slucaj[] slucajevi = { new Slucaj { ID = 50 }, new Slucaj { ID = 51 }, new Slucaj { ID = 52 }, new Slucaj { ID = 53 } };
-            controller = new SlucajController(getDbContext(slucajevi:slucajevi));
+            Zivotinja[] zivotinje = { new Zivotinja { ID=3} };
+            Lokacija[] lokacije = { new Lokacija { ID=2} };
+            Korisnik[] korisnici = { new Korisnik { ID=1} };
+            Kategorija[] kategorije = { new Kategorija { ID=1}, new Kategorija { ID = 2 }, new Kategorija { ID = 3 } };
+            Slucaj[] slucajevi = { new Slucaj { ID = 50,Slike=new List<string> { "nekaSlika.jpg"} }, new Slucaj { ID = 51 }, new Slucaj { ID = 52 }, new Slucaj { ID = 53 } };
+            controller = new SlucajController(getDbContext(lokacije:lokacije,zivotinje:zivotinje,korisnici:korisnici,slucajevi:slucajevi,kategorije:kategorije));
         }
 
         [Test]
-        [TestCase("", "",true,true,1)]
-        [TestCase(null, "", true, true, 1)]
-        [TestCase("___________________________________________________", "", true, true, 1)]
-        [TestCase("tip", "", true, true, 1)]
-        [TestCase("   ", "", true, true, 1)]
-        [Ignore("ne radi")]
-        public async Task PostTest1(string? naziv, string? opis,bool nullLocation,bool nullAnimal,int?idKorisnika)
+        [TestCase("naziv", "opis",1, new int[] { },new string[] { "slika.jpg" })]
+        [TestCase("___________________________________________________", "opis", 1, new int[] { 1,3},new string[] { "slika.jpg" })]
+        [TestCase("naziv", "opis", 1, new int[] { 1,3}, new string[] { "slika.jpg"," " })]
+        [TestCase("", "opis", 1, new int[] { }, new string[] { "slika.jpg" })]
+        [TestCase("naziv", "", 1, new int[] { }, new string[] { "slika.jpg" })]
+        [TestCase("naziv", "______________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________", 1, new int[] { 1, 3 }, new string[] { "slika.jpg" })]
+        [TestCase("naziv", "opis", 1, new int[] { }, new string[] { "slika.jpg" })]
+        [TestCase("naziv", "opis", 1, new int[] { 1, 3,5 }, new string[] { "slika.jpg" })]
+        [TestCase("naziv", "opis", 100, new int[] { 1, 3 }, new string[] { "slika.jpg" })]
+        [TestCase("naziv", null, 1, new int[] { 1, 3 }, new string[] { "slika.jpg" })]
+        [TestCase(null, "opis", 1, new int[] { 1, 3 }, new string[] { "slika.jpg" })]
+        [TestCase("naziv", "opis", 1, new int[] {1,3 }, new string[] { "" })]
+        [TestCase("naziv", "opis", 1, new int[] { 1, 3 }, new string[] { null })]
+        public async Task PostTest1(string? naziv, string? opis, int? idKorisnika,int[]kategorijeIDs, string[]slike)
         {
             Slucaj slucaj=new Slucaj();
             slucaj.Naziv= naziv;
             slucaj.Opis = opis;
             
-            var result = await controller.Dodaj(slucaj,nullLocation?null:new Lokacija { },nullAnimal?null:new Zivotinja { },idKorisnika);
+            var result = await controller.Dodaj(slucaj,idKorisnika, new List<int>(kategorijeIDs),new List<string>(slike));
             Assert.IsInstanceOf<BadRequestObjectResult>(result);
         }
+        public static string[][] slike_cases()
+        {
+            return new[]{ new[] { "slika.jpg" }, new[] { "slika.png","slika2.png" }, new string[] { } };
+        }
         [Test, Combinatorial]
-        [Ignore("ne radi")]
-        public async Task PostTest2([Values("a", "__________________________________________________", "tip")] string? naziv, [Values(null)]string?opis, [Values(1)]int? idKorisnika)
+       
+        public async Task PostTest2([ValueSource(nameof(slike_cases))] string[] slike,[Values("a", "__________________________________________________", "tip")] string? naziv, [Values("opis", "____________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________")]string?opis, 
+                                    [Values(1)]int? idKorisnika, [Values(new int[]{ 1}, new int[] { 1,2 })] int[] idKategorija)
         {
             Slucaj slucaj = new Slucaj();
             slucaj.Naziv = naziv;
             slucaj.Opis = opis;
-            var result = await controller.Dodaj(slucaj,new Lokacija { },new Zivotinja { },idKorisnika);
+            var result = await controller.Dodaj(slucaj,idKorisnika,new List<int>(idKategorija),new List<string>(slike));
             Assert.IsInstanceOf<OkObjectResult>(result);
             var id = (result as OkObjectResult).Value;
             Assert.IsNotNull(id);
@@ -48,7 +65,7 @@ namespace KomponentniTestovi
         [Test]
         public async Task PostTest3()
         {
-            var result = await controller.Dodaj(null,new Lokacija { },new Zivotinja { },1);
+            var result = await controller.Dodaj(null,1, new List<int>() { 1},new List<string>());
             Assert.IsInstanceOf<BadRequestObjectResult>(result);
         }
         [Test]
@@ -104,15 +121,22 @@ namespace KomponentniTestovi
             Assert.IsInstanceOf<NotFoundObjectResult>(actionresult);
         }
         [Test]
-        [TestCase(50,"",  "",null,null,null)]
-        [TestCase(51, null,  "", null, null, null)]
-        [TestCase(51, "___________________________________________________", "", null, null, null)]
-        [TestCase(51, "tip",  "",null,null,null)]
-        [TestCase(51, "   ", "", null, null, null)]
-        [Ignore("ne radi")]
-        public async Task UpdateTest1(int id, string? naziv, string? opis,  int? idLokacija, int? idKorisnika, int? idZivotinja)
+        [TestCase(50,null,  null, null, null, null, null,null, null, new int[] {1,2,3 })]
+        [TestCase(50, null, null, new string[] {"slika.jpg" }, new string[] { }, null, null, null, new int[] { }, null)]
+        [TestCase(50, null, null, new string[] {  }, new string[] { "slika.jpg","nekaSlika.jpg"}, null, null, null, new int[] { }, null)]
+        [TestCase(50, "__________________________________________________", null, null, null, null, null, null, null, null)]
+        [TestCase(50, "a", null, null, null, null, null, null, null, null)]
+        [TestCase(51, null, "opis", null, null, null, null, null, null, null)]
+        [TestCase(51, null, null, null, null, 2, null, null, null, null)]
+        [TestCase(50, null, null, null, null, null, 1, null, null, null)]
+        [TestCase(50, null, null, null, null, null, null, 3, null, null)]
+
+        [TestCase(51, null, null, null, null, null, null, null,null, new int[] {3,2,1 })]
+        [TestCase(51, null, null, null, null, null, null, null, new int[] { 2,}, null)]
+
+        public async Task UpdateTest1(int id, string? naziv, string? opis,  string[]?addSlike,string[]?removeSlike,int? idLokacija, int? idKorisnika, int? idZivotinja, int[]? idRemoveKategorija, int[]? idAddKategorija)
         {
-            var result = await controller.Azuriraj(id, naziv, opis,  idLokacija, idKorisnika, idZivotinja);
+            var result = await controller.Azuriraj(id, naziv, opis, addSlike,removeSlike, idLokacija, idKorisnika, idZivotinja,idRemoveKategorija, idAddKategorija);
             Assert.IsInstanceOf<OkObjectResult>(result);
             var uBazi = await controller.Preuzmi(id);
             Assert.IsInstanceOf<OkObjectResult>(uBazi);
@@ -124,31 +148,39 @@ namespace KomponentniTestovi
                 Assert.IsTrue(idLokacija == null || slucaj.Lokacija.ID==idLokacija);
                 Assert.IsTrue(idKorisnika == null || slucaj.Korisnik.ID==idKorisnika);
                 Assert.IsTrue(idZivotinja==null||slucaj.Zivotinja.ID==idZivotinja);
-
+                Assert.IsTrue(addSlike == null || !addSlike.Except(slucaj.Slike).Any());
+                Assert.IsTrue(removeSlike == null || !slucaj.Slike.Intersect(removeSlike).Any());
+                Assert.IsTrue(idAddKategorija == null || !idAddKategorija.Except(slucaj.Kategorija.Select(k=>k.ID)).Any());
+                Assert.IsTrue(idRemoveKategorija == null || !idRemoveKategorija.Intersect(slucaj.Kategorija.Select(k => k.ID)).Any());
             });
         }
         [Test]
+        [Ignore("")]
+        [TestCase(-50, null, null, null, null, null, null, null, null, null)]
+        [TestCase(50, "", null, new string[] { "",null}, new string[] { }, null, null, null, new int[] { }, new int[] { })]
+        [TestCase(50, "___________________________________________________", null, new string[] { }, new string[] { }, null, null, null, new int[] { }, new int[] { })]
+        [TestCase(51, null, "", new string[] { }, new string[] { }, null, null, null, new int[] { }, new int[] { })]
+        [TestCase(50 , null,null, new string[] { ""}, new string[] { }, null, null, null, new int[] { }, new int[] { })]
+        [TestCase(50, null, null, new string[] { null }, new string[] { }, null, null, null, new int[] { }, new int[] { })]
+        [TestCase(50, null, null, new string[] { }, new string[] { "" },  null, null, null, new int[] { }, new int[] { })]
+        [TestCase(50, null, null, new string[] { }, null, null, null, null, new int[] { }, new int[] { })]
+        [TestCase(50, null, null, new string[] { }, null, -1, null, null, new int[] { }, new int[] { })]
 
-        [TestCase(-50,"", "", "",null,null,null)]
-        [TestCase(int.MinValue,null, "", "", null, null, null)]
-        [TestCase(51,"___________________________________________________", "", "", null, null, null)]
-        [TestCase(50, "tip", "", "", null, null, null)]
-        [Ignore("ne radi")]
-        public async Task UpdateTest2(int id, string? naziv, string? opis, string? slika,int?idLokacija,int?idKorisnika,int?idZivotinja)
+        [TestCase(50, null, null, null, null, -500, null, null, null, null)]
+
+        [TestCase(50, null, null, null, null, -500, null, null, null, null)]
+        public async Task UpdateTest2(int id, string? naziv, string? opis, string[]? addSlike, string[]? removeSlike, int? idLokacija, int? idKorisnika, int? idZivotinja, int[]? idRemoveKategorija, int[]? idAddKategorija)
         {
-            var result = await controller.Azuriraj(id, naziv, opis, idLokacija,idKorisnika,idZivotinja);
+            var result = await controller.Azuriraj(id, naziv, opis, addSlike, removeSlike, idLokacija, idKorisnika, idZivotinja, idRemoveKategorija, idAddKategorija);
             Assert.IsInstanceOf<BadRequestObjectResult>(result);
         }
         [Test]
 
-        [TestCase(int.MaxValue, "", "", "", null, null, null)]
-        [TestCase(70, null, "", "", null, null, null)]
-        [TestCase(70, "___________________________________________________", "", "", null, null, null)]
-        [TestCase(70, "tip", "", "", null, null, null)]
-        [Ignore("ne radi")]
-        public async Task UpdateTest3(int id, string? naziv, string? opis, string? slika, int? idLokacija, int? idKorisnika, int? idZivotinja)
+        [TestCase(int.MaxValue)]
+        [TestCase(70)]
+        public async Task UpdateTest3(int id)
         {
-            var result = await controller.Azuriraj(id, naziv, opis, idLokacija, idKorisnika, idZivotinja);
+            var result = await controller.Azuriraj(id, "tip", "", new string[] { }, new string[] { }, null, null, null, new int[] { }, new int[] { });
             Assert.IsInstanceOf<NotFoundObjectResult>(result);
         }
     }

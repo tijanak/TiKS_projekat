@@ -35,26 +35,34 @@ public class SlucajController : ControllerBase
     }
     [Route("Post")]
     [HttpPost]
-    public async Task<ActionResult> Dodaj([FromBody] Slucaj slucaj, [FromBody] Lokacija? lokacija, [FromBody] Zivotinja? zivotinja, [FromQuery] int? idKorisnika, [FromQuery] Kategorija kategorija)
+    public async Task<ActionResult> Dodaj([FromBody] Slucaj slucaj, [FromQuery] int? idKorisnika, [FromQuery] List<int> kategorijeIDs, [FromQuery] List<string> slike)
     {
         if (slucaj == null) return BadRequest("Slučaj ne može biti null");
-        if (slucaj.Naziv ==null || slucaj.Naziv.Length>50) return BadRequest("Slučaj mora da ima naziv");
-        if (slucaj.Opis ==null || slucaj.Opis.Length>500) return BadRequest("Opis slučaja mora da bude do 500 karaktera");
-        if (lokacija == null) return BadRequest("Lokacija ne može biti null");
+        if (slucaj.Naziv == null || slucaj.Naziv.Length > 50) return BadRequest("Slučaj mora da ima naziv");
+        if (slucaj.Opis == null || slucaj.Opis.Length > 500) return BadRequest("Opis slučaja mora da bude do 500 karaktera");
         if (idKorisnika == null) return BadRequest("ID korisnika ne može biti null");
-        if (kategorija == null) return BadRequest("Kategorija ne može biti null");
-        if (zivotinja == null) return BadRequest("Životinja ne može biti null");
+        if (kategorijeIDs.Count == 0) return BadRequest("Mora postojati kategorija");
+        foreach (string slika in slike)
+        {
+            if (string.IsNullOrEmpty(slika) || string.IsNullOrWhiteSpace(slika)) return BadRequest("Putanja do slike ne moze biti prazna");
+            slucaj.Slike.Add(slika);
+        }
         try
         {
             var korisnik = Context.Korisnici.Where(k => k.ID == idKorisnika).FirstOrDefault();
             if (korisnik == null) return BadRequest("Korisnik ne postoji");
-            
-            slucaj.Lokacija = lokacija;
+
             slucaj.Korisnik = korisnik;
             korisnik.Slucajevi.Add(slucaj);
-            slucaj.Kategorija.Add(kategorija);
-            slucaj.Zivotinja = zivotinja;
-        
+            foreach (int id in kategorijeIDs)
+            {
+                var kategorija = Context.Kategorije.Where(k => k.ID == id).FirstOrDefault();
+                if (kategorija == null)
+                {
+                    return BadRequest($"Kategorija sa IDjem {id} ne postoji");
+                }
+            }
+
             Context.Slucajevi.Add(slucaj);
             await Context.SaveChangesAsync();
             return Ok(slucaj.ID);
@@ -93,7 +101,7 @@ public class SlucajController : ControllerBase
     }
     [Route("Update/{id}")]
     [HttpPut]
-    public async Task<ActionResult> Azuriraj(int id, [FromQuery] string? naziv, [FromQuery] string? opis, [FromQuery] int? idLokacija, [FromQuery] int? idKorisnika, [FromQuery] int? idZivotinja, [FromQuery] int? idKategorija)
+    public async Task<ActionResult> Azuriraj(int id, [FromQuery] string? naziv, [FromQuery] string? opis, [FromQuery] string[]? addSlike, [FromQuery] string[]? removeSlike, [FromQuery] int? idLokacija, [FromQuery] int? idKorisnika, [FromQuery] int? idZivotinja, [FromQuery] int[]? idRemoveKategorija, int[]? idAddKategorija)
     {
         try
         {
@@ -118,7 +126,7 @@ public class SlucajController : ControllerBase
                     var lokacija = Context.Lokacije.Where(l => l.ID == idLokacija).FirstOrDefault();
                     if (lokacija == null) return BadRequest($"Ne postoji lokacija sa idjem{idLokacija}");
                     slucaj.Lokacija = lokacija;
-
+                    lokacija.Slucaj = slucaj;
                 }
                 if (idKorisnika.HasValue)
                 {
@@ -126,20 +134,52 @@ public class SlucajController : ControllerBase
                     if (korisnik == null) return BadRequest($"Ne postoji korisnik sa id-jem{idKorisnika}");
                     if (slucaj.Korisnik != null) slucaj.Korisnik.Slucajevi.Remove(slucaj);
                     slucaj.Korisnik = korisnik;
-
+                    korisnik.Slucajevi.Add(slucaj);
                 }
                 if (idZivotinja.HasValue)
                 {
                     var zivotinja = Context.Zivotinje.Where(k => k.ID == idZivotinja).FirstOrDefault();
                     if (zivotinja == null) return BadRequest($"Ne postoji zivotinja sa id-jem{idZivotinja}");
                     slucaj.Zivotinja = zivotinja;
-
+                    zivotinja.Slucaj = slucaj;
                 }
-                if(idKategorija.HasValue)
+                if (addSlike != null)
                 {
-                    var kategorija = Context.Kategorije.Where(k=>k.ID==idKategorija).FirstOrDefault();
-                    if(kategorija==null) return BadRequest($"Ne postoji kategorija sa id-jem{idKategorija}");
+                    foreach (string slika in addSlike)
+                    {
+                        if (string.IsNullOrEmpty(slika) || string.IsNullOrWhiteSpace(slika)) return BadRequest("Putanja do slike ne moze biti prazna");
+                        if (slucaj.Slike.Contains(slika)) return BadRequest("Ne može se ponavljati slika");
+                        slucaj.Slike.Add(slika);
+                    }
                 }
+                if (removeSlike != null)
+                {
+                    foreach (string slika in removeSlike)
+                    {
+                        slucaj.Slike.Remove(slika);
+                    }
+                }
+                if (idAddKategorija != null)
+                {
+                    foreach (int kId in idAddKategorija)
+                    {
+                        var kategorija = Context.Kategorije.Where(k => k.ID == kId).FirstOrDefault();
+                        if (kategorija == null) return BadRequest($"Ne postoji kategorija sa IDjem {kId}");
+                        slucaj.Kategorija.Add(kategorija);
+                        kategorija.Slucajevi.Add(slucaj);
+                    }
+                }
+                if (idRemoveKategorija != null)
+                {
+                    foreach (int kId in idRemoveKategorija)
+                    {
+                        var kategorija = Context.Kategorije.Where(k => k.ID == kId).FirstOrDefault();
+                        if (kategorija == null) return BadRequest($"Ne postoji kategorija sa IDjem {kId}");
+                        slucaj.Kategorija.Remove(kategorija);
+                        kategorija.Slucajevi.Remove(slucaj);
+                    }
+                }
+
                 await Context.SaveChangesAsync();
                 return Ok($"Izmenjen slucaj {slucaj.ID}");
             }
