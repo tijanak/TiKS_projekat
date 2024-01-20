@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from "react";
-function Joke() {
-  const [joke, setJoke] = useState(null);
+function Main() {
+  const [posts, setPosts] = useState(null);
   useEffect(() => {
-    fetch("http://localhost:5100/Test/Uzmi/1", {
+    fetch("http://localhost:5100/Slucaj/Get/All", {
       method: "GET",
     })
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        setJoke(data.nebitno);
+        setPosts(data);
       })
       .catch((error) => console.log(error));
   }, []);
   return (
     <div>
       <h2>nesto iz baze:</h2>
-      {joke && <p>{joke}</p>}
+      {posts && <p>{posts}</p>}
     </div>
   );
 }
-export default Joke;
+export default Main;

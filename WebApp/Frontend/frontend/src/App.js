@@ -1,28 +1,12 @@
 import logo from "./logo.svg";
 import "./App.css";
-import "./Components/Test";
-import Joke from "./Components/Test";
-import { Post } from "./Components/Post";
+import Login from "./Components/Login";
+import Main from "./Components/Main";
+import React, { useState, useEffect } from "react";
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Joke></Joke>
-          <Post id_posta={1}></Post>
-        </a>
-      </header>
-    </div>
-  );
+  const [currentUser, setUser] = useState(null);
+  if (currentUser == null) return <Login setUserFunction={setUser}></Login>;
+  return <Main></Main>;
 }
 
 export default App;
