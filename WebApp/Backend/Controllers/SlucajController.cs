@@ -196,4 +196,31 @@ public class SlucajController : ControllerBase
             return BadRequest(e.Message);
         }
     }
+    [Route("Get/All")]
+    [HttpGet]
+    public async Task<ActionResult> PreuzmiSveSlucajeve()
+    {
+        try
+        {
+            return Ok(await Context.Slucajevi.ToListAsync());
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+    [Route("Get/WithCategory")]
+    [HttpGet]
+    public async Task<ActionResult> PreuzmiSveSlucajeveSaKategorijama([FromQuery] int[] kategorijeIds)
+    {
+        if (kategorijeIds == null) return BadRequest("Moraju se proslediti idjevi kategorija");
+        try
+        {
+            return Ok(await Context.Slucajevi.Where(s => kategorijeIds.Intersect(s.Kategorija.Select(k => k.ID)).ToArray().Length == kategorijeIds.Length).ToListAsync());
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
 }

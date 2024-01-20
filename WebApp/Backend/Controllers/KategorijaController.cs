@@ -115,4 +115,17 @@ public class KategorijaController : ControllerBase
             return BadRequest(e.Message);
         }
     }
+    [Route("Get/All")]
+    [HttpGet]
+    public async Task<ActionResult> PreuzmiSveKategorije()
+    {
+        try
+        {
+            return Ok(await Context.Kategorije.ToListAsync());
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
 }

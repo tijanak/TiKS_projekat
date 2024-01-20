@@ -2,6 +2,8 @@
 
 
 using Backend.Models;
+using Microsoft.VisualBasic;
+using System.ComponentModel;
 
 namespace KomponentniTestovi
 {
@@ -15,8 +17,9 @@ namespace KomponentniTestovi
             Zivotinja[] zivotinje = { new Zivotinja { ID=3} };
             Lokacija[] lokacije = { new Lokacija { ID=2} };
             Korisnik[] korisnici = { new Korisnik { ID=1} };
-            Kategorija[] kategorije = { new Kategorija { ID=1}, new Kategorija { ID = 2 }, new Kategorija { ID = 3 } };
-            Slucaj[] slucajevi = { new Slucaj { ID = 50,Slike=new List<string> { "nekaSlika.jpg"} }, new Slucaj { ID = 51 }, new Slucaj { ID = 52 }, new Slucaj { ID = 53 } };
+            Kategorija k1=new Kategorija { ID = 1 }, k2=new Kategorija { ID = 2 }, k3=new Kategorija { ID = 3 }, k4 = new Kategorija { ID = 10 }, k5 = new Kategorija { ID = 11 }, k6 = new Kategorija { ID = 12 };
+            Kategorija[] kategorije = { k1,k2,k3 };
+            Slucaj[] slucajevi = { new Slucaj { ID = 50,Slike=new List<string> { "nekaSlika.jpg"} }, new Slucaj { ID = 51 }, new Slucaj { ID = 52 }, new Slucaj { ID = 53 }, new Slucaj { ID = 202, Kategorija = new List<Kategorija>() { k5 } }, new Slucaj { ID = 201, Kategorija = new List<Kategorija>() { k4, k5,k6 } }, new Slucaj { ID = 200,Kategorija=new List<Kategorija>() { k4,k5} } };
             controller = new SlucajController(getDbContext(lokacije:lokacije,zivotinje:zivotinje,korisnici:korisnici,slucajevi:slucajevi,kategorije:kategorije));
         }
 
@@ -186,6 +189,29 @@ namespace KomponentniTestovi
         {
             var result = await controller.Azuriraj(id, "tip", "", new string[] { }, new string[] { }, null, null, null, new int[] { }, new int[] { });
             Assert.IsInstanceOf<NotFoundObjectResult>(result);
+        }
+        [Test]
+        [TestCase(new int[] { },ExpectedResult =7)]
+        [TestCase(new int[] { 12}, ExpectedResult = 1)]
+        [TestCase(new int[] { 10,11,12 }, ExpectedResult = 1)]
+        [TestCase(new int[] { 11 }, ExpectedResult = 3)]
+        [TestCase(new int[] { 10 }, ExpectedResult = 2)]
+        public async Task<int> AllWithCategoryTest(int[]kategorije)
+        {
+            var result = await controller.PreuzmiSveSlucajeveSaKategorijama(kategorije);
+            Assert.IsInstanceOf<OkObjectResult>(result);
+            var lista = (result as OkObjectResult).Value as List<Slucaj>;
+            Assert.IsNotNull(lista);
+            return lista.Count;
+        }
+        [Test]
+        public async Task AllCasesTest()
+        {
+            var result = await controller.PreuzmiSveSlucajeve();
+            Assert.IsInstanceOf<OkObjectResult> (result);
+            var list = (result as OkObjectResult).Value as List<Slucaj>;
+            Assert.IsNotNull(list);
+            Assert.AreEqual(list.Count, 7);
         }
     }
 }
