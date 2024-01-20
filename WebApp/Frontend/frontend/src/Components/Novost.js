@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
+import BACKEND from "../config";
 
 export function Novost(id_novosti) {
   const [novost, setNovost] = useState(null);
   useEffect(() => {
-    fetch(
-      `http://localhost:${window.location.port}/Novost/preuzminovost/${id_novosti}`,
-      {
-        method: "GET",
-      }
-    )
+    fetch(`${BACKEND}Novost/preuzminovost/${id_novosti}`, {
+      method: "GET",
+    })
       .then((response) => {
         if (response.ok) {
           data = response.json();

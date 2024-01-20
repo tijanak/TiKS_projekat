@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
+import BACKEND from "../config";
 
 export function Post(id_posta) {
   const [post, setPost] = useState(null);
   useEffect(() => {
-    fetch(`http://localhost:${window.location.port}/Slucaj/Get/${id_posta}`, {
+    fetch(`${BACKEND}Slucaj/Get/${id_posta}`, {
       method: "GET",
     })
       .then((response) => {

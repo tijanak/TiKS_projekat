@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
+import BACKEND from "../config";
 function Main() {
   const [posts, setPosts] = useState(null);
   useEffect(() => {
-    fetch("http://localhost:5100/Slucaj/Get/All", {
+    fetch(`${BACKEND}Slucaj/Get/All`, {
       method: "GET",
     })
       .then((response) => response.json())
