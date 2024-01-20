@@ -121,7 +121,7 @@ public class KategorijaController : ControllerBase
     {
         try
         {
-            return Ok(await Context.Kategorije.ToListAsync());
+            return Ok(await Context.Kategorije.OrderByDescending(k => k.Prioritet).ToListAsync());
         }
         catch (Exception e)
         {

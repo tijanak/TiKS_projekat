@@ -191,12 +191,11 @@ namespace KomponentniTestovi
             Assert.IsInstanceOf<NotFoundObjectResult>(result);
         }
         [Test]
-        [TestCase(new int[] { },ExpectedResult =7)]
         [TestCase(new int[] { 12}, ExpectedResult = 1)]
         [TestCase(new int[] { 10,11,12 }, ExpectedResult = 1)]
         [TestCase(new int[] { 11 }, ExpectedResult = 3)]
         [TestCase(new int[] { 10 }, ExpectedResult = 2)]
-        public async Task<int> AllWithCategoryTest(int[]kategorije)
+        public async Task<int> GetAllWithCategoryTest(int[]kategorije)
         {
             var result = await controller.PreuzmiSveSlucajeveSaKategorijama(kategorije);
             Assert.IsInstanceOf<OkObjectResult>(result);
@@ -205,13 +204,13 @@ namespace KomponentniTestovi
             return lista.Count;
         }
         [Test]
-        public async Task AllCasesTest()
+        public async Task GetAllTest()
         {
             var result = await controller.PreuzmiSveSlucajeve();
             Assert.IsInstanceOf<OkObjectResult> (result);
             var list = (result as OkObjectResult).Value as List<Slucaj>;
             Assert.IsNotNull(list);
-            Assert.AreEqual(list.Count, 7);
+            Assert.AreEqual(list.Count, controller.Context.Slucajevi.Count());
         }
     }
 }

@@ -141,5 +141,14 @@ namespace KomponentniTestovi
             var result = await controller.Azuriraj(id, tip, prioritet);
             Assert.IsInstanceOf<NotFoundObjectResult>(result);
         }
+        [Test]
+        public async Task GetAllTest()
+        {
+            var result = await controller.PreuzmiSveKategorije();
+            Assert.IsInstanceOf<OkObjectResult>(result);
+            var list = (result as OkObjectResult).Value as List<Kategorija>;
+            Assert.IsNotNull(list);
+            Assert.AreEqual(list.Count, controller.Context.Kategorije.Count());
+        }
     }
 }
