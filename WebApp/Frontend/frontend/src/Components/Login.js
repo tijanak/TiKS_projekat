@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 function Login({ setUserFunction }) {
   const [password, setPassword] = useState(null);
   const [username, setUserName] = useState(null);
+  const [loading, setLoading] = useState(false);
   return (
     <div>
       <p>Login page</p>
@@ -11,9 +12,12 @@ function Login({ setUserFunction }) {
       <input type="password" onChange={(p) => setPassword(p)}></input>
       <button
         className="Button"
+        disabled={loading}
         onClick={() => {
           if (password == null) return;
           if (username == null) return;
+
+          setLoading(true);
           fetch(
             "http://localhost:5100/Korisnik/Login/" +
               username +
@@ -27,7 +31,10 @@ function Login({ setUserFunction }) {
                 alert("pogresan login");
               }
             })
-            .catch((error) => console.log(error));
+            .catch((error) => console.log(error))
+            .finally(() => {
+              setLoading(false);
+            });
         }}
       >
         login
