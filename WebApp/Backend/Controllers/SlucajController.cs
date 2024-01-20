@@ -106,6 +106,7 @@ public class SlucajController : ControllerBase
         try
         {
             var slucaj = Context.Slucajevi.Where(p => p.ID == id).FirstOrDefault();
+            if (id < 0) return BadRequest("ID ne može biti negativan");
             if (slucaj != null)
             {
                 if (naziv != null)
@@ -156,6 +157,7 @@ public class SlucajController : ControllerBase
                 {
                     foreach (string slika in removeSlike)
                     {
+                        if (slika == null) return BadRequest("Null argument");
                         slucaj.Slike.Remove(slika);
                     }
                 }

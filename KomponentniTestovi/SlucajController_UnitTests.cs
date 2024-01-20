@@ -130,9 +130,9 @@ namespace KomponentniTestovi
         [TestCase(51, null, null, null, null, 2, null, null, null, null)]
         [TestCase(50, null, null, null, null, null, 1, null, null, null)]
         [TestCase(50, null, null, null, null, null, null, 3, null, null)]
-
         [TestCase(51, null, null, null, null, null, null, null,null, new int[] {3,2,1 })]
         [TestCase(51, null, null, null, null, null, null, null, new int[] { 2,}, null)]
+        
 
         public async Task UpdateTest1(int id, string? naziv, string? opis,  string[]?addSlike,string[]?removeSlike,int? idLokacija, int? idKorisnika, int? idZivotinja, int[]? idRemoveKategorija, int[]? idAddKategorija)
         {
@@ -155,20 +155,24 @@ namespace KomponentniTestovi
             });
         }
         [Test]
-        [Ignore("")]
         [TestCase(-50, null, null, null, null, null, null, null, null, null)]
-        [TestCase(50, "", null, new string[] { "",null}, new string[] { }, null, null, null, new int[] { }, new int[] { })]
+        [TestCase(50, "", null,new string[] { }, new string[] { }, null, null, null, new int[] { }, new int[] { })]
         [TestCase(50, "___________________________________________________", null, new string[] { }, new string[] { }, null, null, null, new int[] { }, new int[] { })]
         [TestCase(51, null, "", new string[] { }, new string[] { }, null, null, null, new int[] { }, new int[] { })]
+        [TestCase(51, null, "_____________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________"
+                    , null, null, null, null, null, null, null)]
+        [TestCase(50, null, null, new string[] { "slika.jpg", null }, new string[] { }, null, null, null, new int[] { }, new int[] { })]
         [TestCase(50 , null,null, new string[] { ""}, new string[] { }, null, null, null, new int[] { }, new int[] { })]
         [TestCase(50, null, null, new string[] { null }, new string[] { }, null, null, null, new int[] { }, new int[] { })]
-        [TestCase(50, null, null, new string[] { }, new string[] { "" },  null, null, null, new int[] { }, new int[] { })]
-        [TestCase(50, null, null, new string[] { }, null, null, null, null, new int[] { }, new int[] { })]
-        [TestCase(50, null, null, new string[] { }, null, -1, null, null, new int[] { }, new int[] { })]
-
-        [TestCase(50, null, null, null, null, -500, null, null, null, null)]
-
-        [TestCase(50, null, null, null, null, -500, null, null, null, null)]
+        [TestCase(50, null, null, new string[] { }, new string[] { null }, null, null, null, new int[] { }, new int[] { })]
+        [TestCase(50, null, null, new string[] { }, new string[] { null,"slika.jpg" }, null, null, null, new int[] { }, new int[] { })]
+        [TestCase(50, null, null, null, null, int.MinValue, null, null, new int[] { }, new int[] { })]
+        [TestCase(50, null, null, null, null, 1, null, null, new int[] { }, new int[] { })]
+        [TestCase(50, null, null, null, null, null,int.MinValue, null, new int[] { }, new int[] { })]
+        [TestCase(50, null, null, null, null, null,4,  null, new int[] { }, new int[] { })]
+        [TestCase(50, null, null, null, null, null, null, int.MinValue, new int[] { }, new int[] { })]
+        [TestCase(50, null, null, null, null, null, null, 4, new int[] { }, new int[] { })]
+        [TestCase(50, null, null, null, null, null, null, null, null, new int[] { 2,int.MaxValue })]
         public async Task UpdateTest2(int id, string? naziv, string? opis, string[]? addSlike, string[]? removeSlike, int? idLokacija, int? idKorisnika, int? idZivotinja, int[]? idRemoveKategorija, int[]? idAddKategorija)
         {
             var result = await controller.Azuriraj(id, naziv, opis, addSlike, removeSlike, idLokacija, idKorisnika, idZivotinja, idRemoveKategorija, idAddKategorija);
