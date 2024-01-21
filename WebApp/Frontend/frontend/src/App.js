@@ -9,6 +9,7 @@ import Alert from "@mui/material/Alert";
 import { Stack } from "@mui/material";
 import FormLabel from "@mui/material/FormLabel";
 import Container from "@mui/material/Container";
+import { Post } from "./Components/Post";
 import { Typography } from "@mui/material";
 import {
   Routes,
@@ -34,13 +35,14 @@ function App() {
 
             <Route path="/register" element={<Register />} />
             <Route
-              path="/protected"
+              path="/main"
               element={
                 <RequireAuth>
                   <Main />
                 </RequireAuth>
               }
             />
+            <Route path="/post" element={<Post />}></Route>
             <Route path="*" element={<div>404 Not Found</div>} />
           </Route>
         </Routes>
@@ -63,9 +65,28 @@ const fakeAuthProvider = {
       })
       .catch((error) => console.log(error));
   },
+  register(username, password, callback, errorCallback) {
+    var newUser = { username, password };
+    fetch(`${BACKEND}Korisnik/dodajkorisnika`, {
+      method: "POST",
+      body: JSON.stringify(newUser),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (response.ok) {
+          fakeAuthProvider.isAuthenticated = true;
+          response.json().then((data) => callback(data));
+        } else {
+          errorCallback();
+        }
+      })
+      .catch((error) => console.log(error));
+  },
   signout(callback) {
     fakeAuthProvider.isAuthenticated = false;
-    setTimeout(callback, 1);
+    callback();
   },
 };
 
@@ -85,7 +106,17 @@ function AuthProvider({ children }) {
       () => errorCallback()
     );
   };
-
+  let register = (username, password, callback, errorCallback) => {
+    return fakeAuthProvider.register(
+      username,
+      password,
+      (user) => {
+        setUser(user);
+        callback(user);
+      },
+      () => errorCallback()
+    );
+  };
   let signout = (callback) => {
     return fakeAuthProvider.signout(() => {
       setUser(null);
@@ -93,7 +124,7 @@ function AuthProvider({ children }) {
     });
   };
 
-  let value = { user, signin, signout };
+  let value = { user, signin, signout, register };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
@@ -129,37 +160,36 @@ function RequireAuth({ children }) {
   let location = useLocation();
   console.log(auth);
   if (!auth.user) {
-    // Redirect them to the /login page, but save the current location they were
-    // trying to go to when they were redirected. This allows us to send them
-    // along to that page after they login, which is a nicer user experience
-    // than dropping them off on the home page.
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   return children;
 }
 function Layout() {
+  let auth = useAuth();
+  let navigate = useNavigate();
+  if (!auth.user) return <Outlet></Outlet>;
   return (
     <div>
-      <AuthStatus></AuthStatus>
       <nav>
         <ul>
           <li>
-            <Link to="/">Public page</Link>
+            <Link to="/main">Main</Link>
           </li>
-          <li>
-            <Link to="/protected">Main</Link>
-          </li>
-          <li>
+          {/*<li>
             <Link to="/login">Login</Link>
           </li>
           <li>
             <Link to="/register">Register</Link>
-          </li>
-          <li>
-            <Link to="*">Nothing here</Link>
-          </li>
+          </li>*/}
         </ul>
+        <button
+          onClick={() => {
+            auth.signout(() => navigate("/", { replace: true }));
+          }}
+        >
+          Sign out
+        </button>
       </nav>
 
       <hr />
@@ -221,7 +251,7 @@ function Login({ state }) {
                     password,
                     (user) => {
                       console.log(user);
-                      navigate("/protected", { replace: true });
+                      navigate("/main", { replace: true });
                     },
                     () => {
                       setError(true);

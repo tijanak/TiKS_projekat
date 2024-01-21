@@ -58,7 +58,7 @@ public class KorisnikController : ControllerBase
             korisnik.Slucajevi = new List<Slucaj>();
             Context.Korisnici.Add(korisnik);
             await Context.SaveChangesAsync();
-            return Ok(korisnik.ID);
+            return Ok(korisnik);
         }
         catch (Exception e)
         {

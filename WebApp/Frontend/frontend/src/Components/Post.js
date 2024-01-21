@@ -1,35 +1,24 @@
 import React, { useState, useEffect } from "react";
 import BACKEND from "../config";
-
-export function Post(id_posta) {
+import { useLocation } from "react-router-dom";
+export function Post() {
   const [post, setPost] = useState(null);
+
+  const location = useLocation();
   useEffect(() => {
-    fetch(`${BACKEND}Slucaj/Get/${id_posta}`, {
-      method: "GET",
-    })
-      .then((response) => {
-        if (response.ok) {
-          data = response.json();
-          console.log(data);
-          setPost(data);
-        }
-      })
-      .catch((error) => console.log(error));
+    console.log(location);
+    setPost(location.state.post);
   }, []);
   return (
     <>
       {(post && (
         <div>
-          <h2>{post.Naziv}</h2>
-          <p>{post.Opis}</p>
-          {post.Slike.forEach((element) => {
+          <h2>{post.naziv}</h2>
+          <p>{post.ppis}</p>
+          {post.slike.forEach((element) => {
             <img src={element} alt="slika"></img>;
           })}
-          ;
-          {post.Kategorija.forEach((element) => {
-            <h2>{element.Tip}</h2>;
-          })}
-          ;<button>doniraj</button>
+          ; ;<button>doniraj</button>
           <button>udomi</button>
           <button>novosti</button>
         </div>

@@ -33,7 +33,7 @@ namespace KomponentniTestovi
             k.Password = password;
             var actionResult = await controller.DodajKorisnika(k);
             if (actionResult.GetType() == typeof(OkObjectResult))
-                Assert.That(0, Is.LessThan((int)((OkObjectResult)actionResult).Value));
+                Assert.That(0, Is.LessThan(((Korisnik)((OkObjectResult)actionResult).Value).ID));
             Assert.IsInstanceOf<OkObjectResult>(actionResult);
         }
 
