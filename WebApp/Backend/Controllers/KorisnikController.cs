@@ -32,7 +32,7 @@ public class KorisnikController : ControllerBase
         {
             var korisnik = await Context.Korisnici.Where(k => k.Username == username).FirstOrDefaultAsync();
             if (korisnik == null) return BadRequest("ne postoji korisnik sa datim usernameom");
-            if (korisnik.Password != password) return BadRequest("pogresna lozinka");
+            if (korisnik.Password.CompareTo(password) != 0) return BadRequest("pogresna lozinka");
             return Ok(korisnik);
         }
         catch (Exception e)

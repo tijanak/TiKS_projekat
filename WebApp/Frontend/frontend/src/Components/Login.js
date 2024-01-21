@@ -10,7 +10,20 @@ import { Stack } from "@mui/material";
 import FormLabel from "@mui/material/FormLabel";
 import Container from "@mui/material/Container";
 import { Typography } from "@mui/material";
-function Login({ setUserFunction }) {
+import { useAuth } from "../App";
+import {
+  Routes,
+  Route,
+  Link,
+  useNavigate,
+  useLocation,
+  Navigate,
+  Outlet,
+} from "react-router-dom";
+function Login({ state }) {
+  let navigate = useNavigate();
+  let location = useLocation();
+  let auth = useAuth();
   const [password, setPassword] = useState(null);
   const [username, setUserName] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -26,7 +39,7 @@ function Login({ setUserFunction }) {
           type="text"
           onChange={(t) => {
             setError(false);
-            setUserName(t);
+            setUserName(t.target.value);
           }}
         ></Input>
         <FormLabel>Lozinka:</FormLabel>
@@ -34,7 +47,7 @@ function Login({ setUserFunction }) {
           type="password"
           onChange={(p) => {
             setError(false);
-            setPassword(p);
+            setPassword(p.target.value);
           }}
         ></Input>
         {error && <Alert severity="error">Pogresni podaci</Alert>}
@@ -49,26 +62,31 @@ function Login({ setUserFunction }) {
                   if (username == null) return;
 
                   setLoading(true);
-                  fetch(
-                    `${BACKEND}Korisnik/Login/` + username + "/" + "password"
-                  )
-                    .then((response) => {
-                      if (response.ok) {
-                        setUserFunction(response.json());
-                      } else {
-                        setError(true);
-                      }
-                    })
-                    .catch((error) => console.log(error))
-                    .finally(() => {
+                  console.log(password);
+                  console.log(username);
+                  auth.signin(
+                    username,
+                    password,
+                    () => {
+                      // Send them back to the page they tried to visit when they were
+                      // redirected to the login page. Use { replace: true } so we don't create
+                      // another entry in the history stack for the login page.  This means that
+                      // when they get to the protected page and click the back button, they
+                      // won't end up back on the login page, which is also really nice for the
+                      // user experience.
+                      navigate("/protected", { replace: true });
+                    },
+                    () => {
+                      setError(true);
                       setLoading(false);
-                    });
+                    }
+                  );
                 }}
                 variant="contained"
               >
                 Login
               </Button>
-              <Button>Register</Button>
+              <Button onClick={() => navigate("/register")}>Register</Button>
             </>
           )}
         </Box>

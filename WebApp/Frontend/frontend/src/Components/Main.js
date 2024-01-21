@@ -16,7 +16,14 @@ function Main() {
   return (
     <div>
       <h2>nesto iz baze:</h2>
-      {posts && <p>{posts}</p>}
+      {posts && (
+        <>
+          <p>{posts.length}</p>
+          {posts.map((p) => (
+            <>{p.id}</>
+          ))}
+        </>
+      )}
     </div>
   );
 }
