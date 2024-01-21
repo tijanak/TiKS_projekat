@@ -42,7 +42,14 @@ function App() {
                 </RequireAuth>
               }
             />
-            <Route path="/post" element={<Post />}></Route>
+            <Route
+              path="/post"
+              element={
+                <RequireAuth>
+                  <Post />
+                </RequireAuth>
+              }
+            ></Route>
             <Route path="*" element={<div>404 Not Found</div>} />
           </Route>
         </Routes>
