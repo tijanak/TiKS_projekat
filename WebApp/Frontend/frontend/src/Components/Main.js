@@ -8,8 +8,10 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { Container } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import DeleteIcon from "@mui/icons-material/Delete";
 function Main() {
   const [posts, setPosts] = useState(null);
+  const [reload, setReload] = useState(false);
   useEffect(() => {
     fetch(`${BACKEND}Slucaj/Get/All`, {
       method: "GET",
@@ -20,7 +22,7 @@ function Main() {
         setPosts(data);
       })
       .catch((error) => console.log(error));
-  }, []);
+  }, [reload]);
   let navigate = useNavigate();
   return (
     <Container>
@@ -36,6 +38,13 @@ function Main() {
                 <Button size="small">Doniraj</Button>
 
                 <Button size="small">Udomi</Button>
+                <DeleteIcon
+                  onClick={() => {
+                    fetch(`${BACKEND}Slucaj/Delete/${p.id}`, {
+                      method: "DELETE",
+                    }).finally(() => setReload(!reload));
+                  }}
+                ></DeleteIcon>
               </CardActions>
               <CardMedia
                 height="140"
