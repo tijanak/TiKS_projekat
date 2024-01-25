@@ -24,7 +24,7 @@ public class ZivotinjaController : ControllerBase
     }
 
     [HttpPost("dodajzivotinju")]
-    public async Task<ActionResult> DodajZivotinju([FromQuery] Zivotinja z, [FromQuery]int idSlucaja){
+    public async Task<ActionResult> DodajZivotinju([FromBody] Zivotinja z, [FromQuery]int idSlucaja){
         try{
 
             if(z==null) return BadRequest("fali zivotinja");
