@@ -26,16 +26,17 @@ public class TrosakController : ControllerBase
     }
 
     [HttpPost("dodajtrosak")]
-    public async Task<ActionResult> DodajTrosak([FromQuery] Trosak t, [FromQuery]int idSlucaja){
+    public async Task<ActionResult> DodajTrosak([FromBody] Trosak t, [FromQuery]int idSlucaja){
         try{
             if(t.Namena==null || t.Namena.Length==0) return BadRequest("Trosak mora imati namenu");
             if(t.Namena.Length>=50) return BadRequest("namena moze imati max 50 karaktera");
             if(t.Kolicina<100) return BadRequest("Trosak mora biti makar 100din");
             
-            var s = Context.Slucajevi.Where(s=>s.ID==idSlucaja).FirstOrDefault();
+            var s = await Context.Slucajevi.Where(s=>s.ID==idSlucaja).FirstOrDefaultAsync();
             if(s==null) return NotFound("Slucaj ne postoji u bazi");
 
             t.Slucaj=s;
+            s.Troskovi.Add(t);
             await Context.Troskovi.AddAsync(t);
             await Context.SaveChangesAsync();
             return Ok(t);
@@ -87,7 +88,7 @@ public class TrosakController : ControllerBase
         }
     }
     [HttpDelete]
-    public async Task<ActionResult> UkloniTrosak([FromBody] int id){
+    public async Task<ActionResult> UkloniTrosak([FromQuery] int id){
         try{
             var t = await Context.Troskovi.FindAsync(id);
             if(t==null){

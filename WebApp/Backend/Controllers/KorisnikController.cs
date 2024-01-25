@@ -25,6 +25,19 @@ public class KorisnikController : ControllerBase
             return BadRequest(e.Message);
         }
     }
+
+    [HttpGet("preuzmisvekorisnike")]
+    public async Task<ActionResult> PreuzmiSveKorisnike()
+    {
+        try
+        {
+            return Ok(await Context.Korisnici.ToListAsync());
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
     [HttpGet("Login/{username}/{password}")]
     public async Task<ActionResult> Login(string username, string password)
     {
