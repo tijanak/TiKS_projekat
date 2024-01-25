@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import BACKEND from "../config";
 import { useLocation } from "react-router-dom";
-import { Novost } from "./Novost";
+import { Novosti } from "./Novost";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
@@ -37,7 +37,10 @@ export function Post() {
             {post.opis}
           </Typography>
         </CardContent>
-        { post.novosti&& post.novosti.map(n=><Novost novost={n}></Novost>)||<>Nema novosti</>}
+        <Typography variant="subtitle2" component="div">
+            NOVOSTI
+          </Typography>
+        { post && <Novosti novost={post.id}></Novosti>}
       </Card>
       )) || <>ne ucitava post</>}
     </>

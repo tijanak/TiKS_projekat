@@ -30,6 +30,36 @@ public class NovostController : ControllerBase
         }
     }
 
+    [HttpGet("preuzminovosti/{id_slucaja}")]
+    public async Task<ActionResult> PreuzmiNovosti(int id_slucaja)
+    {
+        try
+        {
+            var n = await Context.Novosti.Where(n => n.Slucaj.ID == id_slucaja).OrderByDescending(n=>n.Datum).ToListAsync();
+            if (n == null)
+            {
+                return NotFound("Bez novosti");
+            }
+            return Ok(n);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e);
+        }
+    }
+
+    [HttpGet("preuzmisvenovosti")]
+    public async Task<ActionResult> PreuzmiSveNovosti(){
+        try
+        {
+            return Ok(await Context.Novosti.Include(n=>n.Slucaj).ToListAsync());
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+
     [HttpPost("dodajnovost")]
     public async Task<ActionResult> DodajNovost([FromBody] Novost n, [FromQuery] int? id_slucaja)
     {
@@ -43,17 +73,20 @@ public class NovostController : ControllerBase
 
             if (null == id_slucaja) return BadRequest("fali id slucaja");
 
-            var slucaj = await Context.Slucajevi.FindAsync(id_slucaja);
-
-            if (slucaj == null) return NotFound("id_slucaja los");
-
-            n.Slucaj = slucaj;
-
             var poslednja_novost = await Context.Novosti.Where(n => n.Slucaj.ID == id_slucaja).OrderByDescending(n => n.Datum).FirstOrDefaultAsync();
 
             if (poslednja_novost != null && poslednja_novost.Datum.CompareTo(n.Datum) > 0)
                 return BadRequest("Ne mozete dodati retrospektivno novosti");
 
+
+            var slucaj = await Context.Slucajevi.FindAsync(id_slucaja);
+
+            if (slucaj == null) return NotFound("id_slucaja los");
+
+            n.Slucaj = slucaj;
+            slucaj.Novosti.Add(n);
+
+            
             await Context.Novosti.AddAsync(n);
             await Context.SaveChangesAsync();
             return Ok(n);
