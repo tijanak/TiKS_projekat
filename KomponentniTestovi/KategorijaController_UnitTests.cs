@@ -13,7 +13,7 @@ namespace KomponentniTestovi
         public void Setup()
         {
             Slucaj[] slucajevi = { new Slucaj { ID = 1 }, new Slucaj { ID = 2 } };
-            Kategorija[] kategorije = { new Kategorija { ID = 90, Prioritet = 90 }, new Kategorija { ID = 91, Prioritet = 6 }, new Kategorija { ID = 92, Prioritet = 7 }, new Kategorija { ID = 100, Prioritet = 100 }, new Kategorija { ID=101,Prioritet=5} };
+            Kategorija[] kategorije = { new Kategorija { ID = 90, Prioritet = 90 }, new Kategorija { ID = 91, Prioritet = 6 }, new Kategorija { ID = 92, Prioritet = 7 }, new Kategorija { Tip = "hitno", ID = 100, Prioritet = 100 }, new Kategorija { ID=101,Prioritet=5} };
             controller = new KategorijaController(getDbContext(slucajevi:slucajevi,kategorije:kategorije));
         }
 
@@ -23,6 +23,7 @@ namespace KomponentniTestovi
         [TestCase("___________________________________________________", 1)]
         [TestCase("tip", 100)]
         [TestCase("   ", 1)]
+        [TestCase("hitno",0.05)]
         public async Task PostTest1(string? tip,double prioritet )
         {
             Kategorija kategorija= new Kategorija();
