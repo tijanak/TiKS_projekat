@@ -24,6 +24,7 @@ import {
 import BACKEND from "./config";
 import React, { useState, useEffect } from "react";
 import Register from "./Components/Register";
+import { NoviSlucaj } from "./Components/NoviSlucaj";
 function App() {
   return (
     <BrowserRouter>
@@ -31,6 +32,7 @@ function App() {
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<PublicPage />} />
+            <Route path="/dodaj_slucaj" element={<NoviSlucaj />} />
             <Route path="/login" element={<Login />}></Route>
 
             <Route path="/register" element={<Register />} />
@@ -190,13 +192,14 @@ function Layout() {
             <Link to="/register">Register</Link>
           </li>*/}
         </ul>
-        <button
+        <Button
+          variant="contained"
           onClick={() => {
             auth.signout(() => navigate("/", { replace: true }));
           }}
         >
           Sign out
-        </button>
+        </Button>
       </nav>
 
       <hr />

@@ -18,6 +18,7 @@ public class Slucaj
     [MaxLength(500)]
     public string? Opis { get; set; }
     public List<string> Slike { get; set; }
+    [JsonIgnore]
     public int? LokacijaId { get; set; }
     [JsonIgnore]
     public Lokacija? Lokacija { get; set; }
@@ -27,8 +28,9 @@ public class Slucaj
     public Korisnik? Korisnik { get; set; }
     [JsonIgnore]
     public List<Kategorija> Kategorija { get; set; }
-
+    [JsonIgnore]
     public int? ZivotinjaId { get; set; }
+    [JsonIgnore]
     public Zivotinja? Zivotinja { get; set; }
     [JsonIgnore]
     public List<Trosak> Troskovi { get; set; }

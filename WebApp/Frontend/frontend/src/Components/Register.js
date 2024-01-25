@@ -50,7 +50,7 @@ function Register() {
             setPassword(p.target.value);
           }}
         ></Input>
-        {error && <Alert severity="error">Pogresni podaci</Alert>}
+        {error && <Alert severity="error">Zauzeto korisnicko ime</Alert>}
         <Box>
           {loading ? (
             <CircularProgress />
@@ -69,7 +69,7 @@ function Register() {
                     password,
                     (user) => {
                       console.log(user);
-                      navigate("/protected", { replace: true });
+                      navigate("/main", { replace: true });
                     },
                     () => {
                       setError(true);

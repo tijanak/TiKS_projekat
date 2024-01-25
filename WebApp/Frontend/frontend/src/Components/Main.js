@@ -24,6 +24,9 @@ function Main() {
   let navigate = useNavigate();
   return (
     <Container>
+      <Button variant="outlined" onClick={() => navigate("/dodaj_slucaj")}>
+        Dodaj slucaj
+      </Button>
       <h2>Svi slucajevi({posts && posts.length}):</h2>
       {posts && (
         <>
@@ -35,9 +38,11 @@ function Main() {
                 <Button size="small">Udomi</Button>
               </CardActions>
               <CardMedia
-                sx={{ height: 140 }}
-                image="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.istockphoto.com%2Fphotos%2Fplaceholder-image&psig=AOvVaw3iu14a8dxZufPTObHcDmUR&ust=1705892562250000&source=images&cd=vfe&ved=0CBMQjRxqFwoTCKDv5ZO_7YMDFQAAAAAdAAAAABAE"
+                height="140"
+                alt="stock"
+                image="\imgs\stockphoto.jpg"
                 title="slika"
+                component="img"
               />
               <CardContent>
                 <Typography gutterBottom variant="h5" component="div">

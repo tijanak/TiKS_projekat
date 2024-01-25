@@ -1,3 +1,6 @@
+using System.Text.Json;
+using Newtonsoft.Json.Converters;
+
 namespace Backend.Models;
 [Table("Novost")]
 public class Novost
@@ -8,6 +11,5 @@ public class Novost
     public string? Tekst { get; set; }
     public DateTime Datum { get; set; }
     public string? Slika { get; set; }
-    [JsonIgnore]
     public Slucaj Slucaj { get; set; } = null!;
 }
