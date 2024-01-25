@@ -42,6 +42,8 @@ public class KategorijaController : ControllerBase
         if (postoji != null) return BadRequest($"Već postoji kategorija sa prioritetom {kategorija.Prioritet}");
         if (string.IsNullOrEmpty(kategorija.Tip) || string.IsNullOrWhiteSpace(kategorija.Tip)) return BadRequest("Tip ne može biti prazan");
         if (kategorija.Tip.Length > 50) return BadRequest("Maksimalna dužina za tip je 50");
+        postoji = Context.Kategorije.Where(k => k.Tip == kategorija.Tip).FirstOrDefault();
+        if (postoji != null) return BadRequest($"Već postoji kategorija sa nazivom {kategorija.Tip}");
         try
         {
 

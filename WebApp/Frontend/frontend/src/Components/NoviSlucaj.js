@@ -6,6 +6,9 @@ import Input from "@mui/material/Input";
 import { useAuth } from "../App";
 import * as React from "react";
 import PropTypes from "prop-types";
+
+import Snackbar from "@mui/material/Snackbar";
+import TextField from "@mui/material/TextField";
 import { Select as BaseSelect, selectClasses } from "@mui/base/Select";
 import { Option as BaseOption, optionClasses } from "@mui/base/Option";
 import { styled } from "@mui/system";
@@ -13,12 +16,21 @@ import UnfoldMoreRoundedIcon from "@mui/material/Icon/Icon";
 import Alert from "@mui/material/Alert";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate } from "react-router-dom";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Fab from "@mui/material/Fab";
+import AddIcon from "@mui/icons-material/Add";
 export function NoviSlucaj() {
   let auth = useAuth();
   console.log(auth);
   const user = auth.user;
+  const [formLoading, setFormLoading] = useState(false);
   const [sveKategorije, setSveKategorije] = useState([]);
   const [kategorije, setKategorije] = useState([]);
+  const [open, setOpen] = useState(false);
   useEffect(() => {
     fetch(`${BACKEND}Kategorija/Get/All`, { method: "GET" })
       .then((response) => response.json())
@@ -224,6 +236,7 @@ export function NoviSlucaj() {
   `;
 
   const [loading, setLoading] = useState(false);
+  const [formError, setFormError] = useState(null);
   const [error, setError] = useState(null);
   const [naziv, setNaziv] = useState(null);
   const [opis, setOpis] = useState(null);
@@ -232,10 +245,113 @@ export function NoviSlucaj() {
   const [vrsta, setVrsta] = useState(null);
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
+  const [snackbar, setSnackbar] = useState(false);
   let navigate = useNavigate();
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleSnackbarClose = () => {
+    setSnackbar(false);
+  };
   return (
     <Container>
       <Stack>
+        <Snackbar
+          open={snackbar}
+          autoHideDuration={2000}
+          onClose={handleSnackbarClose}
+          message="Uspesno dodata kategorija."
+        />
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          PaperProps={{
+            component: "form",
+            noValidate: true,
+            onSubmit: (event) => {
+              event.preventDefault();
+              setFormLoading(true);
+              const formData = new FormData(event.currentTarget);
+              const formJson = Object.fromEntries(formData.entries());
+              const tip = formJson.tip;
+              const prioritet = formJson.prioritet;
+              console.log(prioritet);
+              console.log(tip);
+              if (isNaN(prioritet) || prioritet == "") {
+                setFormError("Prioritet ne moze biti null");
+                setFormLoading(false);
+                return;
+              }
+              let kategorija = { tip, prioritet };
+              fetch(`${BACKEND}Kategorija/Post`, {
+                method: "POST",
+                body: JSON.stringify(kategorija),
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              })
+                .then((response) => {
+                  if (response.ok) {
+                    response.json().then((data) => {
+                      kategorija.id = data;
+                      sveKategorije.push(kategorija);
+                      setSnackbar(true);
+                      handleClose();
+                    });
+                  } else {
+                    response.text().then((e) => {
+                      console.log(e);
+                      setFormError(e);
+                    });
+                  }
+                })
+                .catch((e) => setFormError(e))
+                .finally(() => setFormLoading(false));
+            },
+          }}
+        >
+          <DialogTitle>Nova kategorija</DialogTitle>
+          <DialogContent>
+            <DialogContentText></DialogContentText>
+            <TextField
+              autoFocus
+              required
+              margin="dense"
+              id="tip"
+              name="tip"
+              label="Naziv"
+              type="text"
+              fullWidth
+              variant="standard"
+              onChange={(e, n) => {
+                setFormError(null);
+              }}
+            />
+            <TextField
+              autoFocus
+              required
+              margin="dense"
+              id="prioritet"
+              name="prioritet"
+              label="Prioritet"
+              type="number"
+              fullWidth
+              variant="standard"
+              onChange={(e, n) => {
+                setFormError(null);
+              }}
+            />
+          </DialogContent>
+          {formError && <Alert severity="error">{formError}</Alert>}
+          <DialogActions disableSpacing={true}>
+            <Button onClick={handleClose}>Odustani</Button>
+            {formLoading ? (
+              <CircularProgress />
+            ) : (
+              <Button type="submit">Dodaj</Button>
+            )}
+          </DialogActions>
+        </Dialog>
         <FormLabel>Naziv:</FormLabel>
         <Input
           type="text"
@@ -284,19 +400,30 @@ export function NoviSlucaj() {
             setLongitude(t.target.value);
           }}
         ></Input>
+
         <FormLabel>Kategorije:</FormLabel>
-        <MultiSelect
-          value={kategorije}
-          onChange={(event, n) => {
-            setKategorije(n);
-          }} /*defaultValue={[10, 20]}*/
-        >
-          {sveKategorije.map((k) => (
-            <Option key={k.id} value={k.id}>
-              {k.tip}
-            </Option>
-          ))}
-        </MultiSelect>
+        <Box>
+          <MultiSelect
+            value={kategorije}
+            onChange={(event, n) => {
+              setKategorije(n);
+            }} /*defaultValue={[10, 20]}*/
+          >
+            {sveKategorije.map((k) => (
+              <Option key={k.id} value={k.id}>
+                {k.tip}
+              </Option>
+            ))}
+          </MultiSelect>
+          <Fab
+            size="small"
+            color="primary"
+            aria-label="add"
+            onClick={() => setOpen(true)}
+          >
+            <AddIcon />
+          </Fab>
+        </Box>
       </Stack>
       {error && <Alert severity="error">{error}</Alert>}
       <Box>
@@ -342,7 +469,33 @@ export function NoviSlucaj() {
                       })
                         .then((response2) => {
                           if (response2.ok) {
-                            navigate(-1, { replace: true });
+                            let zivotinja = { ime, vrsta, slucaj: {} };
+                            fetch(
+                              `${BACKEND}Zivotinja/dodajzivotinju?idSlucaja=${id}`,
+                              {
+                                method: "POST",
+                                body: JSON.stringify(zivotinja),
+                                headers: {
+                                  "Content-Type": "application/json",
+                                },
+                              }
+                            )
+                              .then((response3) => {
+                                if (response3.ok) {
+                                  navigate(-1, { replace: true });
+                                } else {
+                                  fetch(`${BACKEND}Slucaj/Delete/${id}`, {
+                                    method: "DELETE",
+                                  }).catch((e) => console.log(e));
+                                  response3.text().then((e) => {
+                                    console.log(e);
+                                    setError(e);
+                                  });
+                                }
+                              })
+                              .catch((e) => {
+                                setError(e);
+                              });
                           } else {
                             fetch(`${BACKEND}Slucaj/Delete/${id}`, {
                               method: "DELETE",

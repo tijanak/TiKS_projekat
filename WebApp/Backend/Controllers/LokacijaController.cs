@@ -45,9 +45,9 @@ public class LokacijaController : ControllerBase
 
         try
         {
-            Context.Lokacije.Add(lokacija);
             slucaj.Lokacija = lokacija;
             lokacija.Slucaj = slucaj;
+            Context.Lokacije.Add(lokacija);
             await Context.SaveChangesAsync();
             return Ok(lokacija.ID);
         }
