@@ -342,7 +342,33 @@ export function NoviSlucaj() {
                       })
                         .then((response2) => {
                           if (response2.ok) {
-                            navigate(-1, { replace: true });
+                            let zivotinja = { ime, vrsta, slucaj: {} };
+                            fetch(
+                              `${BACKEND}Zivotinja/dodajzivotinju?idSlucaja=${id}`,
+                              {
+                                method: "POST",
+                                body: JSON.stringify(zivotinja),
+                                headers: {
+                                  "Content-Type": "application/json",
+                                },
+                              }
+                            )
+                              .then((response3) => {
+                                if (response3.ok) {
+                                  navigate(-1, { replace: true });
+                                } else {
+                                  fetch(`${BACKEND}Slucaj/Delete/${id}`, {
+                                    method: "DELETE",
+                                  }).catch((e) => console.log(e));
+                                  response3.text().then((e) => {
+                                    console.log(e);
+                                    setError(e);
+                                  });
+                                }
+                              })
+                              .catch((e) => {
+                                setError(e);
+                              });
                           } else {
                             fetch(`${BACKEND}Slucaj/Delete/${id}`, {
                               method: "DELETE",
