@@ -38,8 +38,8 @@ public class SlucajController : ControllerBase
     public async Task<ActionResult> Dodaj([FromBody] Slucaj slucaj, [FromQuery] int? idKorisnika, [FromQuery] List<int> kategorijeIDs, [FromQuery] List<string> slike)
     {
         if (slucaj == null) return BadRequest("Slučaj ne može biti null");
-        if (slucaj.Naziv == null || slucaj.Naziv.Length > 50) return BadRequest("Slučaj mora da ima naziv");
-        if (slucaj.Opis == null || slucaj.Opis.Length > 500) return BadRequest("Opis slučaja mora da bude do 500 karaktera");
+        if (slucaj.Naziv == null || slucaj.Naziv.Length > 50) return BadRequest("Slučaj mora da ima naziv(do 50 karaktera)");
+        if (string.IsNullOrEmpty(slucaj.Opis) || slucaj.Opis.Length > 500) return BadRequest("Opis slucaja je obavezan(do 500 karaktera)");
         if (idKorisnika == null) return BadRequest("ID korisnika ne može biti null");
         if (kategorijeIDs.Count == 0) return BadRequest("Mora postojati kategorija");
         foreach (string slika in slike)
