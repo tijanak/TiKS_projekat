@@ -10,7 +10,7 @@ export default function Doniraj(state){
     const [troskovi, setTroskovi] = useState(null);
     const [bilans, setBilans] = useState(0);
     const [suma, setSuma] = useState(200);
-
+    const [loading, setLoading] =useState(false);
     let auth = useAuth();
     let user =  auth.user;
     
@@ -53,7 +53,7 @@ export default function Doniraj(state){
       console.log(user.id + " " + post);
         fetch(`${BACKEND}Donacija/Post/${user.id}/${post}`, requestOptions)
         .then(response=>{if(response.ok) return response.json()})
-        .then(d=>{console.log(d)})
+        .then(d=>{console.log(d); setLoading(!loading)})
         .catch(e=>console.log(e));
 
     };
@@ -88,7 +88,7 @@ export default function Doniraj(state){
               setTroskovi(data);
             })
             .catch(error => console.log(error));
-    },[post]);
+    },[]);
 
     useEffect(()=>{
       fetch(`${BACKEND}Donacija/preuzmidonacije/${post}`, {
@@ -99,7 +99,7 @@ export default function Doniraj(state){
             setDonacije(data);
           })
           .catch(error => console.log(error));
-    },[post]);
+    },[loading]);
 
     
     return (<><Typography variant="h5">Bilans stanja: {bilans}din</Typography>

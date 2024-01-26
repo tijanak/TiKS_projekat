@@ -13,6 +13,7 @@ export default function DodajNovost(state){
   const [e2, setE2] = useState(false);
   const [success, setSuccess] = useState("primary");
   const [slika, setSlika] = useState(null);
+  
   const DodajNovost =async ()=>{
     if(!novost || novost.length==0){
       setTekst("Unesite tekst");
@@ -21,7 +22,6 @@ export default function DodajNovost(state){
     if(!datum){
       setE2(true);
     }
-    console.log(slika);
     if(novost&&datum&&slika){
     const n = {
       "id": 0,
@@ -45,7 +45,7 @@ export default function DodajNovost(state){
       
       fetch(`${BACKEND}Novost/dodajnovost?id_slucaja=${state.id_slucaja}`, requestOptions)
       .then(response=>{if(response.ok) return response.json()})
-      .then(d=>{setSuccess("success");console.log(d)})
+      .then(d=>{state.setLoading(!state.loading);setSuccess("success");console.log(d)})
       .catch(e=>console.log(e));
     }
     }

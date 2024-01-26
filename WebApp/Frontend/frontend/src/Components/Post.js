@@ -8,6 +8,7 @@ import { TextField, Box, Button, Typography, Card, CardActions, CardContent, Car
 import Zivotinja from "./Zivotinja";
 export function Post() {
   const [post, setPost] = useState(null);
+  const [loading, setLoading] = useState(false);
   let navigate = useNavigate();
   const location = useLocation();
   useEffect(() => {
@@ -50,8 +51,8 @@ export function Post() {
       <Typography variant="subtitle2" component="div">
             NOVOSTI
           </Typography>
-      { post && <Novosti novost={post.id}></Novosti>} </div>
-      <DodajNovost id_slucaja={post.id}/>
+      { post && <Novosti novost={post.id} loading={loading}></Novosti>} </div>
+      <DodajNovost id_slucaja={post.id} loading={loading} setLoading={setLoading}/>
       </Box>
       )) || <>ne ucitava post</>}
     </>
