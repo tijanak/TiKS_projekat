@@ -111,7 +111,24 @@ public class KorisnikController : ControllerBase
         }
     }
 
+    [HttpDelete("uklonikorisnika/username/{username}")]
+    public async Task<ActionResult> UkloniKorisnikaUsername(string username)
+    {
+        try
+        {
+            var korisnik = await Context.Korisnici.Where(k => k.Username == username).FirstOrDefaultAsync();
+            if (korisnik == null) return NotFound("Trazeni korisnik svakako ne postoji");
 
+            Context.Korisnici.Remove(korisnik);
+            await Context.SaveChangesAsync();
+            return Ok(korisnik);
+
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
     [HttpDelete("uklonikorisnika/{ID}")]
     public async Task<ActionResult> UkloniKorisnika(int ID)
     {
