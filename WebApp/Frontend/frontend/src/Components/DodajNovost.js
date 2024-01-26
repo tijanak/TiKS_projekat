@@ -29,24 +29,35 @@ export default function DodajNovost(state) {
     if (!datum) {
       setE2(true);
     }
-    if (novost && datum && slika) {
-      const n = {
-        id: 0,
-        tekst: novost,
-        datum: datum,
-        slika: slika,
-        slucaj: {
-          id: 0,
-          naziv: "string",
-          opis: "string",
-          slike: ["string"],
-        },
-      };
-      const requestOptions = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(n),
-      };
+
+    if(novost&&datum&&slika){
+    const n = {
+      "id": 0,
+      "tekst": novost,
+      "datum": datum,
+      "slika": slika,
+      "slucaj": {
+        "id": 0,
+        "naziv": "string",
+        "opis": "string",
+        "slike": [
+          "string"
+        ]
+      }
+    };
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(n)
+    };
+    console.log(n);
+      
+      fetch(`${BACKEND}Novost/dodajnovost?id_slucaja=${state.id_slucaja}`, requestOptions)
+      .then(response=>{if(response.ok) return response.json()})
+      .then(d=>{state.setLoading(!state.loading);setSuccess("success");console.log(d)})
+      .catch(e=>console.log(e));
+    }
+    }
 
       fetch(
         `${BACKEND}Novost/dodajnovost?id_slucaja=${state.id_slucaja}`,
