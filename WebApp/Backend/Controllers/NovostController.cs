@@ -75,7 +75,7 @@ public class NovostController : ControllerBase
 
             var poslednja_novost = await Context.Novosti.Where(n => n.Slucaj.ID == id_slucaja).OrderByDescending(n => n.Datum).FirstOrDefaultAsync();
 
-            if (poslednja_novost != null && poslednja_novost.Datum.CompareTo(n.Datum) > 0)
+            if (poslednja_novost != null && poslednja_novost.Datum.CompareTo(n.Datum) >= 0)
                 return BadRequest("Ne mozete dodati retrospektivno novosti");
 
 

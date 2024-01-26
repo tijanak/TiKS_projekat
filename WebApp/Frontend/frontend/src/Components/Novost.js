@@ -3,10 +3,14 @@ import BACKEND from "../config";
 import { useLocation } from "react-router-dom";
 
 import Card from "@mui/material/Card";
+import {ButtonGroup} from "@mui/material";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import Delete from "@mui/icons-material/Delete";
+import Edit from "@mui/icons-material/Edit";
+import IconButton from '@mui/joy/IconButton';
 export function Novosti(state) {
   const [novosti, setNovosti] = useState(null);
 
@@ -27,21 +31,29 @@ export function Novosti(state) {
       {novosti&&novosti.length>0&&novosti.map(n=>(
       <Card variant="outlined" key={n.id}>
       <CardContent>
-        {<Button></Button>}
-      <Typography gutterBottom variant="h5" component="div">
+        <ButtonGroup>
+        <IconButton>
+        <Edit/>
+        </IconButton> 
+          <IconButton>
+            
+            <Delete/>
+            </IconButton> 
+        </ButtonGroup>
+      <Typography gutterBottom variant="body2" color="text.secondary" component="div">
       {n.datum}
       </Typography>
-      <Typography variant="body2" color="text.secondary">
+      <Typography variant="body">
       {n.tekst}
         </Typography>
        </CardContent>
        <CardMedia
-                 height="140"
-                 alt="stock"
-                 image="\imgs\stockphoto.jpg"
-                 title="slika"
-                 component="img"
-               />
+                height="140"
+                alt="stock"
+                image={n.slika.length == 0 ? "imgs/stockphoto.jpg" : n.slika}
+                title="slika"
+                component="img"
+              />
        </Card>)) || <>slucaj nema novosti</>}
     </>
   );
