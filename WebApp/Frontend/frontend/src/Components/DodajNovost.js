@@ -42,6 +42,7 @@ export default function DodajNovost(state){
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(n)
     };
+    console.log(n);
       
       fetch(`${BACKEND}Novost/dodajnovost?id_slucaja=${state.id_slucaja}`, requestOptions)
       .then(response=>{if(response.ok) return response.json()})

@@ -116,7 +116,8 @@ export default function Doniraj(state){
     }, []);
 
     useEffect(()=>{
-        fetch(`${BACKEND}Trosak/preuzmitroskove/${post}`, {
+      console.log(user);
+              fetch(`${BACKEND}Trosak/preuzmitroskove/${post}`, {
             method: "GET",
           })
             .then(response => response.json())
@@ -174,8 +175,8 @@ export default function Doniraj(state){
             Evidentiraj trosak
           </Typography>
           <TextField id="outlined-basic" value={trosakTekst}label="Namena" variant="outlined" onChange={handlesetText}/>
-          <Slider defaultValue={200} value ={trosak} aria-label="slider"  onChange={menjajTrosak} marks valueLabelDisplay="auto" min={200} max={5000} step={500}/> {suma}
-      <Button variant="contained" onClick={()=>EvidentirajTrosak()}  >Doniraj</Button>
+          <Slider defaultValue={200} value ={trosak} aria-label="slider"  onChange={menjajTrosak} marks valueLabelDisplay="auto" min={200} max={5000} step={500}/> {trosak}
+      <Button variant="contained" onClick={()=>EvidentirajTrosak()}  >Evidentiraj</Button>
     </FormControl>
     </>);
 }
