@@ -11,6 +11,7 @@ import FormLabel from "@mui/material/FormLabel";
 import Container from "@mui/material/Container";
 import { Post } from "./Components/Post";
 import { Typography } from "@mui/material";
+import ResponsiveAppBar from "./Components/AppBar";
 import {
   Routes,
   Route,
@@ -183,7 +184,8 @@ function Layout() {
   if (!auth.user) return <Outlet></Outlet>;
   return (
     <div>
-      <nav>
+      <ResponsiveAppBar />
+      {/*<nav>
         <ul>
           <li>
             <Link to="/main">Main</Link>
@@ -196,7 +198,8 @@ function Layout() {
           </li>
           <li>
             <Link to="/register">Register</Link>
-          </li>*/}
+          </li>*/
+      /*}
         </ul>
         <Button
           variant="contained"
@@ -207,8 +210,7 @@ function Layout() {
           Sign out
         </Button>
       </nav>
-
-      <hr />
+      <hr />*/}
 
       <Outlet />
     </div>

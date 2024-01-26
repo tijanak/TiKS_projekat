@@ -6,7 +6,7 @@ import Input from "@mui/material/Input";
 import { useAuth } from "../App";
 import * as React from "react";
 import PropTypes from "prop-types";
-
+import { ImagePicker } from "react-file-picker";
 import Snackbar from "@mui/material/Snackbar";
 import TextField from "@mui/material/TextField";
 import { Select as BaseSelect, selectClasses } from "@mui/base/Select";
@@ -23,6 +23,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 export function NoviSlucaj() {
   let auth = useAuth();
   console.log(auth);
@@ -246,12 +247,17 @@ export function NoviSlucaj() {
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
   const [snackbar, setSnackbar] = useState(false);
+  const [errorSnackbar, setErrorSnackbar] = useState(null);
+
   let navigate = useNavigate();
   const handleClose = () => {
     setOpen(false);
   };
   const handleSnackbarClose = () => {
     setSnackbar(false);
+  };
+  const handleErrorSnackbarClose = () => {
+    setErrorSnackbar(null);
   };
   return (
     <Container>
@@ -261,6 +267,13 @@ export function NoviSlucaj() {
           autoHideDuration={2000}
           onClose={handleSnackbarClose}
           message="Uspesno dodata kategorija."
+        />
+        <Snackbar
+          open={errorSnackbar != null}
+          autoHideDuration={2000}
+          onClose={handleErrorSnackbarClose}
+          message={errorSnackbar}
+          variant="error"
         />
         <Dialog
           open={open}
@@ -400,7 +413,45 @@ export function NoviSlucaj() {
             setLongitude(t.target.value);
           }}
         ></Input>
-
+        {slike.map((s, i) => (
+          <>
+            <img
+              key={s}
+              style={{
+                maxHeight: "500px",
+                maxWidth: "500px",
+              }}
+              src={s}
+              alt={s}
+            />
+            <DeleteIcon
+              onClick={() => {
+                console.log("klik");
+                setSlike(
+                  slike.filter((v, ind, arr) => {
+                    if (ind == i) return false;
+                    else return true;
+                  })
+                );
+              }}
+            ></DeleteIcon>
+          </>
+        ))}
+        <ImagePicker
+          extensions={["jpg", "jpeg", "png"]}
+          dims={{
+            minWidth: 0,
+            maxWidth: 2000,
+            minHeight: 0,
+            maxHeight: 2000,
+          }}
+          onChange={(base64) => {
+            setSlike([...slike, base64]);
+          }}
+          onError={(errMsg) => setErrorSnackbar(errMsg)}
+        >
+          <Button>Dodaj sliku</Button>
+        </ImagePicker>
         <FormLabel>Kategorije:</FormLabel>
         <Box>
           <MultiSelect
