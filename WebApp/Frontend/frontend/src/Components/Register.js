@@ -50,7 +50,7 @@ function Register() {
             setPassword(p.target.value);
           }}
         ></Input>
-        {error && <Alert severity="error">Zauzeto korisnicko ime</Alert>}
+        {error && <Alert severity="error">{error}</Alert>}
         <Box>
           {loading ? (
             <CircularProgress />
@@ -71,8 +71,9 @@ function Register() {
                       console.log(user);
                       navigate("/main", { replace: true });
                     },
-                    () => {
-                      setError(true);
+                    (e) => {
+                      console.log(e);
+                      setError(e);
                       setLoading(false);
                     }
                   );

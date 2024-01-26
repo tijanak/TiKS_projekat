@@ -26,7 +26,7 @@ import BACKEND from "./config";
 import React, { useState, useEffect } from "react";
 import Register from "./Components/Register";
 import { NoviSlucaj } from "./Components/NoviSlucaj";
-import Doniraj from './Components/Doniraj';
+import Doniraj from "./Components/Doniraj";
 import MojProfil from "./Components/MojProfil";
 function App() {
   return (
@@ -92,7 +92,7 @@ const fakeAuthProvider = {
           fakeAuthProvider.isAuthenticated = true;
           response.json().then((data) => callback(data));
         } else {
-          errorCallback();
+          response.text().then((t) => errorCallback(t));
         }
       })
       .catch((error) => console.log(error));
@@ -127,7 +127,7 @@ function AuthProvider({ children }) {
         setUser(user);
         callback(user);
       },
-      () => errorCallback()
+      (e) => errorCallback(e)
     );
   };
   let signout = (callback) => {

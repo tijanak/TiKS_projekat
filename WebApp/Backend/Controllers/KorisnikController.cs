@@ -12,12 +12,18 @@ public class KorisnikController : ControllerBase
     }
 
     [HttpGet("preuzmikorisnika/{id}")]
-    public ActionResult PreuzmiKorisnika(int id)
+    public async Task<ActionResult> PreuzmiKorisnika(int id)
     {
         try
         {
-            var korisnik = Context.Korisnici.Include(k => k.Slucajevi!).FirstOrDefault();
-            if (korisnik != null) return Ok(korisnik);
+            var korisnik = await Context.Korisnici.Where(k => k.ID == id).Include(k => k.Slucajevi).Select(k => new { k.Username, k.Password, k.Slucajevi }).FirstOrDefaultAsync();
+
+
+            if (korisnik != null)
+            {
+
+                return Ok(korisnik);
+            }
             return NotFound("Trazeni korisnik ne postoji");
         }
         catch (Exception e)
@@ -81,7 +87,7 @@ public class KorisnikController : ControllerBase
 
 
     [HttpPut("izmeniusernamepassword")]
-    public async Task<ActionResult> IzmeniUsernamePassword([FromQuery] int id_korisnika, string? username, string? password)
+    public async Task<ActionResult> IzmeniUsernamePassword([FromQuery] int id_korisnika, [FromQuery] string? username, [FromQuery] string? password)
     {
         try
         {
@@ -91,7 +97,7 @@ public class KorisnikController : ControllerBase
             if (null != username)
             {
                 if (username.Length < 1 || username.Length > 50) return BadRequest("username mora biti izmedju 1 i 50 karaktera");
-                var vec_postoji_korisnik_sa_username = Context.Korisnici.Where(k => k.Username == username).FirstOrDefault();
+                var vec_postoji_korisnik_sa_username = Context.Korisnici.Where(k => k.Username!.CompareTo(username) == 0).FirstOrDefault();
                 if (vec_postoji_korisnik_sa_username != null) return BadRequest("korisnicko ime zauzeto");
                 stari_korisnik.Username = username;
             }
