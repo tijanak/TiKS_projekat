@@ -9,9 +9,11 @@ namespace End_to_endTestovi
     [SetUpFixture]
     public class Setup
     {
+
+        private IAPIRequestContext Request;
         //Process front=new Process(), back=new Process();
         [OneTimeSetUp]
-        public void RunBeforeAnyTests()
+        public async Task RunBeforeAnyTests()
         {
             if(Directory.Exists(Globals.vidDir))
             {
@@ -21,6 +23,19 @@ namespace End_to_endTestovi
             {
                 Directory.Delete(Globals.scDir,true);
             }
+            var headers = new Dictionary<string, string>
+        {
+            { "Accept", "application/json" }
+        };
+            using var playwright = await Playwright.CreateAsync();
+            Request = await playwright.APIRequest.NewContextAsync(new()
+            {
+                BaseURL = "http://localhost:5100",
+                ExtraHTTPHeaders = headers,
+                IgnoreHTTPSErrors = true
+            });
+            await using var response = await Request.DeleteAsync("Korisnik/dodajkorisnika", new() { DataObject = new { username = "admin", password = "admin" } });
+
             /*string workingDirectory = Environment.CurrentDirectory;
             // or: Directory.GetCurrentDirectory() gives the same result
 
@@ -60,8 +75,9 @@ namespace End_to_endTestovi
         }
 
         [OneTimeTearDown]
-        public void RunAfterAnyTests()
+        public async Task RunAfterAnyTests()
         {
+            await Request.DisposeAsync();
             /*try
             {
                 front.Kill();
