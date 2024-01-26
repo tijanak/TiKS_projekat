@@ -10,6 +10,7 @@ import { Container } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 
+import Input from "@mui/joy/Input/Input";
 import EditIcon from "@mui/icons-material/Edit";
 import Fab from "@mui/material/Fab";
 function Main() {
@@ -29,6 +30,15 @@ function Main() {
   let navigate = useNavigate();
   return (
     <Container>
+      <Input
+        type="date"
+        slotProps={{
+          input: {
+            min: "2018-06-07",
+            max: "2018-06-14",
+          },
+        }}
+      />
       <Button variant="outlined" onClick={() => navigate("/dodaj_slucaj")}>
         Dodaj slucaj
       </Button>
