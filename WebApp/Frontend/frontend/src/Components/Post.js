@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Novosti } from "./Novost";
 import DodajNovost from "./DodajNovost";
-import { TextField, Box, Button, Typography, Card, CardActions, CardContent } from "@mui/material";
+import { TextField, Box, Button, Typography, Card, CardActions, CardContent, CardMedia } from "@mui/material";
 import Zivotinja from "./Zivotinja";
 export function Post() {
   const [post, setPost] = useState(null);
@@ -28,11 +28,13 @@ export function Post() {
 
           <Button size="small">Udomi</Button>
         </CardActions>
-        {/* <CardMedia
-          sx={{ height: 140 }}
-          image="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.istockphoto.com%2Fphotos%2Fplaceholder-image&psig=AOvVaw3iu14a8dxZufPTObHcDmUR&ust=1705892562250000&source=images&cd=vfe&ved=0CBMQjRxqFwoTCKDv5ZO_7YMDFQAAAAAdAAAAABAE"
-          title="slika"
-        /> */}
+        <CardMedia
+                height="140"
+                alt="stock"
+                image={post.slike.length == 0 ? "imgs/stockphoto.jpg" : post.slike[0]}
+                title="slika"
+                component="img"
+              />
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
             {post.naziv}
@@ -49,7 +51,7 @@ export function Post() {
             NOVOSTI
           </Typography>
       { post && <Novosti novost={post.id}></Novosti>} </div>
-      <DodajNovost/>
+      <DodajNovost id_slucaja={post.id}/>
       </Box>
       )) || <>ne ucitava post</>}
     </>
