@@ -6,18 +6,18 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
 export function Novosti(state) {
   const [novosti, setNovosti] = useState(null);
 
   useEffect(() => {
-    console.log("what");  
     fetch(`${BACKEND}Novost/preuzminovosti/${state.novost}`, {
       method: "GET",
     })
       .then(response => response.json())
       .then(data => {
-        console.log(data);
-        console.log(state.novost);
+        // console.log(data);
+        // console.log(state.novost);
         setNovosti(data);
       })
       .catch(error => console.log(error));
@@ -25,8 +25,9 @@ export function Novosti(state) {
   return (
     <>
       {novosti&&novosti.length>0&&novosti.map(n=>(
-      <Card variant="outlined">
+      <Card variant="outlined" key={n.id}>
       <CardContent>
+        {<Button></Button>}
       <Typography gutterBottom variant="h5" component="div">
       {n.datum}
       </Typography>

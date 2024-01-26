@@ -11,6 +11,18 @@ public class ZivotinjaController : ControllerBase
         this.Context=Context;
     }
 
+    [HttpGet("preuzmi/{id_slucaja}")]
+    public ActionResult Preuzmi(int id_slucaja){
+        try{
+            var zivotinja = Context.Zivotinje.Where(z => z.Slucaj.ID==id_slucaja).FirstOrDefault();
+            if(zivotinja == null) return NotFound("Zivotinja ne postoji.");
+            return Ok(zivotinja);
+        }
+        catch(Exception e){
+            return BadRequest(e);
+        }
+    }
+
     [HttpGet("preuzmizivotinju/{id}")]
     public ActionResult PreuzmiZivotinju(int id){
         try{
@@ -22,7 +34,6 @@ public class ZivotinjaController : ControllerBase
             return BadRequest(e);
         }
     }
-
     [HttpPost("dodajzivotinju")]
     public async Task<ActionResult> DodajZivotinju([FromBody] Zivotinja z, [FromQuery]int idSlucaja){
         try{

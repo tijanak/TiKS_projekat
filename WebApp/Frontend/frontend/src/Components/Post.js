@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
 import BACKEND from "../config";
 import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Novosti } from "./Novost";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
+import DodajNovost from "./DodajNovost";
+import { TextField, Box, Button, Typography, Card, CardActions, CardContent } from "@mui/material";
+import Zivotinja from "./Zivotinja";
 export function Post() {
   const [post, setPost] = useState(null);
-
+  let navigate = useNavigate();
   const location = useLocation();
   useEffect(() => {
     console.log(location);
@@ -18,9 +17,14 @@ export function Post() {
   return (
     <>
       {(post && (
-        <Card key={post.id} sx={{ maxWidth: 345 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+        
+        <Card key={post.id}>
+        
         <CardActions>
-          <Button size="small">Doniraj</Button>
+          <Button size="small" onClick={() => {
+                    navigate("/doniraj", { state: { id_posta: post.id } });
+                  }}>Doniraj</Button>
 
           <Button size="small">Udomi</Button>
         </CardActions>
@@ -37,11 +41,16 @@ export function Post() {
             {post.opis}
           </Typography>
         </CardContent>
-        <Typography variant="subtitle2" component="div">
+        {post&&<Zivotinja id_posta={post.id} />}
+      </Card>
+      
+      <div>
+      <Typography variant="subtitle2" component="div">
             NOVOSTI
           </Typography>
-        { post && <Novosti novost={post.id}></Novosti>}
-      </Card>
+      { post && <Novosti novost={post.id}></Novosti>} </div>
+      <DodajNovost/>
+      </Box>
       )) || <>ne ucitava post</>}
     </>
   );

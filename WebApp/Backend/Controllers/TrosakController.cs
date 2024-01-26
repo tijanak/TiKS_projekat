@@ -25,6 +25,21 @@ public class TrosakController : ControllerBase
         }
     }
 
+
+    [HttpGet("preuzmitroskove/{id_slucaja}")]
+    public async Task<ActionResult> PreuzmiTroskove(int id_slucaja){
+        try{
+            var t = await Context.Troskovi.Where(t => t.Slucaj.ID == id_slucaja).OrderByDescending(t=>t.ID).ToListAsync();
+            if(t == null){
+                return NotFound("Slucaj nema troskove.");
+            }
+            return Ok(t);
+        }
+        catch(Exception e){
+            return BadRequest(e);
+        }
+    }
+
     [HttpPost("dodajtrosak")]
     public async Task<ActionResult> DodajTrosak([FromBody] Trosak t, [FromQuery]int idSlucaja){
         try{
