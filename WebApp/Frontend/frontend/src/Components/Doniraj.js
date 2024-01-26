@@ -5,12 +5,15 @@ import { useLocation } from "react-router-dom";
 import {useAuth} from "../App";
 export default function Doniraj(state){
     const [post, setPost] = useState(null);
-    
+    const [vlasnikPosta, setVlasnikPosta] = useState(null);
     const [donacije, setDonacije] = useState(null);
     const [troskovi, setTroskovi] = useState(null);
     const [bilans, setBilans] = useState(0);
     const [suma, setSuma] = useState(200);
+    const [trosak, setTrosak] = useState(200);
     const [loading, setLoading] =useState(false);
+    const[trosakTekst, setTrosakTekst ]= useState("");
+    const[loadingTrosak, setLoadingTrosak] = useState(false);
     let auth = useAuth();
     let user =  auth.user;
     
@@ -50,7 +53,6 @@ export default function Doniraj(state){
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(donacija)
       };
-      console.log(user.id + " " + post);
         fetch(`${BACKEND}Donacija/Post/${user.id}/${post}`, requestOptions)
         .then(response=>{if(response.ok) return response.json()})
         .then(d=>{console.log(d); setLoading(!loading)})
@@ -61,6 +63,39 @@ export default function Doniraj(state){
     const menjajSumu = (e)=>{
 
       setSuma(e.target.value);
+    }
+
+    const EvidentirajTrosak = async ()=>{
+      const t = {
+        "id": 0,
+        "namena": trosakTekst,
+        "kolicina": trosak,
+        "slucaj": {
+          "id": 0,
+          "naziv": "string",
+          "opis": "string",
+          "slike": [
+            "string"
+          ]
+        }
+      };
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(t)
+      };
+        fetch(`${BACKEND}Trosak/dodajtrosak?idSlucaja=${post}`, requestOptions)
+        .then(response=>{if(response.ok) return response.json()})
+        .then(d=>{console.log(d); setLoadingTrosak(!loadingTrosak)})
+        .catch(e=>console.log(e));
+
+
+    }
+    const handlesetText = (e)=>{
+      setTrosakTekst(e.target.value);
+    }
+    const menjajTrosak=(e)=>{
+      setTrosak(e.target.value);
     }
     useEffect(()=>{
         var s=0;
@@ -77,6 +112,7 @@ export default function Doniraj(state){
     const location = useLocation();
     useEffect(() => {
       setPost(location.state.id_posta);
+      setVlasnikPosta(location.state.id_vlasnika);
     }, []);
 
     useEffect(()=>{
@@ -88,7 +124,7 @@ export default function Doniraj(state){
               setTroskovi(data);
             })
             .catch(error => console.log(error));
-    },[]);
+    },[post, loadingTrosak]);
 
     useEffect(()=>{
       fetch(`${BACKEND}Donacija/preuzmidonacije/${post}`, {
@@ -99,7 +135,7 @@ export default function Doniraj(state){
             setDonacije(data);
           })
           .catch(error => console.log(error));
-    },[loading]);
+    },[post, loading]);
 
     
     return (<><Typography variant="h5">Bilans stanja: {bilans}din</Typography>
@@ -129,8 +165,17 @@ export default function Doniraj(state){
     <Typography variant="subtitle2" component="div">
             Doniraj
           </Typography>
+          
           <Slider defaultValue={200} value ={suma} aria-label="slider"  onChange={menjajSumu} marks valueLabelDisplay="auto" min={200} max={5000} step={500}/> {suma}
       <Button variant="contained" onClick={()=>DonirajPare()}  >Doniraj</Button>
+    </FormControl>
+    <FormControl>
+    <Typography variant="subtitle2" component="div">
+            Evidentiraj trosak
+          </Typography>
+          <TextField id="outlined-basic" value={trosakTekst}label="Namena" variant="outlined" onChange={handlesetText}/>
+          <Slider defaultValue={200} value ={trosak} aria-label="slider"  onChange={menjajTrosak} marks valueLabelDisplay="auto" min={200} max={5000} step={500}/> {suma}
+      <Button variant="contained" onClick={()=>EvidentirajTrosak()}  >Doniraj</Button>
     </FormControl>
     </>);
 }

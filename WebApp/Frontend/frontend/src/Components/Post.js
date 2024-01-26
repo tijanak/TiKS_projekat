@@ -24,7 +24,7 @@ export function Post() {
         
         <CardActions>
           <Button size="small" onClick={() => {
-                    navigate("/doniraj", { state: { id_posta: post.id } });
+                    navigate("/doniraj", { state: { id_posta: post.id} });
                   }}>Doniraj</Button>
 
           <Button size="small">Udomi</Button>
