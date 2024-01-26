@@ -39,6 +39,7 @@ function Main() {
 
                 <Button size="small">Udomi</Button>
                 <DeleteIcon
+                  style={{ cursor: "pointer" }}
                   onClick={() => {
                     fetch(`${BACKEND}Slucaj/Delete/${p.id}`, {
                       method: "DELETE",
@@ -49,7 +50,7 @@ function Main() {
               <CardMedia
                 height="140"
                 alt="stock"
-                image="\imgs\stockphoto.jpg"
+                image={p.slike.length == 0 ? "imgs/stockphoto.jpg" : p.slike[0]}
                 title="slika"
                 component="img"
               />
