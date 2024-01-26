@@ -9,6 +9,9 @@ import Button from "@mui/material/Button";
 import { Container } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
+
+import EditIcon from "@mui/icons-material/Edit";
+import Fab from "@mui/material/Fab";
 function Main() {
   const [posts, setPosts] = useState(null);
   const [reload, setReload] = useState(false);
@@ -46,6 +49,9 @@ function Main() {
                     }).finally(() => setReload(!reload));
                   }}
                 ></DeleteIcon>
+                <Fab color="secondary" size="small" aria-label="edit">
+                  <EditIcon />
+                </Fab>
               </CardActions>
               <CardMedia
                 height="140"
