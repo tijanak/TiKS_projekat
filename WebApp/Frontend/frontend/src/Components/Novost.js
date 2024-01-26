@@ -13,7 +13,6 @@ import Edit from "@mui/icons-material/Edit";
 import IconButton from '@mui/joy/IconButton';
 export function Novosti(state) {
   const [novosti, setNovosti] = useState(null);
-
   useEffect(() => {
     fetch(`${BACKEND}Novost/preuzminovosti/${state.novost}`, {
       method: "GET",
@@ -25,7 +24,7 @@ export function Novosti(state) {
         setNovosti(data);
       })
       .catch(error => console.log(error));
-  }, []);
+  }, [state.loading]);
   return (
     <>
       {novosti&&novosti.length>0&&novosti.map(n=>(
