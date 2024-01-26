@@ -9,6 +9,7 @@ import Button from "@mui/material/Button";
 import { Container } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useAuth } from "../App";
 import Dialog from "@mui/material/Dialog";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -48,15 +49,18 @@ function Main() {
       .catch((error) => console.log(error));
   }, [reload]);
   let navigate = useNavigate();
+
   return (
     <Container>
-      <EditSlucaj
-        close={() => {
-          handleClose();
-        }}
-        open={open}
-        p={editSlucaj}
-      />
+      {editSlucaj && (
+        <EditSlucaj
+          close={() => {
+            handleClose();
+          }}
+          open={open}
+          p={editSlucaj}
+        />
+      )}
       <Button variant="outlined" onClick={() => navigate("/dodaj_slucaj")}>
         Dodaj slucaj
       </Button>
@@ -82,7 +86,7 @@ function Main() {
                   Doniraj
                 </Button>
 
-                <Button size="small">Udomi</Button>
+                {/*<Button size="small">Udomi</Button>*/}
                 <DeleteIcon
                   className="delete-btn"
                   style={{ cursor: "pointer" }}

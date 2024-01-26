@@ -4,7 +4,16 @@ import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Novosti } from "./Novost";
 import DodajNovost from "./DodajNovost";
-import { TextField, Box, Button, Typography, Card, CardActions, CardContent, CardMedia } from "@mui/material";
+import {
+  TextField,
+  Box,
+  Button,
+  Typography,
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+} from "@mui/material";
 import Zivotinja from "./Zivotinja";
 export function Post() {
   const [post, setPost] = useState(null);
@@ -18,6 +27,7 @@ export function Post() {
   return (
     <>
       {(post && (
+
         <Box sx={{ display: 'flex', flexDirection: 'row' }}>
         
         <Card key={post.id}>
@@ -27,7 +37,7 @@ export function Post() {
                     navigate("/doniraj", { state: { id_posta: post.id} });
                   }}>Doniraj</Button>
 
-          <Button size="small">Udomi</Button>
+				  {/*<Button size="small">Udomi</Button>*/}
         </CardActions>
         <CardMedia
                 height="140"

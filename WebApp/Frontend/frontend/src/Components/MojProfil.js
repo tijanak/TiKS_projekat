@@ -184,10 +184,10 @@ export default function MojProfil() {
           >
             Obrisi profil
           </Button>
-          <h2>Moji slucajevi</h2>
+          {/*<h2>Moji slucajevi</h2>
           {korisnik.slucajevi.forEach((element) => {
             <Post id_posta={element.ID}></Post>;
-          })}
+          })}*/}
           ;
         </Stack>
       )) || <>ne ucitava korisnika</>}

@@ -16,7 +16,7 @@ public class SlucajController : ControllerBase
         if (id < 0) return BadRequest("ID ne može biti negativan");
         try
         {
-            var slucaj = await Context.Slucajevi.Where(p => p.ID == id).Include(s=>s.Novosti).Include(s=>s.Donacije).Include(s=>s.Troskovi).Include(s=>s.Kategorija).FirstOrDefaultAsync();
+            var slucaj = await Context.Slucajevi.Where(p => p.ID == id).Include(s => s.Novosti).Include(s => s.Donacije).Include(s => s.Troskovi).Include(s => s.Kategorija).FirstOrDefaultAsync();
             if (slucaj != null)
             {
                 return Ok(slucaj);
@@ -61,6 +61,8 @@ public class SlucajController : ControllerBase
                 {
                     return BadRequest($"Kategorija sa IDjem {id} ne postoji");
                 }
+                slucaj.Kategorija.Add(kategorija);
+                kategorija.Slucajevi.Add(slucaj);
             }
 
             Context.Slucajevi.Add(slucaj);
@@ -203,7 +205,8 @@ public class SlucajController : ControllerBase
     {
         try
         {
-            return Ok(await Context.Slucajevi.Include(s=>s.Novosti).Include(s=>s.Donacije).Include(s=>s.Troskovi).Include(s=>s.Kategorija).ToListAsync());
+            return Ok(await Context.Slucajevi.Include(s => s.Novosti).Include(s => s.Donacije).Include(s => s.Troskovi).Include(s => s.Kategorija)
+            .Select(s => new { s.ID, s.Kategorija, s.Korisnik, s.Naziv, s.Opis, s.Slike, s.Lokacija, s.Zivotinja }).ToListAsync());
         }
         catch (Exception e)
         {
