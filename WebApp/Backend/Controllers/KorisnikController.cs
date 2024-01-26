@@ -16,7 +16,7 @@ public class KorisnikController : ControllerBase
     {
         try
         {
-            var korisnik = Context.Korisnici.Where(k => k.ID == id).FirstOrDefault();
+            var korisnik = Context.Korisnici.Include(k => k.Slucajevi!).FirstOrDefault();
             if (korisnik != null) return Ok(korisnik);
             return NotFound("Trazeni korisnik ne postoji");
         }

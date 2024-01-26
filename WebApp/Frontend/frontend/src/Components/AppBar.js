@@ -40,7 +40,7 @@ function ResponsiveAppBar() {
     {
       name: "Profil",
       click: () => {
-        navigate("/profil");
+        navigate("/profil", { state: { korisnik_id: auth.user.id } });
       },
     },
     {
