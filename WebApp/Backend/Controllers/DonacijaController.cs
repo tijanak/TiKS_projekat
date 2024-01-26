@@ -32,6 +32,30 @@ public class DonacijaController : ControllerBase
         }
 
     }
+
+    [Route("preuzmidonacije/{idSlucaja}")]
+    [HttpGet]
+    public async Task<ActionResult> PreuzmiDonacije(int idSlucaja)
+    {
+        if (idSlucaja < 0) return BadRequest("ID ne može biti negativan");
+        try
+        {
+            var donacija = await Context.Donacije.Where(p => p.Slucaj.ID == idSlucaja).Include(p=>p.Korisnik).OrderByDescending(t=>t.ID).ToListAsync();
+            if (donacija != null)
+            {
+                return Ok(donacija);
+            }
+            else
+            {
+                return NotFound($"Ne postoji donacija sa id-jem {idSlucaja}");
+            }
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+
+    }
     [Route("Post/{idKorisnika}/{idSlucaja}")]
     [HttpPost]
     public async Task<ActionResult> Dodaj([FromBody] Donacija donacija, int idKorisnika, int idSlucaja)
