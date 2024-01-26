@@ -1,5 +1,5 @@
 ﻿
-/*using Microsoft.Playwright;
+using Microsoft.Playwright;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Net;
@@ -9,11 +9,19 @@ namespace End_to_endTestovi
     [SetUpFixture]
     public class Setup
     {
-        Process front=new Process(), back=new Process();
+        //Process front=new Process(), back=new Process();
         [OneTimeSetUp]
         public void RunBeforeAnyTests()
         {
-            string workingDirectory = Environment.CurrentDirectory;
+            if(Directory.Exists(Globals.vidDir))
+            {
+                Directory.Delete(Globals.vidDir,true);
+            }
+            if (Directory.Exists(Globals.scDir))
+            {
+                Directory.Delete(Globals.scDir,true);
+            }
+            /*string workingDirectory = Environment.CurrentDirectory;
             // or: Directory.GetCurrentDirectory() gives the same result
 
            
@@ -47,14 +55,14 @@ namespace End_to_endTestovi
                 {
                     //set flag if there was a timeout or some other issues
                 }
-            }
-            
+            }*/
+
         }
 
         [OneTimeTearDown]
         public void RunAfterAnyTests()
         {
-            try
+            /*try
             {
                 front.Kill();
                 front.WaitForExit(); // possibly with a timeout
@@ -68,8 +76,7 @@ namespace End_to_endTestovi
             catch (InvalidOperationException invalidException)
             {
                 // process has already exited - might be able to let this one go
-            }
+            }*/
         }
     }
 }
-*/

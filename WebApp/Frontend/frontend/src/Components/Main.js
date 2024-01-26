@@ -9,13 +9,33 @@ import Button from "@mui/material/Button";
 import { Container } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
-
-import Input from "@mui/joy/Input/Input";
+import Dialog from "@mui/material/Dialog";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemButton from "@mui/material/ListItemButton";
+import List from "@mui/material/List";
+import Divider from "@mui/material/Divider";
+import Toolbar from "@mui/material/Toolbar";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import Slide from "@mui/material/Slide";
 import EditIcon from "@mui/icons-material/Edit";
 import Fab from "@mui/material/Fab";
+import { AppBar } from "@mui/material";
+import EditSlucaj from "./EditSlucaj";
 function Main() {
-  const [posts, setPosts] = useState(null);
+  const [posts, setPosts] = useState([]);
   const [reload, setReload] = useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [editSlucaj, setEditSlucaj] = useState(null);
+  const handleClickOpen = (p) => {
+    setEditSlucaj(p);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setEditSlucaj(null);
+  };
   useEffect(() => {
     fetch(`${BACKEND}Slucaj/Get/All`, {
       method: "GET",
@@ -30,27 +50,32 @@ function Main() {
   let navigate = useNavigate();
   return (
     <Container>
-      <Input
-        type="date"
-        slotProps={{
-          input: {
-            min: "2018-06-07",
-            max: "2018-06-14",
-          },
+      <EditSlucaj
+        close={() => {
+          handleClose();
         }}
+        open={open}
+        p={editSlucaj}
       />
       <Button variant="outlined" onClick={() => navigate("/dodaj_slucaj")}>
         Dodaj slucaj
       </Button>
-      <h2>Svi slucajevi({posts && posts.length}):</h2>
+      <h2>
+        Svi slucajevi(<span id="all-posts">{posts.length}</span>):
+      </h2>
       {posts && (
         <>
           {posts.map((p) => (
-            <Card key={p.id} sx={{ maxWidth: 345 }}>
+            <Card className="post-card" key={p.id} sx={{ maxWidth: 345 }}>
               <CardActions>
-                <Button size="small" onClick={() => {
+                <Button
+                  size="small"
+                  onClick={() => {
                     navigate("/doniraj", { state: { id_posta: p.id } });
-                  }}>Doniraj</Button>
+                  }}
+                >
+                  Doniraj
+                </Button>
 
                 <Button size="small">Udomi</Button>
                 <DeleteIcon
@@ -61,7 +86,14 @@ function Main() {
                     }).finally(() => setReload(!reload));
                   }}
                 ></DeleteIcon>
-                <Fab color="secondary" size="small" aria-label="edit">
+                <Fab
+                  onClick={() => {
+                    handleClickOpen(p);
+                  }}
+                  color="secondary"
+                  size="small"
+                  aria-label="edit"
+                >
                   <EditIcon />
                 </Fab>
               </CardActions>

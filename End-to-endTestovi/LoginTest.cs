@@ -14,7 +14,7 @@ namespace End_to_endTestovi
             browser = await Playwright.Chromium.LaunchAsync(new()
             {
                 //Headless = false,
-                SlowMo = 500
+                //SlowMo = 500
             });
 
             page = await browser.NewPageAsync(new()
@@ -34,7 +34,7 @@ namespace End_to_endTestovi
                     Width = 1280,
                     Height = 720
                 },
-                RecordVideoDir = "../../../Videos"
+                RecordVideoDir = Globals.vidDir,
             });
         }
 
@@ -55,7 +55,7 @@ namespace End_to_endTestovi
             await page.GetByRole(AriaRole.Button, new() { Name = "Login" }).ClickAsync();
 
             await Expect(page.Locator("div").Filter(new() { HasText = "LOGOLOGOMain" }).Nth(2)).ToBeVisibleAsync();
-
+            await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/LoginTest1.png" });
         }
         [Test]
         [Order(2)]
@@ -80,6 +80,7 @@ namespace End_to_endTestovi
             await page.GetByRole(AriaRole.Menuitem, new() { Name = "Logout" }).ClickAsync();
 
             await Expect(page.GetByRole(AriaRole.Heading, new() { Name = "Login page" })).ToBeVisibleAsync();
+            await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/LoginTest2.png" });
 
         }
         [TearDown]
