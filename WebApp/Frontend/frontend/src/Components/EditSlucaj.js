@@ -37,18 +37,6 @@ function EditSlucaj({ p, open, close }) {
           </Button>
         </Toolbar>
       </AppBar>
-      <List>
-        <ListItemButton>
-          <ListItemText primary="Phone ringtone" secondary="Titania" />
-        </ListItemButton>
-        <Divider />
-        <ListItemButton>
-          <ListItemText
-            primary="Default notification ringtone"
-            secondary="Tethys"
-          />
-        </ListItemButton>
-      </List>
     </Dialog>
   );
 }

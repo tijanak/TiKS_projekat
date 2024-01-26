@@ -66,7 +66,12 @@ function Main() {
       {posts && (
         <>
           {posts.map((p) => (
-            <Card className="post-card" key={p.id} sx={{ maxWidth: 345 }}>
+            <Card
+              id={"_" + p.id}
+              className="post-card"
+              key={p.id}
+              sx={{ maxWidth: 345 }}
+            >
               <CardActions>
                 <Button
                   size="small"
@@ -79,6 +84,7 @@ function Main() {
 
                 <Button size="small">Udomi</Button>
                 <DeleteIcon
+                  className="delete-btn"
                   style={{ cursor: "pointer" }}
                   onClick={() => {
                     fetch(`${BACKEND}Slucaj/Delete/${p.id}`, {

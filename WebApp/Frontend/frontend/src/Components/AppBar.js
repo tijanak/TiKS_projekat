@@ -37,7 +37,12 @@ function ResponsiveAppBar() {
   let navigate = useNavigate();
   const pages = [{ name: "Main", link: "/main" }];
   const settings = [
-    { name: "Profil", click: () => {} },
+    {
+      name: "Profil",
+      click: () => {
+        navigate("/profil");
+      },
+    },
     {
       name: "Logout",
       click: () => {

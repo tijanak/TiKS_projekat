@@ -56,10 +56,10 @@ namespace End_to_endTestovi
             await page.Locator("input[type=\"password\"]").FillAsync("admin");
 
             await page.GetByRole(AriaRole.Button, new() { Name = "Login" }).ClickAsync();
-            await Expect(page.GetByRole(AriaRole.Button, new() { Name = "Dodaj slucaj" })).ToBeVisibleAsync();
+            await Expect(page.Locator(".post-card").First).ToBeVisibleAsync();
 
-            var original = await page.Locator(".post-card").AllAsync();
-            int originalNum = original.Count;
+            var original = await page.Locator(".post-card").CountAsync();
+            
             await page.GetByRole(AriaRole.Button, new() { Name = "Dodaj slucaj" }).ClickAsync();
 
             await page.GetByRole(AriaRole.Textbox).First.ClickAsync();
@@ -116,11 +116,9 @@ namespace End_to_endTestovi
             
             await page.GetByRole(AriaRole.Button, new() { Name = "Dodaj slucaj" }).ClickAsync();
             await Expect(page.GetByText("novi slucaj").Nth(1)).ToBeVisibleAsync();
-
+            await Expect(page.Locator(".post-card")).ToHaveCountAsync(original + 1);
             await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/NoviSlucajTest1.3.png" });
-            var after = await page.Locator(".post-card").AllAsync();
-            int afterNum = after.Count;
-            Assert.That(originalNum + 1, Is.EqualTo(afterNum));
+            
 
 
         }
