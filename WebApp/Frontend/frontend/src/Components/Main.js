@@ -48,7 +48,9 @@ function Main() {
           {posts.map((p) => (
             <Card key={p.id} sx={{ maxWidth: 345 }}>
               <CardActions>
-                <Button size="small">Doniraj</Button>
+                <Button size="small" onClick={() => {
+                    navigate("/doniraj", { state: { id_posta: p.id } });
+                  }}>Doniraj</Button>
 
                 <Button size="small">Udomi</Button>
                 <DeleteIcon

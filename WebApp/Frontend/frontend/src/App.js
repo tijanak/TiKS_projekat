@@ -26,6 +26,8 @@ import BACKEND from "./config";
 import React, { useState, useEffect } from "react";
 import Register from "./Components/Register";
 import { NoviSlucaj } from "./Components/NoviSlucaj";
+import Doniraj from './Components/Doniraj';
+import MojProfil from "./Components/MojProfil";
 function App() {
   return (
     <BrowserRouter>
@@ -35,7 +37,7 @@ function App() {
             <Route path="/" element={<PublicPage />} />
             <Route path="/dodaj_slucaj" element={<NoviSlucaj />} />
             <Route path="/login" element={<Login />}></Route>
-
+            <Route path="/profil" element={<MojProfil />} />
             <Route path="/register" element={<Register />} />
             <Route
               path="/main"
@@ -53,6 +55,7 @@ function App() {
                 </RequireAuth>
               }
             ></Route>
+            <Route path="/doniraj" element={<Doniraj />}></Route>
             <Route path="*" element={<div>404 Not Found</div>} />
           </Route>
         </Routes>
@@ -186,6 +189,9 @@ function Layout() {
         <ul>
           <li>
             <Link to="/main">Main</Link>
+          </li>
+          <li>
+            <Link to="/profil">Moj profil</Link>
           </li>
           {/*<li>
             <Link to="/login">Login</Link>
