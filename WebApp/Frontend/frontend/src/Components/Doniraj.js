@@ -16,6 +16,7 @@ export default function Doniraj(state){
     const[trosakTekst, setTrosakTekst ]= useState("");
     const[loadingTrosak, setLoadingTrosak] = useState(false);
     const[bojabilans,setBojaBilans]=useState('black');
+    const[mojslucaj, setMojslucaj] = useState(false);
     let auth = useAuth();
     let user =  auth.user;
     
@@ -113,6 +114,21 @@ export default function Doniraj(state){
         setBilans(s);
     },[donacije,troskovi]);
 
+    useEffect(()=>{
+      fetch(`${BACKEND}Korisnik/preuzmikorisnika/${user.id}`,{method:"GET"})
+      .then(response => response.json())
+      .then(data => {
+              let mojslucaj_tmp=false;
+              
+              let tmp = data.slucajevi.map(m=>m.id);
+              for (let index = 0; index < tmp.length; index++) {
+                if(tmp[index]==post) {
+                  mojslucaj_tmp=true;
+                  break}
+              }
+              setMojslucaj(mojslucaj_tmp);});
+    },[post])
+
     const location = useLocation();
     useEffect(() => {
       setPost(location.state.id_posta);
@@ -120,7 +136,6 @@ export default function Doniraj(state){
     }, []);
 
     useEffect(()=>{
-      console.log(user);
               fetch(`${BACKEND}Trosak/preuzmitroskove/${post}`, {
             method: "GET",
           })
@@ -133,6 +148,10 @@ export default function Doniraj(state){
 
     const obrisiDonaciju = async function (id){fetch(`${BACKEND}Donacija/Delete/${id}`, {method:"DELETE"})
     .then(response=>{if(response.ok) {setLoading(!loading);return response.json()}})
+    .catch(e=>console.log(e));};
+
+    const obrisiTrosak = async function(id){console.log(id);fetch(`${BACKEND}Trosak/obrisi?id=${id}`, {method:"DELETE"})
+    .then(response=>{if(response.ok) {setLoadingTrosak(!loadingTrosak);return response.json()}})
     .catch(e=>console.log(e));};
 
     useEffect(()=>{
@@ -158,14 +177,14 @@ export default function Doniraj(state){
           <Slider defaultValue={200} value ={suma} aria-label="slider"  onChange={menjajSumu} marks valueLabelDisplay="auto" min={200} max={5000} step={500}/> {suma}
       <Button variant="contained" onClick={()=>DonirajPare()}  >Doniraj</Button>
     </FormControl>
-    <FormControl>
+    {mojslucaj&&<FormControl>
     <Typography variant="subtitle2" component="div">
             Evidentiraj trosak
           </Typography>
           <TextField id="outlined-basic" value={trosakTekst}label="Namena" variant="outlined" onChange={handlesetText}/>
           <Slider defaultValue={200} value ={trosak} aria-label="slider"  onChange={menjajTrosak} marks valueLabelDisplay="auto" min={200} max={5000} step={500}/> {trosak}
       <Button variant="contained" onClick={()=>EvidentirajTrosak()}  >Evidentiraj</Button>
-    </FormControl></Box>
+    </FormControl>}</Box>
     <Box>
       <Box>
     <Typography color={bojabilans} variant="h5">Bilans stanja: {bilans}din</Typography>
@@ -178,6 +197,7 @@ export default function Doniraj(state){
         {troskovi.map(t=>(
             <>
             <Typography>- {t.namena} {t.kolicina}</Typography>
+            {mojslucaj&&<Button onClick={()=>obrisiTrosak(t.id)}><ClearIcon/></Button>}
             </>))}
 
     </Box>)||<>bez troskova</>}

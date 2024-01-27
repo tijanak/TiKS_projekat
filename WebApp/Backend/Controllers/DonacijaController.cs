@@ -33,6 +33,18 @@ public class DonacijaController : ControllerBase
 
     }
 
+[HttpGet("preuzmisvedonacije")]
+    public async Task<ActionResult> PreuzmiSveDonacije(){
+        try
+        {
+            return Ok(await Context.Donacije.Include(n=>n.Slucaj).ToListAsync());
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+
     [Route("preuzmidonacije/{idSlucaja}")]
     [HttpGet]
     public async Task<ActionResult> PreuzmiDonacije(int idSlucaja)
