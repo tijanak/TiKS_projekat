@@ -1,9 +1,10 @@
 import Dialog from "@mui/material/Dialog";
-import {Button, DialogActions, DialogTitle, DialogContent, TextField, DialogContentText} from "@mui/material";
+import {Button, DialogActions, DialogTitle, DialogContent, TextField, DialogContentText, IconButton} from "@mui/material";
 import BACKEND from "../config";
 import ClearIcon from '@mui/icons-material/Clear';
 import React, { useState, useEffect } from "react";
 import { Input as InputJoy } from "@mui/joy";
+import Edit from "@mui/icons-material/Edit";
 import { ImagePicker } from "react-file-picker";
 
 export default function EditNovost(props){
@@ -24,18 +25,48 @@ export default function EditNovost(props){
             setE(false);
           }
       };
-    
+    const handleSubmit = async ()=>{
+        const n = {
+            id: props.novost.id,
+            tekst: tekstNovosti,
+            datum: datum ? datum : new Date(),
+            slika: slika ? slika : "imgs/stockphoto.jpg",
+            slucaj: {
+              id: 0,
+              naziv: "string",
+              opis: "string",
+              slike: ["string"],
+              korisnik: {
+                id: 0,
+                username: "string",
+                password: "string",
+              },
+            },
+          };
+        const requestOptions = {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(n),
+          };
+        fetch(`${BACKEND}Novost/izmeninovost`,requestOptions)
+        .then(response=>{if (response.ok) {props.setLoading(!props.loading)}})
+        .catch(e=>console.log(e));
+
+
+    }
+
       const handleSetDate = (event) => {
-        setDatum(event.target);
+        
+        setDatum(event.target.value);
         if (e2 && datum) {
           setE2(false);
         }
       };
     return(
         <>
-            <Button variant="outlined" onClick={toogleDialog}>
-                Izmeni
-            </Button>
+            <IconButton onClick={toogleDialog} sx={{color: "#32383E"}}>
+                <Edit/>
+            </IconButton>
 
             <Dialog
                 open={showDialog}
@@ -46,8 +77,7 @@ export default function EditNovost(props){
                     event.preventDefault();
                     const formData = new FormData(event.currentTarget);
                     const formJson = Object.fromEntries((formData).entries());
-                    const email = formJson.email;
-                    console.log(email);
+                    handleSubmit();
                     toogleDialog();
                   },
                 }}
@@ -57,8 +87,8 @@ export default function EditNovost(props){
                   <TextField
                     autoFocus
                     margin="dense"
-                    id="name"
-                    name="email"
+                    id="tekst"
+                    name="tekst"
                     type="text"
                     fullWidth
                     variant="standard"
