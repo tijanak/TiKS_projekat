@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace End_to_endTestovi
 {
     [TestFixture]
-    internal class DodavanjeNovostiTest :PageTest
+    internal class IzmeniNovostTest : PageTest
     {
         IPage page;
         IBrowser browser;
         int testSlucajId = 0;
+        int testNovostId = 0;
         private IAPIRequestContext Request;
         [SetUp]
         public async Task Setup()
@@ -75,8 +75,30 @@ namespace End_to_endTestovi
 
                 var id = j.GetInt32();
                 testSlucajId = id;
-
             }
+
+            await using var response3 = await Request.PostAsync("Novost/dodajnovost?id_slucaja=" + testSlucajId, new APIRequestContextOptions()
+            {
+                Headers = headers2,
+                DataObject = new
+                {
+                    Tekst = "Test Edit Novost",
+                    Slika = "imgs/stockphoto.jpg",
+                    Slucaj = new { Korisnik=new { } },
+                    Datum = new DateTime()
+                }
+            }) ;
+            k = await response3.JsonAsync();
+            if (k.HasValue)
+            {
+                var j = k.GetValueOrDefault();
+
+                var id = j.GetInt32();
+                testNovostId = id;
+            }
+
+
+
             await page.GotoAsync("http://127.0.0.1:4000/");
             await page.Locator("input[type=\"text\"]").ClickAsync();
 
@@ -94,22 +116,23 @@ namespace End_to_endTestovi
         [Test]
         public async Task Test()
         {
-            await page.Locator($"#_{testSlucajId} .novosti-btn" ).ClickAsync();
 
+            await page.Locator($"#_{testSlucajId} .novosti-btn").ClickAsync();
 
-            await Expect(page.Locator("#root")).ToContainTextAsync("Test");
+            await page.Locator($"#novosti{testNovostId}").GetByRole(AriaRole.Button).First.ClickAsync();
 
-            await Expect(page.GetByRole(AriaRole.Button, new() { Name = "Podeli novost" })).ToBeVisibleAsync();
+            await page.Locator("#tekst").ClickAsync();
 
-            await page.GetByRole(AriaRole.Textbox).First.ClickAsync();
+            await page.Locator("#tekst").PressAsync("Control+a");
 
-            await page.GetByRole(AriaRole.Textbox).First.FillAsync("Novost proba");
+            await page.Locator("#tekst").FillAsync("Edited");
 
-            await page.Locator("input[type=\"date\"]").FillAsync("2024-01-25");
+            await page.GetByLabel("Izmeni novost").Locator("input[type=\"date\"]").FillAsync("2024-01-24");
 
-            await page.GetByRole(AriaRole.Button, new() { Name = "Podeli novost" }).ClickAsync();
+            await page.GetByRole(AriaRole.Button, new() { Name = "Izmeni" }).ClickAsync();
 
-            await Expect(page.GetByText("Novost proba")).ToBeVisibleAsync();
+            await Expect(page.GetByText("Edited")).ToBeVisibleAsync();
+
         }
 
         [TearDown]
@@ -129,3 +152,4 @@ namespace End_to_endTestovi
         }
     }
 }
+
