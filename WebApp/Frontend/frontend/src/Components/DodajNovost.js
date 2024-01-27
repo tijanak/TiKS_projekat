@@ -45,8 +45,14 @@ export default function DodajNovost(state) {
           naziv: "string",
           opis: "string",
           slike: ["string"],
+          korisnik: {
+            id: 0,
+            username: "string",
+            password: "string",
+          },
         },
       };
+      console.log(JSON.stringify(n));
       const requestOptions = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -60,6 +66,7 @@ export default function DodajNovost(state) {
       )
         .then((response) => {
           if (response.ok) return response.json();
+          else response.text().then((t) => console.log(t));
         })
         .then((d) => {
           state.setLoading(!state.loading);

@@ -4,6 +4,7 @@ using Backend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(ProjectContext))]
-    partial class ProjectContextModelSnapshot : ModelSnapshot
+    [Migration("20240127131136_v10")]
+    partial class v10
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -147,7 +150,7 @@ namespace Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<int>("KorisnikID")
+                    b.Property<int?>("KorisnikID")
                         .HasColumnType("int");
 
                     b.Property<int?>("LokacijaId")
@@ -249,7 +252,7 @@ namespace Backend.Migrations
                     b.HasOne("Backend.Models.Korisnik", "Korisnik")
                         .WithMany("Donacije")
                         .HasForeignKey("KorisnikID")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Backend.Models.Slucaj", "Slucaj")
@@ -278,9 +281,7 @@ namespace Backend.Migrations
                 {
                     b.HasOne("Backend.Models.Korisnik", "Korisnik")
                         .WithMany("Slucajevi")
-                        .HasForeignKey("KorisnikID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("KorisnikID");
 
                     b.HasOne("Backend.Models.Lokacija", "Lokacija")
                         .WithOne("Slucaj")

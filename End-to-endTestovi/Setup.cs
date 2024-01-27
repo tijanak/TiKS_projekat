@@ -34,7 +34,20 @@ namespace End_to_endTestovi
                 ExtraHTTPHeaders = headers,
                 IgnoreHTTPSErrors = true
             });
-            await using var response = await Request.DeleteAsync("Korisnik/dodajkorisnika", new() { DataObject = new { username = "admin", password = "admin" } });
+            Dictionary<string, string> headers2 = new()
+        {
+            { "Content-Type", "application/json" }
+        };
+            await using var response = await Request.DeleteAsync("Korisnik/uklonikorisnika/username/admin");
+
+            await using var response2 = await Request.PostAsync("Korisnik/dodajkorisnika", new APIRequestContextOptions() {Headers=headers2,
+                DataObject = new
+                {
+                    Username="admin",
+                    Password="admin",
+                }
+            });
+            var k = await response.TextAsync();
 
             /*string workingDirectory = Environment.CurrentDirectory;
             // or: Directory.GetCurrentDirectory() gives the same result

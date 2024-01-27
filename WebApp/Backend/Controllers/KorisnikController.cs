@@ -132,7 +132,7 @@ public class KorisnikController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return BadRequest(e);
         }
     }
     [HttpDelete("uklonikorisnika/{ID}")]

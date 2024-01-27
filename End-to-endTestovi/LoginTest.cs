@@ -1,4 +1,6 @@
 
+using Microsoft.Playwright;
+
 namespace End_to_endTestovi
 {
 
@@ -8,6 +10,8 @@ namespace End_to_endTestovi
     {
         IPage page;
         IBrowser browser;
+
+        private IAPIRequestContext Request;
         [SetUp]
         public async Task Setup()
         {
@@ -35,6 +39,29 @@ namespace End_to_endTestovi
                     Height = 720
                 },
                 RecordVideoDir = Globals.vidDir,
+            });
+            var headers = new Dictionary<string, string>
+        {
+            { "Accept", "application/json" }
+        };
+            Request = await Playwright.APIRequest.NewContextAsync(new()
+            {
+                BaseURL = "http://localhost:5100",
+                ExtraHTTPHeaders = headers,
+                IgnoreHTTPSErrors = true
+            });
+            Dictionary<string, string> headers2 = new()
+        {
+            { "Content-Type", "application/json" }
+        };
+            await using var response2 = await Request.PostAsync("Korisnik/dodajkorisnika", new APIRequestContextOptions()
+            {
+                Headers = headers2,
+                DataObject = new
+                {
+                    Username = "admin2",
+                    Password = "admin2",
+                }
             });
         }
 

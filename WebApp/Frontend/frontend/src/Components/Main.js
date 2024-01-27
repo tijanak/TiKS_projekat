@@ -62,79 +62,93 @@ function Main() {
           p={editSlucaj}
         />
       )}
-      <Button variant="outlined" onClick={() => navigate("/dodaj_slucaj")}>
+      <Button
+        className="dodaj_slucaj_btn"
+        variant="outlined"
+        onClick={() => navigate("/dodaj_slucaj")}
+      >
         Dodaj slucaj
       </Button>
       <h2>
         Svi slucajevi(<span id="all-posts">{posts.length}</span>):
       </h2>
       {posts && (
-        <><Box sx={{ display: 'flex', flexDirection: 'row-reverse',  justifyContent:'space-around', flexWrap:"wrap"}}>
-          {posts.map((p) => (
-            <Card
-              id={"_" + p.id}
-              className="post-card"
-              key={p.id}
-              sx={{ maxWidth: 345 }}
-            >
-              <CardActions>
-                <Button
-                  size="small"
-                  onClick={() => {
-                    navigate("/doniraj", { state: { id_posta: p.id } });
-                  }}
-                >
-                  Doniraj
-                </Button>
+        <>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row-reverse",
+              justifyContent: "space-around",
+              flexWrap: "wrap",
+            }}
+          >
+            {posts.map((p) => (
+              <Card
+                id={"_" + p.id}
+                className="post-card"
+                key={p.id}
+                sx={{ maxWidth: 345 }}
+              >
+                <CardActions>
+                  <Button
+                    size="small"
+                    onClick={() => {
+                      navigate("/doniraj", { state: { id_posta: p.id } });
+                    }}
+                  >
+                    Doniraj
+                  </Button>
 
-                {/*<Button size="small">Udomi</Button>*/}
-                <DeleteIcon
-                  className="delete-btn"
-                  style={{ cursor: "pointer" }}
-                  onClick={() => {
-                    fetch(`${BACKEND}Slucaj/Delete/${p.id}`, {
-                      method: "DELETE",
-                    }).finally(() => setReload(!reload));
-                  }}
-                ></DeleteIcon>
-                <Fab
-                  onClick={() => {
-                    handleClickOpen(p);
-                  }}
-                  color="secondary"
-                  size="small"
-                  aria-label="edit"
-                >
-                  <EditIcon />
-                </Fab>
-              </CardActions>
-              <CardMedia
-                height="140"
-                alt="stock"
-                image={p.slike.length == 0 ? "imgs/stockphoto.jpg" : p.slike[0]}
-                title="slika"
-                component="img"
-              />
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  {p.naziv}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {p.opis}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button
-                  size="small"
-                  onClick={() => {
-                    navigate("/post", { state: { post: p } });
-                  }}
-                >
-                  Novosti
-                </Button>
-              </CardActions>
-            </Card>
-          ))}
+                  {/*<Button size="small">Udomi</Button>*/}
+                  <DeleteIcon
+                    className="delete-btn"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      fetch(`${BACKEND}Slucaj/Delete/${p.id}`, {
+                        method: "DELETE",
+                      }).finally(() => setReload(!reload));
+                    }}
+                  ></DeleteIcon>
+                  <Fab
+                    onClick={() => {
+                      handleClickOpen(p);
+                    }}
+                    color="secondary"
+                    size="small"
+                    aria-label="edit"
+                  >
+                    <EditIcon />
+                  </Fab>
+                </CardActions>
+                <CardMedia
+                  height="140"
+                  alt="stock"
+                  image={
+                    p.slike.length == 0 ? "imgs/stockphoto.jpg" : p.slike[0]
+                  }
+                  title="slika"
+                  component="img"
+                />
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="div">
+                    {p.naziv}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {p.opis}
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button
+                    size="small"
+                    onClick={() => {
+                      navigate("/post", { state: { post: p } });
+                    }}
+                  >
+                    Novosti
+                  </Button>
+                </CardActions>
+              </Card>
+            ))}
           </Box>
         </>
       )}

@@ -16,7 +16,7 @@ namespace End_to_endTestovi
         {
             browser = await Playwright.Chromium.LaunchAsync(new()
             {
-                //Headless = false,
+                Headless = false,
                 //SlowMo = 500
             });
 
@@ -56,7 +56,7 @@ namespace End_to_endTestovi
             await page.Locator("input[type=\"password\"]").FillAsync("admin");
 
             await page.GetByRole(AriaRole.Button, new() { Name = "Login" }).ClickAsync();
-            await Expect(page.Locator(".post-card").First).ToBeVisibleAsync();
+            await Expect(page.GetByRole(AriaRole.Button, new() { Name = "Dodaj slucaj" })).ToBeVisibleAsync();
 
             var original = await page.Locator(".post-card").CountAsync();
             
@@ -115,7 +115,7 @@ namespace End_to_endTestovi
             await page.GetByRole(AriaRole.Spinbutton).Nth(1).FillAsync("20");
             
             await page.GetByRole(AriaRole.Button, new() { Name = "Dodaj slucaj" }).ClickAsync();
-            await Expect(page.GetByText("novi slucaj").Nth(1)).ToBeVisibleAsync();
+            await Expect(page.GetByText("novi slucaj").First).ToBeVisibleAsync();
             await Expect(page.Locator(".post-card")).ToHaveCountAsync(original + 1);
             await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/NoviSlucajTest1.3.png" });
             

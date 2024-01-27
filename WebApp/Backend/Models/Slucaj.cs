@@ -24,8 +24,7 @@ public class Slucaj
     public Lokacija? Lokacija { get; set; }
     [JsonIgnore]
     public List<Novost> Novosti { get; set; }
-    [JsonIgnore]
-    public Korisnik? Korisnik { get; set; }
+    public Korisnik Korisnik { get; set; } = null!;
     [JsonIgnore]
     public List<Kategorija> Kategorija { get; set; }
     [JsonIgnore]

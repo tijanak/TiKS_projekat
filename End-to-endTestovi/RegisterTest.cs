@@ -90,7 +90,7 @@ namespace End_to_endTestovi
 
             await page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
 
-            await Expect(page.GetByRole(AriaRole.Alert)).ToContainTextAsync("Zauzeto korisnicko ime");
+            await Expect(page.GetByRole(AriaRole.Alert)).ToContainTextAsync("korisnicko ime zauzeto");
             await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/RegisterTest2.png" });
 
         }

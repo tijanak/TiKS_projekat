@@ -487,14 +487,22 @@ export function NoviSlucaj() {
                 setError("Latituda i longituda ne smeju biti prazne");
                 return;
               }
-              let slucaj = { naziv, opis, slike };
+              let slucaj = {
+                id: 0,
+                naziv: naziv,
+                opis: opis,
+                slike: slike,
+                korisnik: {
+                  id: 0,
+                  username: "string",
+                  password: "string",
+                },
+              };
+              console.log(JSON.stringify(slucaj));
               setLoading(true);
               let kategorijeQuery = "";
               kategorije.forEach(
                 (e) => (kategorijeQuery += "&kategorijeIDs=" + e)
-              );
-              console.log(
-                `${BACKEND}Slucaj/Post?idKorisnika=${user.id}${kategorijeQuery}`
               );
               fetch(
                 `${BACKEND}Slucaj/Post?idKorisnika=${user.id}${kategorijeQuery}`,
@@ -510,7 +518,17 @@ export function NoviSlucaj() {
                   if (response.ok) {
                     response.json().then((id) => {
                       console.log(id);
-                      let lokacija = { latitude, longitude, slucaj: {} };
+                      let lokacija = {
+                        latitude,
+                        longitude,
+                        slucaj: {
+                          korisnik: {
+                            id: 0,
+                            username: "string",
+                            password: "string",
+                          },
+                        },
+                      };
                       fetch(`${BACKEND}Lokacija/Post/${id}`, {
                         method: "POST",
                         body: JSON.stringify(lokacija),
@@ -520,7 +538,17 @@ export function NoviSlucaj() {
                       })
                         .then((response2) => {
                           if (response2.ok) {
-                            let zivotinja = { ime, vrsta, slucaj: {} };
+                            let zivotinja = {
+                              ime,
+                              vrsta,
+                              slucaj: {
+                                korisnik: {
+                                  id: 0,
+                                  username: "string",
+                                  password: "string",
+                                },
+                              },
+                            };
                             fetch(
                               `${BACKEND}Zivotinja/dodajzivotinju?idSlucaja=${id}`,
                               {

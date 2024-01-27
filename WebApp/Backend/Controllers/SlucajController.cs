@@ -71,7 +71,6 @@ public class SlucajController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.InnerException.Message);
             return BadRequest(e.Message);
         }
     }

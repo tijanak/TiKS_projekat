@@ -19,6 +19,10 @@ public class ProjectContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<Korisnik>()
+                .HasMany(c => c.Slucajevi)
+                .WithOne(x => x.Korisnik).OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<Korisnik>().HasMany(k => k.Donacije).WithOne(d => d.Korisnik).OnDelete(DeleteBehavior.NoAction);
     }
 
 }
