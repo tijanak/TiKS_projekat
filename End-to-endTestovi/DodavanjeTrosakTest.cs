@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace End_to_endTestovi
 {
-    public class DonacijaDodavanjeTest:PageTest
+    public class DodavanjeTrosakTest : PageTest
     {
 
         private IAPIRequestContext Request;
@@ -20,7 +20,7 @@ namespace End_to_endTestovi
         {
             browser = await Playwright.Chromium.LaunchAsync(new()
             {
-                //Headless = false,
+                Headless = false,
                 //SlowMo = 1000
             });
 
@@ -43,7 +43,7 @@ namespace End_to_endTestovi
                 },
                 RecordVideoDir = Globals.vidDir,
             });
-            
+
             var headers = new Dictionary<string, string>
         {
             { "Accept", "application/json" }
@@ -97,13 +97,28 @@ namespace End_to_endTestovi
         public async Task Test1()
         {
             await page.Locator($"#_{testSlucajId} .donate-btn").ClickAsync();
+            await page.GetByLabel("Namena").ClickAsync();
 
-            await page.Locator(".MuiSlider-rail").First.ClickAsync();
+            await page.GetByLabel("Namena").FillAsync("novi trosak");
+            await page.Locator(".MuiSlider-rail").Nth(1).ClickAsync();
 
-            await page.GetByRole(AriaRole.Button, new() { Name = "Doniraj" }).ClickAsync();
+            await page.GetByRole(AriaRole.Button, new() { Name = "Evidentiraj" }).ClickAsync();
+   
+            await Expect(page.Locator("#root")).ToContainTextAsync("- novi trosak 2700");
+            await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/DodavanjeTrosakTest1.png" });
 
-            await Expect(page.GetByText("+ admin")).ToBeVisibleAsync();
-            await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/DonacijaDodavanjeTest1.png" });
+        }
+        [Test]
+        [Order(2)]
+        public async Task Test2()
+        {
+            await page.Locator($"#_{testSlucajId} .donate-btn").ClickAsync();
+            await page.Locator(".MuiSlider-rail").Nth(1).ClickAsync();
+
+            await page.GetByRole(AriaRole.Button, new() { Name = "Evidentiraj" }).ClickAsync();
+
+            await Expect(page.Locator("#root")).ToContainTextAsync("bez troskova");
+            await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/DodavanjeTrosakTest1.png" });
 
         }
         [TearDown]
