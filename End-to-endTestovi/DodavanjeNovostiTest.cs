@@ -57,7 +57,7 @@ namespace End_to_endTestovi
         {
             { "Content-Type", "application/json" }
         };
-            await using var response2 = await Request.PostAsync("Slucaj/Post?idKorisnika=" + Globals.adminId + "&kategorijeIDs=1", new APIRequestContextOptions()
+            await using var response2 = await Request.PostAsync("Slucaj/Post?idKorisnika=" + Globals.adminId + "&kategorijeIDs=" + Globals.kategorijaId[0], new APIRequestContextOptions()
             {
                 Headers = headers2,
                 DataObject = new
