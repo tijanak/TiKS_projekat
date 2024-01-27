@@ -48,16 +48,75 @@ namespace End_to_endTestovi
                     Password="admin",
                 }
             });
-            var k = await response.JsonAsync();
+            var k = await response2.JsonAsync();
                 if(k.HasValue)
             {
                 var j = k.GetValueOrDefault();
                 
-                   var id= j.GetProperty("id").GetInt32()+1;
+                   var id= j.GetProperty("id").GetInt32();
                 Globals.adminId = id;
                 
             }
-            
+
+            await using var response3 = await Request.PostAsync("Kategorija/Post", new APIRequestContextOptions()
+            {
+                Headers = headers2,
+                DataObject = new
+                {
+                    Tip="test",
+                    Prioritet=10000
+                }
+            });
+            k = await response3.JsonAsync();
+            if (k.HasValue)
+            {
+                var j = k.GetValueOrDefault();
+                int id;
+                try
+                {
+                    if (j.TryGetInt32(out id))
+                        Globals.kategorijaId.Add(id);
+                }
+                catch (Exception e) { }
+            }
+            await using var response4 = await Request.PostAsync("Kategorija/Post", new APIRequestContextOptions()
+            {
+                Headers = headers2,
+                DataObject = new
+                {
+                    Tip = "za lecenje",
+                    Prioritet = 900
+                }
+            });
+            k = await response4.JsonAsync();
+            if (k.HasValue)
+            {
+                var j = k.GetValueOrDefault();
+                int id;
+                if (j.TryGetInt32(out id))
+                    Globals.kategorijaId.Add(id);
+
+            }
+            await using var response5 = await Request.PostAsync("Kategorija/Post", new APIRequestContextOptions()
+            {
+                Headers = headers2,
+                DataObject = new
+                {
+                    Tip = "za udomljavanje",
+                    Prioritet = 800
+                }
+            });
+            k = await response5.JsonAsync();
+            if (k.HasValue)
+            {
+                var j = k.GetValueOrDefault();
+
+                int id;
+                if (j.TryGetInt32(out id))
+                    Globals.kategorijaId.Add(id);
+
+            }
+
             /*string workingDirectory = Environment.CurrentDirectory;
             // or: Directory.GetCurrentDirectory() gives the same result
 
@@ -99,6 +158,14 @@ namespace End_to_endTestovi
         [OneTimeTearDown]
         public async Task RunAfterAnyTests()
         {
+            await using var response = await Request.DeleteAsync("Korisnik/uklonikorisnika/username/admin");
+            foreach(int id in Globals.kategorijaId)
+            {
+                await using var response2 = await Request.DeleteAsync("Kategorija/Delete/" + id);
+
+            }
+            
+
             await Request.DisposeAsync();
             /*try
             {
