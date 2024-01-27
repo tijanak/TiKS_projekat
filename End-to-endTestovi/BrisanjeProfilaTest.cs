@@ -63,7 +63,7 @@ namespace End_to_endTestovi
 
             await page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
 
-            await Expect(page.Locator("#root div").Filter(new() { HasTextRegex = new Regex("^Main$") })).ToBeVisibleAsync();
+            await Expect(page.Locator("#root div").Filter(new() { HasTextRegex = new Regex("^Main$") }).First).ToBeVisibleAsync();
 
             await Expect(page.Locator(".settings")).ToBeVisibleAsync();
 

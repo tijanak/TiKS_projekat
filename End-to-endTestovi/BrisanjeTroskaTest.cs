@@ -78,7 +78,7 @@ namespace End_to_endTestovi
                 testSlucajId = id;
             }
 
-            await using var response3 = await Request.PostAsync("Trosak/dodajtrosak?id_slucaja=" + testSlucajId, new APIRequestContextOptions()
+            await using var response3 = await Request.PostAsync("Trosak/dodajtrosak?idSlucaja=" + testSlucajId, new APIRequestContextOptions()
             {
                 Headers = headers2,
                 DataObject = new
@@ -116,7 +116,8 @@ namespace End_to_endTestovi
         public async Task ObrisiTrosak_test()
         {
             
-            await page.Locator("[id=\"_{testSlucajId}\"]").GetByRole(AriaRole.Button, new() { Name = "Doniraj" }).ClickAsync();
+            await page.Locator($"[id=\"_{testSlucajId}\"]").GetByRole(AriaRole.Button, new() { Name = "Doniraj" }).ClickAsync();
+            await Expect(page.Locator(".troskovi-broj")).ToBeVisibleAsync();
             var br = await page.Locator(".troskovi-broj").CountAsync();
 
             await page.Locator($"#troskovi{testTrosakId}").GetByRole(AriaRole.Button).ClickAsync();
