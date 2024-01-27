@@ -82,7 +82,7 @@ namespace End_to_endTestovi
 
             await page.GetByRole(AriaRole.Button, new() { Name = "Login" }).ClickAsync();
 
-            await Expect(page.Locator("div").Filter(new() { HasText = "LOGOLOGOMain" }).Nth(2)).ToBeVisibleAsync();
+            await Expect(page.Locator("#menu-appbar").First).ToBeVisibleAsync();
             await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/LoginTest1.png" });
         }
         [Test]

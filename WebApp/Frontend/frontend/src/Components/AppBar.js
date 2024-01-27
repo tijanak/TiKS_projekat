@@ -85,7 +85,6 @@ function ResponsiveAppBar() {
               <MenuIcon />
             </IconButton>
             <Menu
-              id="menu-appbar"
               anchorEl={anchorElNav}
               anchorOrigin={{
                 vertical: "bottom",
@@ -149,7 +148,7 @@ function ResponsiveAppBar() {
             ))}
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
+          <Box id="menu-appbar" sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton
                 className="settings"
@@ -161,7 +160,6 @@ function ResponsiveAppBar() {
             </Tooltip>
             <Menu
               sx={{ mt: "45px" }}
-              id="menu-appbar"
               anchorEl={anchorElUser}
               anchorOrigin={{
                 vertical: "top",
