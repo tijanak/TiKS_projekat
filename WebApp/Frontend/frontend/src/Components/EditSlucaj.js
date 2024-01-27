@@ -39,6 +39,7 @@ function EditSlucaj({ p, open, close }) {
   const [sveKategorije, setSveKategorije] = useState([]);
   const [kategorije, setKategorije] = useState([]);
 
+  const [defaultKat, setDefaulKat] = useState([]);
   const [slike, setSlike] = useState([]);
   let user = {};
   useEffect(() => {
@@ -52,6 +53,7 @@ function EditSlucaj({ p, open, close }) {
   }, []);
   useEffect(() => {
     if (p != null) {
+      setKategorije(p.kategorija.map((k) => k.id));
       setSlike(p.slike);
     }
   }, [p]);
@@ -265,7 +267,6 @@ function EditSlucaj({ p, open, close }) {
   const [imgsRemove, setImgsRemove] = useState("");
   const [kategorijeAdd, setKategorijeAdd] = useState("");
   const [kategorijeRemove, setKategorijRemove] = useState("");
-
   let navigate = useNavigate();
   const handleSnackbarClose = () => {
     setSnackbar(false);
@@ -291,7 +292,106 @@ function EditSlucaj({ p, open, close }) {
           <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
             Edit
           </Typography>
-          <Button autoFocus color="inherit" onClick={handleClose}>
+          <Button
+            color="inherit"
+            onClick={() => {
+              console.log(p.id);
+              console.log(naziv);
+              console.log(opis);
+              console.log(slike);
+              console.log(kategorije);
+              let currentCat = p.kategorija.map((k) => k.id);
+              console.log(currentCat);
+              let addedCat = kategorije.filter((v) => !currentCat.includes(v));
+              console.log(addedCat);
+              let removedCat = currentCat.filter(
+                (v) => !kategorije.includes(v)
+              );
+              console.log(removedCat);
+              let currentPics = p.slike;
+              console.log(currentPics);
+              let addedPics = slike.filter((v) => !currentPics.includes(v));
+              console.log(addedPics);
+              let removedPics = currentPics.filter((v) => !slike.includes(v));
+              console.log(removedPics);
+              let parametri = "";
+              if (naziv != null) parametri += "?naziv=" + naziv;
+              if (opis != null) {
+                if (parametri.length > 0) parametri += "&";
+                else parametri += "?";
+                parametri += "opis=" + opis;
+              }
+
+              if (removedCat.length > 0) {
+                removedCat.forEach((v) => {
+                  if (parametri.length > 0) parametri += "&";
+                  else parametri += "?";
+                  parametri += "idRemoveKategorija=" + v;
+                });
+              }
+              if (addedCat.length > 0) {
+                addedCat.forEach((v) => {
+                  if (parametri.length > 0) parametri += "&";
+                  else parametri += "?";
+                  parametri += "idAddKategorija=" + v;
+                });
+              }
+              fetch(`${BACKEND}Slucaj/Update/${p.id}${parametri}`, {
+                method: "PUT",
+              })
+                .then(() => {
+                  if (addedPics.length > 0) {
+                    fetch(`${BACKEND}Slucaj/Update/AddPictures/${p.id}`, {
+                      method: "PUT",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify(addedPics),
+                    })
+                      .then(() => {
+                        if (removedPics.length > 0) {
+                          fetch(
+                            `${BACKEND}Slucaj/Update/RemovePictures/${p.id}`,
+                            {
+                              method: "PUT",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify(removedPics),
+                            }
+                          )
+                            .then(() => {
+                              handleClose();
+                            })
+                            .catch(() => {})
+                            .finally(() => {});
+                        } else handleClose();
+                      })
+                      .catch((e) => {})
+                      .finally(() => {});
+                  } else {
+                    console.log("here");
+                    if (removedPics.length > 0) {
+                      console.log("fetch");
+                      fetch(`${BACKEND}Slucaj/Update/RemovePictures/${p.id}`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(removedPics),
+                      })
+                        .then(() => {
+                          handleClose();
+                        })
+                        .catch((e) => {
+                          console.log(e);
+                        })
+                        .finally(() => {});
+                    } else handleClose();
+                  }
+                })
+                .catch((e) => {
+                  console.log(e);
+                  //setError(e);
+                })
+                .finally(() => {});
+              return;
+            }}
+          >
             sacuvaj
           </Button>
         </Toolbar>
@@ -385,25 +485,14 @@ function EditSlucaj({ p, open, close }) {
           <Button>Dodaj sliku</Button>
         </ImagePicker>
         <FormLabel>Kategorije:</FormLabel>
-        <Button
-          onClick={() => {
-            console.log(sveKategorije);
-            console.log(kategorije);
-            console.log(p.kategorija.map((v) => v.id));
-          }}
-        >
-          test
-        </Button>
+
         <Box>
           <MultiSelect
             value={kategorije}
             onChange={(event, n) => {
               setKategorije(n);
             }}
-            defaultValue={() => {
-              if (p != null) p.kategorija.map((v) => v.id);
-              else return [];
-            }}
+            defaultValue={defaultKat}
           >
             {sveKategorije.map((k) => (
               <Option key={k.id} value={k.id}>
