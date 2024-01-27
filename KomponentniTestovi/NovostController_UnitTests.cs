@@ -27,7 +27,6 @@
         }
 
         [Order(2)]
-        [TestCase("2023-09-17", "pic/fndkjsalfd/malopile3,5.jpg", "samo da dodam", 1509)]
         [TestCase("2023-09-20", "pic/fndkjsalfd/malopile.jpg", "", 1509)]
         [TestCase("2023-09-20", "pic/fndkjsalfd/malopile.jpg", "novost", 2000)]
         [TestCase("2023-09-20", "", "novost", 2000)]

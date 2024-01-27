@@ -96,9 +96,9 @@ namespace KomponentniTestovi
 
         [TestCase(500)]
         [Order(8)]
-        public void PreuzmiKorisnika_Ok(int id)
+        public async Task PreuzmiKorisnika_Ok(int id)
         {
-            var actionresult = controller.PreuzmiKorisnika(id);
+            var actionresult = await controller.PreuzmiKorisnika(id);
             Assert.IsInstanceOf<OkObjectResult>(actionresult);
         }
 

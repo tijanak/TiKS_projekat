@@ -208,7 +208,7 @@ namespace KomponentniTestovi
         {
             var result = await controller.PreuzmiSveSlucajeve();
             Assert.IsInstanceOf<OkObjectResult> (result);
-            var list = (result as OkObjectResult).Value as List<Slucaj>;
+            var list = ((result as OkObjectResult).Value as IEnumerable<object>).Cast<object>().ToList();
             Assert.IsNotNull(list);
             Assert.AreEqual(list.Count, controller.Context.Slucajevi.Count());
         }

@@ -97,7 +97,7 @@ public class KorisnikController : ControllerBase
             if (null != username)
             {
                 if (username.Length < 1 || username.Length > 50) return BadRequest("username mora biti izmedju 1 i 50 karaktera");
-                var vec_postoji_korisnik_sa_username = Context.Korisnici.Where(k => k.Username!.CompareTo(username) == 0).FirstOrDefault();
+                var vec_postoji_korisnik_sa_username = Context.Korisnici.Where(k => username.CompareTo(k.Username) == 0).FirstOrDefault();
                 if (vec_postoji_korisnik_sa_username != null) return BadRequest("korisnicko ime zauzeto");
                 stari_korisnik.Username = username;
             }
