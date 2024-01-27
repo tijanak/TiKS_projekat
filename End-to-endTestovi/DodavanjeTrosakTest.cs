@@ -20,7 +20,7 @@ namespace End_to_endTestovi
         {
             browser = await Playwright.Chromium.LaunchAsync(new()
             {
-                Headless = false,
+                //Headless = false,
                 //SlowMo = 1000
             });
 
