@@ -121,7 +121,7 @@ public class TrosakController : ControllerBase
             }
             Context.Troskovi.Remove(t);
             await Context.SaveChangesAsync();
-            return Ok(t);
+            return Ok(t.ID);
         }
         catch(Exception e){
             return BadRequest(e);

@@ -2,17 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace End_to_endTestovi
 {
     [TestFixture]
-    internal class BrisanjeNovostiTest : PageTest
+    internal class BrisanjeTroskaTest : PageTest
     {
         IPage page;
         IBrowser browser;
         int testSlucajId = 0;
-        int testNovostId = 0;
+        int testTrosakId = 0;
         private IAPIRequestContext Request;
         [SetUp]
         public async Task Setup()
@@ -77,15 +78,14 @@ namespace End_to_endTestovi
                 testSlucajId = id;
             }
 
-            await using var response3 = await Request.PostAsync("Novost/dodajnovost?id_slucaja=" + testSlucajId, new APIRequestContextOptions()
+            await using var response3 = await Request.PostAsync("Trosak/dodajtrosak?id_slucaja=" + testSlucajId, new APIRequestContextOptions()
             {
                 Headers = headers2,
                 DataObject = new
                 {
-                    Tekst = "Test Edit Novost",
-                    Slika = "imgs/stockphoto.jpg",
-                    Slucaj = new { Korisnik = new { } },
-                    Datum = new DateTime()
+                    namena = "Test Dodat Trosak",
+                    kolicina = 5000,
+                    slucaj = new { Korisnik = new { } }
                 }
             });
             k = await response3.JsonAsync();
@@ -93,8 +93,8 @@ namespace End_to_endTestovi
             {
                 var j = k.GetValueOrDefault();
 
-                var id = j.GetInt32();
-                testNovostId = id;
+                var id = j.GetProperty("id").GetInt32();
+                testTrosakId = id;
             }
 
 
@@ -113,13 +113,15 @@ namespace End_to_endTestovi
         }
 
         [Test]
-        public async Task ObrisiNovost_Test()
+        public async Task ObrisiTrosak_test()
         {
+            
+            await page.Locator("[id=\"_{testSlucajId}\"]").GetByRole(AriaRole.Button, new() { Name = "Doniraj" }).ClickAsync();
+            var br = await page.Locator(".troskovi-broj").CountAsync();
 
-            await page.Locator($"#_{testSlucajId} .novosti-btn").ClickAsync();
-
-            await page.Locator($"#novosti{testNovostId}").GetByRole(AriaRole.Button).Nth(1).ClickAsync();
-
+            await page.Locator($"#troskovi{testTrosakId}").GetByRole(AriaRole.Button).ClickAsync();
+            
+            await Expect(page.Locator(".troskovi-broj")).ToHaveCountAsync(br-1);
         }
 
         [TearDown]
@@ -137,6 +139,7 @@ namespace End_to_endTestovi
             await Page.CloseAsync();
             await browser.DisposeAsync();
         }
-        
+
     }
 }
+

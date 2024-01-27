@@ -269,12 +269,12 @@ export default function Doniraj(state) {
             }}
           >
             {(troskovi && troskovi.length > 0 && (
-              <Box>
+              <Box id="troskovi">
                 <Typography variant="subtitle2" color="darkred">
                   Troskovi
                 </Typography>
                 {troskovi.map((t) => (
-                  <>
+                  <Box key={t.id} id={"troskovi"+t.id} class="troskovi-broj">
                     <Typography>
                       - {t.namena} {t.kolicina}
                     </Typography>
@@ -283,7 +283,7 @@ export default function Doniraj(state) {
                         <ClearIcon />
                       </Button>
                     )}
-                  </>
+                  </Box>
                 ))}
               </Box>
             )) || <>bez troskova</>}
