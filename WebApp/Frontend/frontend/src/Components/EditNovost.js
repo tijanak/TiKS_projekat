@@ -15,7 +15,7 @@ export default function EditNovost(props){
     const [e, setE] = useState(false);
     const [e2, setE2] = useState(false);
     const maxdatum = new Date().toISOString().substring(0, 10);
-    
+   
     const toogleDialog=()=>{
         setShowDialog(!showDialog);
     }

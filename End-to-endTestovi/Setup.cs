@@ -100,6 +100,7 @@ namespace End_to_endTestovi
                 }
                 catch (Exception e) { }
 
+
             }
             await using var response5 = await Request.PostAsync("Kategorija/Post", new APIRequestContextOptions()
             {
