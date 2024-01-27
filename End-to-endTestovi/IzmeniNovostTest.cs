@@ -114,7 +114,8 @@ namespace End_to_endTestovi
 
 
         [Test]
-        public async Task Test()
+        [Order(2)]
+        public async Task IzmeniNovost_test()
         {
 
             await page.Locator($"#_{testSlucajId} .novosti-btn").ClickAsync();
@@ -132,6 +133,27 @@ namespace End_to_endTestovi
             await page.GetByRole(AriaRole.Button, new() { Name = "Izmeni" }).ClickAsync();
 
             await Expect(page.GetByText("Edited")).ToBeVisibleAsync();
+
+        }
+
+        [Test]
+        [Order(1)]
+        public async Task OdustaniOdPromeneNovosti_test()
+        {
+
+            await page.Locator($"#_{testSlucajId} .novosti-btn").ClickAsync();
+
+            await page.Locator($"#novosti{testNovostId}").GetByRole(AriaRole.Button).First.ClickAsync();
+
+            await page.Locator("#tekst").ClickAsync();
+
+            await page.Locator("#tekst").PressAsync("Control+a");
+
+            await page.Locator("#tekst").FillAsync("Odustacu od ovog");
+
+            await page.GetByRole(AriaRole.Button, new() { Name = "Izmeni" }).ClickAsync();
+
+            await Expect(page.GetByText("Test Edit Novost")).ToBeVisibleAsync();
 
         }
 
