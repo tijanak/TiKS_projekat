@@ -39,13 +39,6 @@ namespace End_to_endTestovi
                 },
                 RecordVideoDir = Globals.vidDir,
             });
-        }
-
-        [Test]
-        [Order(1)]
-        public async Task Test1()
-        {
-
             await page.GotoAsync("http://127.0.0.1:4000/");
             await page.Locator("input[type=\"text\"]").ClickAsync();
 
@@ -56,6 +49,14 @@ namespace End_to_endTestovi
             await page.Locator("input[type=\"password\"]").FillAsync("admin");
 
             await page.GetByRole(AriaRole.Button, new() { Name = "Login" }).ClickAsync();
+
+        }
+
+        [Test]
+        [Order(1)]
+        public async Task Test1()
+        {
+
             await Expect(page.GetByRole(AriaRole.Button, new() { Name = "Dodaj slucaj" })).ToBeVisibleAsync();
 
             var original = await page.Locator(".post-card").CountAsync();
@@ -120,12 +121,6 @@ namespace End_to_endTestovi
             await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/NoviSlucajTest1.3.png" });
             
 
-
-        }
-        [Test]
-        [Order(2)]
-        public async Task Test2()
-        {
 
         }
         [TearDown]

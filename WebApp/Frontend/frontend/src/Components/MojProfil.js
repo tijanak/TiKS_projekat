@@ -158,6 +158,7 @@ export default function MojProfil() {
           <h1>MOJ PROFIL</h1>
           <h2>{korisnik.username}</h2>
           <Fab
+            className="edit_profile"
             onClick={() => {
               setOpen(true);
             }}
