@@ -91,6 +91,7 @@ function Main() {
               >
                 <CardActions>
                   <Button
+                    className="donate-btn"
                     size="small"
                     onClick={() => {
                       navigate("/doniraj", { state: { id_posta: p.id } });
@@ -130,16 +131,25 @@ function Main() {
                   component="img"
                 />
                 <CardContent>
-                  <Typography gutterBottom variant="h5" component="div">
+                  <Typography
+                    className="naziv"
+                    gutterBottom
+                    variant="h5"
+                    component="div"
+                  >
                     {p.naziv}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography
+                    className="opis"
+                    variant="body2"
+                    color="text.secondary"
+                  >
                     {p.opis}
                   </Typography>
                 </CardContent>
                 <CardActions>
                   <Button
-                  class="novosti-btn"
+                    class="novosti-btn"
                     size="small"
                     onClick={() => {
                       navigate("/post", { state: { post: p } });
