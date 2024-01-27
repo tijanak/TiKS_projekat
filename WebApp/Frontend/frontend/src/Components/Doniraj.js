@@ -3,6 +3,7 @@ import { TextField, Paper, Box, Button, Typography, Card, CardActions, CardConte
 import BACKEND from "../config";
 import { useLocation } from "react-router-dom";
 import {useAuth} from "../App";
+import ClearIcon from '@mui/icons-material/Clear';
 export default function Doniraj(state){
     const [post, setPost] = useState(null);
     const [vlasnikPosta, setVlasnikPosta] = useState(null);
@@ -130,6 +131,10 @@ export default function Doniraj(state){
             .catch(error => console.log(error));
     },[post, loadingTrosak]);
 
+    const obrisiDonaciju = async function (id){fetch(`${BACKEND}Donacija/Delete/${id}`, {method:"DELETE"})
+    .then(response=>{if(response.ok) {setLoading(!loading);return response.json()}})
+    .catch(e=>console.log(e));};
+
     useEffect(()=>{
       fetch(`${BACKEND}Donacija/preuzmidonacije/${post}`, {
           method: "GET",
@@ -181,9 +186,10 @@ export default function Doniraj(state){
         
         <Typography variant="subtitle2" color="green">Donacije</Typography>
         {donacije.map(t=>(
-            <>
+            <Box sx={{ display: 'flex', flexDirection: 'row'}}>
             <Typography>+ {t.korisnik.username} {t.kolicina}</Typography>
-            </>))}
+            {t.korisnik.id==user.id&&<Button onClick={()=>obrisiDonaciju(t.id)}><ClearIcon /></Button>}
+            </Box>))}
 
     </Box>)||<>bez donacija</>}
     </Box>
