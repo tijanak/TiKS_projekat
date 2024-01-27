@@ -41,14 +41,10 @@ export function Novosti(state) {
       <CardContent>
       <CardActions>
         <ButtonGroup>
-        <IconButton >
-        <EditNovost novost={n}/>
-        <Edit/>
-        </IconButton> 
+          <EditNovost novost={n} setLoading={state.setLoading} loading={state.loading}/>
           <IconButton onClick={()=>obrisi(n.id)}>
-            
-            <Delete />
-            </IconButton> 
+          <Delete />
+          </IconButton> 
         </ButtonGroup>
       </CardActions>
       <Typography gutterBottom variant="body2" color="text.secondary" component="div">
