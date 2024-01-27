@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Playwright;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +19,7 @@ namespace End_to_endTestovi
         {
             browser = await Playwright.Chromium.LaunchAsync(new()
             {
-                Headless = false,
+                //Headless = false,
                 //SlowMo = 1000
             });
 
@@ -51,9 +52,7 @@ namespace End_to_endTestovi
                 ExtraHTTPHeaders = headers,
                 IgnoreHTTPSErrors = true
             });
-            await page.GotoAsync("http://127.0.0.1:4000/");
-            await page.GetByRole(AriaRole.Button, new() { Name = "Register" }).ClickAsync();
-
+      
             await page.GotoAsync("http://127.0.0.1:4000/");
             await page.Locator("input[type=\"text\"]").ClickAsync();
 
@@ -138,15 +137,21 @@ namespace End_to_endTestovi
             await page.GetByLabel("Username *").FillAsync("testUser");
 
 
-            await Page.GetByRole(AriaRole.Button, new() { Name = "Odustani" }).ClickAsync();
-            await Expect(page.Locator(".username_label")).ToContainTextAsync("noviUsername");
+            await page.GetByRole(AriaRole.Button, new() { Name = "Odustani" }).ClickAsync();
+            await Expect(page.Locator(".username_label")).ToContainTextAsync("admin");
             await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/IzmenaProfilaTest3.png" });
 
         }
         [TearDown]
         public async Task Teardown()
         {
-            
+            await using var response2 = await Request.PutAsync("Korisnik/izmeniusernamepassword",new APIRequestContextOptions()
+            {
+                Params = new Dictionary<string, object>
+            {
+                { "id_korisnika",Globals.adminId },{"username","admin" },{"password","admin"} 
+            },
+            });
             await page.CloseAsync();
             await browser.DisposeAsync();
         }

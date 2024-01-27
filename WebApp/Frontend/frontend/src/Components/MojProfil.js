@@ -156,7 +156,7 @@ export default function MojProfil() {
             </DialogActions>
           </Dialog>
           <h1>MOJ PROFIL</h1>
-          <h2>{korisnik.username}</h2>
+          <h2 className="username_label">{korisnik.username}</h2>
           <Fab
             className="edit_profile"
             onClick={() => {
