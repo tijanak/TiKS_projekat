@@ -17,7 +17,7 @@ namespace End_to_endTestovi
             browser = await Playwright.Chromium.LaunchAsync(new()
             {
                 //Headless = false,
-                //SlowMo = 500
+                SlowMo = 500
             });
 
             page = await browser.NewPageAsync(new()
