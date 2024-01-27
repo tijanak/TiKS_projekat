@@ -57,14 +57,14 @@ export function Post() {
         {post&&<Zivotinja id_posta={post.id} />}
       </Card>
       
-        <Card variant="" >
+        <Box >
       <Typography variant="subtitle2" component="div">
             NOVOSTI
       </Typography>
-      { post && <Novosti novost={post.id} loading={loading} setLoading={setLoading}></Novosti>} </Card>
-      <Card>
+      { post && <Novosti novost={post.id} loading={loading} setLoading={setLoading}></Novosti>} </Box>
+      <Box>
       <DodajNovost id_slucaja={post.id} loading={loading} setLoading={setLoading}/>
-      </Card>
+      </Box>
       </Box>
       )) || <>ne ucitava post</>}
     </>

@@ -21,7 +21,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import Slide from "@mui/material/Slide";
 import EditIcon from "@mui/icons-material/Edit";
 import Fab from "@mui/material/Fab";
-import { AppBar } from "@mui/material";
+import { AppBar, Box } from "@mui/material";
 import EditSlucaj from "./EditSlucaj";
 function Main() {
   const [posts, setPosts] = useState([]);
@@ -69,7 +69,7 @@ function Main() {
         Svi slucajevi(<span id="all-posts">{posts.length}</span>):
       </h2>
       {posts && (
-        <>
+        <><Box sx={{ display: 'flex', flexDirection: 'row-reverse',  justifyContent:'space-around', flexWrap:"wrap"}}>
           {posts.map((p) => (
             <Card
               id={"_" + p.id}
@@ -135,6 +135,7 @@ function Main() {
               </CardActions>
             </Card>
           ))}
+          </Box>
         </>
       )}
     </Container>
