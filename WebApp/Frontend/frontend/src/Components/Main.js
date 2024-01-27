@@ -139,6 +139,7 @@ function Main() {
                 </CardContent>
                 <CardActions>
                   <Button
+                  class="novosti-btn"
                     size="small"
                     onClick={() => {
                       navigate("/post", { state: { post: p } });

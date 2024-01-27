@@ -93,8 +93,13 @@ namespace End_to_endTestovi
             {
                 var j = k.GetValueOrDefault();
                 int id;
-                if (j.TryGetInt32(out id))
-                    Globals.kategorijaId.Add(id);
+                try
+                {
+                    if (j.TryGetInt32(out id))
+                        Globals.kategorijaId.Add(id);
+                }
+                catch (Exception e) { }
+
 
             }
             await using var response5 = await Request.PostAsync("Kategorija/Post", new APIRequestContextOptions()
@@ -112,8 +117,12 @@ namespace End_to_endTestovi
                 var j = k.GetValueOrDefault();
 
                 int id;
-                if (j.TryGetInt32(out id))
-                    Globals.kategorijaId.Add(id);
+                try
+                {
+                    if (j.TryGetInt32(out id))
+                        Globals.kategorijaId.Add(id);
+                }
+                catch (Exception e) { }
 
             }
 
