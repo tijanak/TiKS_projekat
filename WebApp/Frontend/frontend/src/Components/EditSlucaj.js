@@ -295,25 +295,20 @@ function EditSlucaj({ p, open, close }) {
           <Button
             color="inherit"
             onClick={() => {
-              console.log(p.id);
-              console.log(naziv);
-              console.log(opis);
-              console.log(slike);
-              console.log(kategorije);
+              console.log(ime);
+              console.log(p.lokacija.id);
+              console.log(p.zivotinja.id);
+              console.log(vrsta);
+              console.log(latitude);
+              console.log(longitude);
               let currentCat = p.kategorija.map((k) => k.id);
-              console.log(currentCat);
               let addedCat = kategorije.filter((v) => !currentCat.includes(v));
-              console.log(addedCat);
               let removedCat = currentCat.filter(
                 (v) => !kategorije.includes(v)
               );
-              console.log(removedCat);
               let currentPics = p.slike;
-              console.log(currentPics);
               let addedPics = slike.filter((v) => !currentPics.includes(v));
-              console.log(addedPics);
               let removedPics = currentPics.filter((v) => !slike.includes(v));
-              console.log(removedPics);
               let parametri = "";
               if (naziv != null) parametri += "?naziv=" + naziv;
               if (opis != null) {
@@ -336,60 +331,64 @@ function EditSlucaj({ p, open, close }) {
                   parametri += "idAddKategorija=" + v;
                 });
               }
-              fetch(`${BACKEND}Slucaj/Update/${p.id}${parametri}`, {
-                method: "PUT",
-              })
+              let fetches = [];
+              fetches.push({
+                url: `${BACKEND}Slucaj/Update/${p.id}${parametri}`,
+                options: {
+                  method: "PUT",
+                },
+              });
+              if (addedPics.length > 0) {
+                fetches.push({
+                  url: `${BACKEND}Slucaj/Update/AddPictures/${p.id}`,
+                  options: {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(addedPics),
+                  },
+                });
+              }
+              if (removedPics.length > 0) {
+                fetches.push({
+                  url: `${BACKEND}Slucaj/Update/RemovePictures/${p.id}`,
+                  options: {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(removedPics),
+                  },
+                });
+              }
+              if (latitude != null || longitude != null) {
+                parametri = "";
+                if (latitude != null) parametri += "?latitude=" + latitude;
+                if (longitude != null)
+                  if (parametri.length == 0)
+                    parametri += "?longitude=" + longitude;
+                  else parametri += "&longitude=" + longitude;
+                fetches.push({
+                  url: `${BACKEND}Lokacija/Update/${p.lokacija.id}${parametri}`,
+                  options: {
+                    method: "PUT",
+                  },
+                });
+              }
+              if (ime != null || vrsta != null) {
+                parametri = "?id_zivotinje=" + p.zivotinja.id;
+                if (vrsta != null) parametri += "&vrsta=" + vrsta;
+                if (ime != null) parametri += "&ime=" + ime;
+                fetches.push({
+                  url: `${BACKEND}Zivotinja/izmenizivotinju/${parametri}`,
+                  options: {
+                    method: "PUT",
+                  },
+                });
+              }
+              Promise.all(fetches.map((f) => fetch(f.url, f.options)))
                 .then(() => {
-                  if (addedPics.length > 0) {
-                    fetch(`${BACKEND}Slucaj/Update/AddPictures/${p.id}`, {
-                      method: "PUT",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify(addedPics),
-                    })
-                      .then(() => {
-                        if (removedPics.length > 0) {
-                          fetch(
-                            `${BACKEND}Slucaj/Update/RemovePictures/${p.id}`,
-                            {
-                              method: "PUT",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify(removedPics),
-                            }
-                          )
-                            .then(() => {
-                              handleClose();
-                            })
-                            .catch(() => {})
-                            .finally(() => {});
-                        } else handleClose();
-                      })
-                      .catch((e) => {})
-                      .finally(() => {});
-                  } else {
-                    console.log("here");
-                    if (removedPics.length > 0) {
-                      console.log("fetch");
-                      fetch(`${BACKEND}Slucaj/Update/RemovePictures/${p.id}`, {
-                        method: "PUT",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(removedPics),
-                      })
-                        .then(() => {
-                          handleClose();
-                        })
-                        .catch((e) => {
-                          console.log(e);
-                        })
-                        .finally(() => {});
-                    } else handleClose();
-                  }
+                  handleClose();
                 })
-                .catch((e) => {
-                  console.log(e);
-                  //setError(e);
-                })
+                .catch((e) => {})
                 .finally(() => {});
-              return;
             }}
           >
             sacuvaj
