@@ -89,7 +89,7 @@ public class NovostController : ControllerBase
             
             await Context.Novosti.AddAsync(n);
             await Context.SaveChangesAsync();
-            return Ok(n);
+            return Ok(n.ID);
         }
         catch (Exception e)
         {

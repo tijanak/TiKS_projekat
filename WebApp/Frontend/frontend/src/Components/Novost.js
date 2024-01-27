@@ -37,7 +37,7 @@ export function Novosti(state) {
     <>
       
       {novosti&&novosti.length>0&&novosti.map(n=>(
-      <Card variant="outlined" key={n.id}>
+      <Card variant="outlined" key={n.id} id={"novosti"+n.id}>
       <CardContent>
       <CardActions>
         <ButtonGroup>
