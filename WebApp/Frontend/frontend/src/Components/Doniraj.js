@@ -1,219 +1,314 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Paper, Box, Button, Typography, Card, CardActions, CardContent, FormControl, Slider } from "@mui/material";
+import {
+  TextField,
+  Paper,
+  Box,
+  Button,
+  Typography,
+  Card,
+  CardActions,
+  CardContent,
+  FormControl,
+  Slider,
+} from "@mui/material";
 import BACKEND from "../config";
 import { useLocation } from "react-router-dom";
-import {useAuth} from "../App";
-import ClearIcon from '@mui/icons-material/Clear';
-export default function Doniraj(state){
-    const [post, setPost] = useState(null);
-    const [vlasnikPosta, setVlasnikPosta] = useState(null);
-    const [donacije, setDonacije] = useState(null);
-    const [troskovi, setTroskovi] = useState(null);
-    const [bilans, setBilans] = useState(0);
-    const [suma, setSuma] = useState(200);
-    const [trosak, setTrosak] = useState(200);
-    const [loading, setLoading] =useState(false);
-    const[trosakTekst, setTrosakTekst ]= useState("");
-    const[loadingTrosak, setLoadingTrosak] = useState(false);
-    const[bojabilans,setBojaBilans]=useState('black');
-    const[mojslucaj, setMojslucaj] = useState(false);
-    let auth = useAuth();
-    let user =  auth.user;
-    
-    const DonirajPare = async ()=>{
-      const donacija = {
-        "id": 0,
-        "kolicina": suma,
-        "slucaj": {
-          "id": 0,
-          "naziv": "string",
-          "opis": "string",
-          "slike": [
-            "string"
-          ]
+import { useAuth } from "../App";
+import ClearIcon from "@mui/icons-material/Clear";
+export default function Doniraj(state) {
+  const [post, setPost] = useState(null);
+  const [vlasnikPosta, setVlasnikPosta] = useState(null);
+  const [donacije, setDonacije] = useState(null);
+  const [troskovi, setTroskovi] = useState(null);
+  const [bilans, setBilans] = useState(0);
+  const [suma, setSuma] = useState(200);
+  const [trosak, setTrosak] = useState(200);
+  const [loading, setLoading] = useState(false);
+  const [trosakTekst, setTrosakTekst] = useState("");
+  const [loadingTrosak, setLoadingTrosak] = useState(false);
+  const [bojabilans, setBojaBilans] = useState("black");
+  const [mojslucaj, setMojslucaj] = useState(false);
+  let auth = useAuth();
+  let user = auth.user;
+
+  const DonirajPare = async () => {
+    const donacija = {
+      id: 0,
+      kolicina: suma,
+      slucaj: {
+        id: 0,
+        naziv: "string",
+        opis: "string",
+        slike: ["string"],
+        korisnik: {
+          id: 0,
+          username: "string",
+          password: "string",
         },
-        "korisnik": {
-          "id": 0,
-          "username": "string",
-          "password": "string",
-          "slucajevi": [
-            {
-              "id": 0,
-              "naziv": "string",
-              "opis": "string",
-              "slike": [
-                "string"
-              ]
-            }
-          ],
-          "donacije": [
-            "string"
-          ]
-        }
-      };
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(donacija)
-      };
-        fetch(`${BACKEND}Donacija/Post/${user.id}/${post}`, requestOptions)
-        .then(response=>{if(response.ok) return response.json()})
-        .then(d=>{console.log(d); setLoading(!loading)})
-        .catch(e=>console.log(e));
-
+      },
+      korisnik: {
+        id: 0,
+        username: "string",
+        password: "string",
+      },
     };
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(donacija),
+    };
+    fetch(`${BACKEND}Donacija/Post/${user.id}/${post}`, requestOptions)
+      .then((response) => {
+        if (response.ok) return response.json();
+        else return response.text();
+      })
+      .then((d) => {
+        console.log(d);
+        setLoading(!loading);
+      })
+      .catch((e) => console.log(e));
+  };
 
-    const menjajSumu = (e)=>{
+  const menjajSumu = (e) => {
+    setSuma(e.target.value);
+  };
 
-      setSuma(e.target.value);
-    }
+  const EvidentirajTrosak = async () => {
+    const t = {
+      id: 0,
+      namena: trosakTekst,
+      kolicina: trosak,
+      slucaj: {
+        id: 0,
+        naziv: "string",
+        opis: "string",
+        slike: [],
+        korisnik: {
+          id: 0,
+          username: "string",
+          password: "string",
+        },
+      },
+    };
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(t),
+    };
+    fetch(`${BACKEND}Trosak/dodajtrosak?idSlucaja=${post}`, requestOptions)
+      .then((response) => {
+        if (response.ok) return response.json();
+        else return response.text();
+      })
+      .then((d) => {
+        console.log(d);
+        setLoadingTrosak(!loadingTrosak);
+      })
+      .catch((e) => console.log(e));
+  };
+  const handlesetText = (e) => {
+    setTrosakTekst(e.target.value);
+  };
+  const menjajTrosak = (e) => {
+    setTrosak(e.target.value);
+  };
+  useEffect(() => {
+    var s = 0;
 
-    const EvidentirajTrosak = async ()=>{
-      const t = {
-        "id": 0,
-        "namena": trosakTekst,
-        "kolicina": trosak,
-        "slucaj": {
-          "id": 0,
-          "naziv": "string",
-          "opis": "string",
-          "slike": [
-            "string"
-          ]
+    if (troskovi && troskovi.length > 0) troskovi.map((t) => (s -= t.kolicina));
+    // console.log(`bilans je ${s}`);
+    if (donacije && donacije.length > 0) donacije.map((d) => (s += d.kolicina));
+    if (s > 0) setBojaBilans("green");
+    else if (s < 0) setBojaBilans("darkred");
+    else setBojaBilans("black");
+    setBilans(s);
+  }, [donacije, troskovi]);
+
+  useEffect(() => {
+    fetch(`${BACKEND}Korisnik/preuzmikorisnika/${user.id}`, { method: "GET" })
+      .then((response) => response.json())
+      .then((data) => {
+        let mojslucaj_tmp = false;
+
+        let tmp = data.slucajevi.map((m) => m.id);
+        for (let index = 0; index < tmp.length; index++) {
+          if (tmp[index] == post) {
+            mojslucaj_tmp = true;
+            break;
+          }
         }
-      };
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(t)
-      };
-        fetch(`${BACKEND}Trosak/dodajtrosak?idSlucaja=${post}`, requestOptions)
-        .then(response=>{if(response.ok) return response.json()})
-        .then(d=>{console.log(d); setLoadingTrosak(!loadingTrosak)})
-        .catch(e=>console.log(e));
+        setMojslucaj(mojslucaj_tmp);
+      });
+  }, [post]);
 
+  const location = useLocation();
+  useEffect(() => {
+    setPost(location.state.id_posta);
+    setVlasnikPosta(location.state.id_vlasnika);
+  }, []);
 
-    }
-    const handlesetText = (e)=>{
-      setTrosakTekst(e.target.value);
-    }
-    const menjajTrosak=(e)=>{
-      setTrosak(e.target.value);
-    }
-    useEffect(()=>{
-        var s=0;
-        
-        if(troskovi&&troskovi.length>0)
-            troskovi.map(t=>s-=t.kolicina);
-        // console.log(`bilans je ${s}`);
-        if(donacije&&donacije.length>0)
-            donacije.map(d=>s+=d.kolicina);
-        if(s>0) setBojaBilans('green');
-        else if(s<0) setBojaBilans('darkred');
-        else setBojaBilans('black');
-        setBilans(s);
-    },[donacije,troskovi]);
+  useEffect(() => {
+    fetch(`${BACKEND}Trosak/preuzmitroskove/${post}`, {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setTroskovi(data);
+      })
+      .catch((error) => console.log(error));
+  }, [post, loadingTrosak]);
 
-    useEffect(()=>{
-      fetch(`${BACKEND}Korisnik/preuzmikorisnika/${user.id}`,{method:"GET"})
-      .then(response => response.json())
-      .then(data => {
-              let mojslucaj_tmp=false;
-              
-              let tmp = data.slucajevi.map(m=>m.id);
-              for (let index = 0; index < tmp.length; index++) {
-                if(tmp[index]==post) {
-                  mojslucaj_tmp=true;
-                  break}
-              }
-              setMojslucaj(mojslucaj_tmp);});
-    },[post])
+  const obrisiDonaciju = async function (id) {
+    fetch(`${BACKEND}Donacija/Delete/${id}`, { method: "DELETE" })
+      .then((response) => {
+        if (response.ok) {
+          setLoading(!loading);
+          return response.json();
+        }
+      })
+      .catch((e) => console.log(e));
+  };
 
-    const location = useLocation();
-    useEffect(() => {
-      setPost(location.state.id_posta);
-      setVlasnikPosta(location.state.id_vlasnika);
-    }, []);
+  const obrisiTrosak = async function (id) {
+    console.log(id);
+    fetch(`${BACKEND}Trosak/obrisi?id=${id}`, { method: "DELETE" })
+      .then((response) => {
+        if (response.ok) {
+          setLoadingTrosak(!loadingTrosak);
+          return response.json();
+        }
+      })
+      .catch((e) => console.log(e));
+  };
 
-    useEffect(()=>{
-              fetch(`${BACKEND}Trosak/preuzmitroskove/${post}`, {
-            method: "GET",
-          })
-            .then(response => response.json())
-            .then(data => {
-              setTroskovi(data);
-            })
-            .catch(error => console.log(error));
-    },[post, loadingTrosak]);
+  useEffect(() => {
+    fetch(`${BACKEND}Donacija/preuzmidonacije/${post}`, {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setDonacije(data);
+      })
+      .catch((error) => console.log(error));
+  }, [post, loading]);
 
-    const obrisiDonaciju = async function (id){fetch(`${BACKEND}Donacija/Delete/${id}`, {method:"DELETE"})
-    .then(response=>{if(response.ok) {setLoading(!loading);return response.json()}})
-    .catch(e=>console.log(e));};
-
-    const obrisiTrosak = async function(id){console.log(id);fetch(`${BACKEND}Trosak/obrisi?id=${id}`, {method:"DELETE"})
-    .then(response=>{if(response.ok) {setLoadingTrosak(!loadingTrosak);return response.json()}})
-    .catch(e=>console.log(e));};
-
-    useEffect(()=>{
-      fetch(`${BACKEND}Donacija/preuzmidonacije/${post}`, {
-          method: "GET",
-        })
-          .then(response => response.json())
-          .then(data => {
-            setDonacije(data);
-          })
-          .catch(error => console.log(error));
-    },[post, loading]);
-
-    
-    return (<>
-    <Box sx={{ display: 'flex', flexDirection: 'row',  justifyContent:'space-around', flexWrap:"wrap"}}>
-    <Box sx={{ display: 'flex', flexDirection: 'column'}}>
-    <FormControl>
-    <Typography variant="subtitle2" component="div">
-            Doniraj
-          </Typography>
-          
-          <Slider defaultValue={200} value ={suma} aria-label="slider"  onChange={menjajSumu} marks valueLabelDisplay="auto" min={200} max={5000} step={500}/> {suma}
-      <Button variant="contained" onClick={()=>DonirajPare()}  >Doniraj</Button>
-    </FormControl>
-    {mojslucaj&&<FormControl>
-    <Typography variant="subtitle2" component="div">
-            Evidentiraj trosak
-          </Typography>
-          <TextField id="outlined-basic" value={trosakTekst}label="Namena" variant="outlined" onChange={handlesetText}/>
-          <Slider defaultValue={200} value ={trosak} aria-label="slider"  onChange={menjajTrosak} marks valueLabelDisplay="auto" min={200} max={5000} step={500}/> {trosak}
-      <Button variant="contained" onClick={()=>EvidentirajTrosak()}  >Evidentiraj</Button>
-    </FormControl>}</Box>
-    <Box>
-      <Box>
-    <Typography color={bojabilans} variant="h5">Bilans stanja: {bilans}din</Typography>
-    </Box>
-    <Box sx={{ display: 'flex', flexDirection: 'row',  justifyContent:'space-between', flexBasis: 'auto' , flexWrap:"wrap"}}>
-    {(troskovi&&troskovi.length>0&&
-    <Box> 
-        
-        <Typography variant="subtitle2" color="darkred">Troskovi</Typography>
-        {troskovi.map(t=>(
-            <>
-            <Typography>- {t.namena} {t.kolicina}</Typography>
-            {mojslucaj&&<Button onClick={()=>obrisiTrosak(t.id)}><ClearIcon/></Button>}
-            </>))}
-
-    </Box>)||<>bez troskova</>}
-    {(donacije&&donacije.length>0&&
-    <Box> 
-        
-        <Typography variant="subtitle2" color="green">Donacije</Typography>
-        {donacije.map(t=>(
-            <Box sx={{ display: 'flex', flexDirection: 'row'}}>
-            <Typography>+ {t.korisnik.username} {t.kolicina}</Typography>
-            {t.korisnik.id==user.id&&<Button onClick={()=>obrisiDonaciju(t.id)}><ClearIcon /></Button>}
-            </Box>))}
-
-    </Box>)||<>bez donacija</>}
-    </Box>
-    </Box>
-    </Box>
-    </>);
+  return (
+    <>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-around",
+          flexWrap: "wrap",
+        }}
+      >
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <FormControl>
+            <Typography variant="subtitle2" component="div">
+              Doniraj
+            </Typography>
+            <Slider
+              defaultValue={200}
+              value={suma}
+              aria-label="slider"
+              onChange={menjajSumu}
+              marks
+              valueLabelDisplay="auto"
+              min={200}
+              max={5000}
+              step={500}
+            />{" "}
+            {suma}
+            <Button variant="contained" onClick={() => DonirajPare()}>
+              Doniraj
+            </Button>
+          </FormControl>
+          {mojslucaj && (
+            <FormControl>
+              <Typography variant="subtitle2" component="div">
+                Evidentiraj trosak
+              </Typography>
+              <TextField
+                id="outlined-basic"
+                value={trosakTekst}
+                label="Namena"
+                variant="outlined"
+                onChange={handlesetText}
+              />
+              <Slider
+                defaultValue={200}
+                value={trosak}
+                aria-label="slider"
+                onChange={menjajTrosak}
+                marks
+                valueLabelDisplay="auto"
+                min={200}
+                max={5000}
+                step={500}
+              />{" "}
+              {trosak}
+              <Button variant="contained" onClick={() => EvidentirajTrosak()}>
+                Evidentiraj
+              </Button>
+            </FormControl>
+          )}
+        </Box>
+        <Box>
+          <Box>
+            <Typography color={bojabilans} variant="h5">
+              Bilans stanja: {bilans}din
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              flexBasis: "auto",
+              flexWrap: "wrap",
+            }}
+          >
+            {(troskovi && troskovi.length > 0 && (
+              <Box>
+                <Typography variant="subtitle2" color="darkred">
+                  Troskovi
+                </Typography>
+                {troskovi.map((t) => (
+                  <>
+                    <Typography>
+                      - {t.namena} {t.kolicina}
+                    </Typography>
+                    {mojslucaj && (
+                      <Button onClick={() => obrisiTrosak(t.id)}>
+                        <ClearIcon />
+                      </Button>
+                    )}
+                  </>
+                ))}
+              </Box>
+            )) || <>bez troskova</>}
+            {(donacije && donacije.length > 0 && (
+              <Box>
+                <Typography variant="subtitle2" color="green">
+                  Donacije
+                </Typography>
+                {donacije.map((t) => (
+                  <Box sx={{ display: "flex", flexDirection: "row" }}>
+                    <Typography>
+                      + {t.korisnik.username} {t.kolicina}
+                    </Typography>
+                    {t.korisnik.id == user.id && (
+                      <Button onClick={() => obrisiDonaciju(t.id)}>
+                        <ClearIcon />
+                      </Button>
+                    )}
+                  </Box>
+                ))}
+              </Box>
+            )) || <>bez donacija</>}
+          </Box>
+        </Box>
+      </Box>
+    </>
+  );
 }

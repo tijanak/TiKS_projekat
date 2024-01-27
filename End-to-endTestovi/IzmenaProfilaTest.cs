@@ -18,7 +18,7 @@ namespace End_to_endTestovi
         {
             browser = await Playwright.Chromium.LaunchAsync(new()
             {
-                //Headless = false,
+                Headless = false,
                 //SlowMo = 1000
             });
 
@@ -79,9 +79,70 @@ namespace End_to_endTestovi
             await page.GetByText("Profil").ClickAsync();
 
             await Expect(page.Locator(".edit_profile")).ToBeVisibleAsync();
+            await page.Locator(".edit_profile").ClickAsync();
+
+            await Expect(page.GetByRole(AriaRole.Heading, new() { Name = "Promena podataka" })).ToBeVisibleAsync();
+
+            await page.GetByLabel("Username *").ClickAsync();
+
+            await page.GetByLabel("Username *").FillAsync("admin");
+
+            await page.GetByRole(AriaRole.Button, new() { Name = "Sacuvaj" }).ClickAsync();
+            await Expect(page.GetByRole(AriaRole.Alert)).ToContainTextAsync("korisnicko ime zauzeto");
+            await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/IzmenaProfilaTest1.png" });
 
         }
-        
+        [Test]
+        [Order(2)]
+        public async Task Test2()
+        {
+            await Expect(page.Locator(".settings")).ToBeVisibleAsync();
+
+
+            await page.Locator(".settings").ClickAsync();
+
+            await page.GetByText("Profil").ClickAsync();
+
+            await Expect(page.Locator(".edit_profile")).ToBeVisibleAsync();
+            await page.Locator(".edit_profile").ClickAsync();
+
+            await Expect(page.GetByRole(AriaRole.Heading, new() { Name = "Promena podataka" })).ToBeVisibleAsync();
+
+            await page.GetByLabel("Username *").ClickAsync();
+
+            await page.GetByLabel("Username *").FillAsync("noviUsername");
+
+            await page.GetByRole(AriaRole.Button, new() { Name = "Sacuvaj" }).ClickAsync();
+            await Expect(page.Locator(".username_label")).ToContainTextAsync("noviUsername");
+            await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/IzmenaProfilaTest2.png" });
+
+        }
+        [Test]
+        [Order(3)]
+        public async Task Test3()
+        {
+            await Expect(page.Locator(".settings")).ToBeVisibleAsync();
+
+
+            await page.Locator(".settings").ClickAsync();
+
+            await page.GetByText("Profil").ClickAsync();
+
+            await Expect(page.Locator(".edit_profile")).ToBeVisibleAsync();
+            await page.Locator(".edit_profile").ClickAsync();
+
+            await Expect(page.GetByRole(AriaRole.Heading, new() { Name = "Promena podataka" })).ToBeVisibleAsync();
+
+            await page.GetByLabel("Username *").ClickAsync();
+
+            await page.GetByLabel("Username *").FillAsync("testUser");
+
+
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Odustani" }).ClickAsync();
+            await Expect(page.Locator(".username_label")).ToContainTextAsync("noviUsername");
+            await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/IzmenaProfilaTest3.png" });
+
+        }
         [TearDown]
         public async Task Teardown()
         {
