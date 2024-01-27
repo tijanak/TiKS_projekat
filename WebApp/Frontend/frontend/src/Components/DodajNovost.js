@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from "react";
 import BACKEND from "../config";
-import { TextField, Box, Button, Typography, Card, CardActions, CardContent } from "@mui/material";
-import { FormControl, Input, FormHelperText, InputLabel } from '@mui/material';
+import {
+  TextField,
+  Box,
+  Button,
+  Typography,
+  Card,
+  CardActions,
+  CardContent,
+} from "@mui/material";
+import { FormControl, Input, FormHelperText, InputLabel } from "@mui/material";
 import { ImagePicker } from "react-file-picker";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
-export default function DodajNovost(state){
-
+export default function DodajNovost(state) {
   const [novost, setNovost] = useState(null);
   const [datum, setDatum] = useState(null);
   const [tekst, setTekst] = useState(null);
@@ -19,7 +26,7 @@ export default function DodajNovost(state){
     if(!novost || novost.length==0){
       setE(true);
     }
-    if(!datum){
+    if (!datum) {
       setE2(true);
     }
     if(novost&&datum){
@@ -49,22 +56,21 @@ export default function DodajNovost(state){
       .then(d=>{state.setLoading(!state.loading);setSuccess("success");setSlika(null);setDatum(null);setTekst(null);
     setTimeout(()=>setSuccess("primary"),1000)})
       .catch(e=>console.log(e));
-    }
-    }
+    }   
+  };
 
-
-  const handleSetText = (event)=>{
+  const handleSetText = (event) => {
     setNovost(event.target.value);
     setSuccess("primary");
     if(e&&novost&&novost.length>0) {
       setE(false);
     }
-  }
+  };
 
   const handleSetDate = (event)=>{
     setSuccess("primary");
     setDatum(event.target.value);
-    if(e&&datum) {
+    if (e && datum) {
       setE2(false);
     }
   }
@@ -100,9 +106,9 @@ export default function DodajNovost(state){
           extensions={["jpg", "jpeg", "png"]}
           dims={{
             minWidth: 0,
-            maxWidth: 2000,
+            maxWidth: 500,
             minHeight: 0,
-            maxHeight: 2000,
+            maxHeight: 500,
           }}
           onChange={(s) => {
             setSlika(s);

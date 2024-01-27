@@ -102,9 +102,81 @@ public class SlucajController : ControllerBase
             return BadRequest(e.Message);
         }
     }
+    [Route("Update/RemovePictures/{id}")]
+    [HttpPut]
+    public async Task<ActionResult> IzbaciSlike(int id, [FromBody] string[]? removeSlike)
+    {
+        try
+        {
+            var slucaj = Context.Slucajevi.Where(p => p.ID == id).FirstOrDefault();
+            if (id < 0) return BadRequest("ID ne može biti negativan");
+            if (slucaj != null)
+            {
+                if (removeSlike != null)
+                {
+                    foreach (string slika in removeSlike)
+                    {
+                        if (slika == null) return BadRequest("Null argument");
+                        var inSlike = slucaj.Slike.Where(s => s.CompareTo(slika) == 0).FirstOrDefault();
+                        if (inSlike != null) slucaj.Slike.Remove(inSlike);
+                    }
+                }
+
+
+
+                await Context.SaveChangesAsync();
+                return Ok($"Izmenjen slucaj {slucaj.ID}");
+            }
+            else
+            {
+                return NotFound($"Ne postoji slucaj sa id-jem {id}");
+            }
+
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+    [Route("Update/AddPictures/{id}")]
+    [HttpPut]
+    public async Task<ActionResult> DodajSlike(int id, [FromBody] string[]? addSlike)
+    {
+        try
+        {
+            var slucaj = Context.Slucajevi.Where(p => p.ID == id).FirstOrDefault();
+            if (id < 0) return BadRequest("ID ne može biti negativan");
+            if (slucaj != null)
+            {
+                if (addSlike != null)
+                {
+                    foreach (string slika in addSlike)
+                    {
+                        if (string.IsNullOrEmpty(slika) || string.IsNullOrWhiteSpace(slika)) return BadRequest("Putanja do slike ne moze biti prazna");
+                        if (slucaj.Slike.Contains(slika)) return BadRequest("Ne može se ponavljati slika");
+                        slucaj.Slike.Add(slika);
+                    }
+                }
+
+
+
+                await Context.SaveChangesAsync();
+                return Ok($"Izmenjen slucaj {slucaj.ID}");
+            }
+            else
+            {
+                return NotFound($"Ne postoji slucaj sa id-jem {id}");
+            }
+
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
     [Route("Update/{id}")]
     [HttpPut]
-    public async Task<ActionResult> Azuriraj(int id, [FromQuery] string? naziv, [FromQuery] string? opis, [FromQuery] string[]? addSlike, [FromQuery] string[]? removeSlike, [FromQuery] int? idLokacija, [FromQuery] int? idKorisnika, [FromQuery] int? idZivotinja, [FromQuery] int[]? idRemoveKategorija, int[]? idAddKategorija)
+    public async Task<ActionResult> Azuriraj(int id, [FromQuery] string? naziv, [FromQuery] string? opis, [FromQuery] string[]? addSlike, [FromQuery] string[]? removeSlike, [FromQuery] int? idLokacija, [FromQuery] int? idKorisnika, [FromQuery] int? idZivotinja, [FromQuery] int[]? idRemoveKategorija, [FromQuery] int[]? idAddKategorija)
     {
         try
         {
@@ -161,7 +233,8 @@ public class SlucajController : ControllerBase
                     foreach (string slika in removeSlike)
                     {
                         if (slika == null) return BadRequest("Null argument");
-                        slucaj.Slike.Remove(slika);
+                        var inSlike = slucaj.Slike.Where(s => s.CompareTo(slika) == 0).FirstOrDefault();
+                        if (inSlike != null) slucaj.Slike.Remove(inSlike);
                     }
                 }
                 if (idAddKategorija != null)

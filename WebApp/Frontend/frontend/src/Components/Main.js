@@ -34,6 +34,7 @@ function Main() {
   };
 
   const handleClose = () => {
+    setReload(!reload);
     setOpen(false);
     setEditSlucaj(null);
   };

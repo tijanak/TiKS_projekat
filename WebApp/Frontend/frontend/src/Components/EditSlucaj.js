@@ -39,6 +39,7 @@ function EditSlucaj({ p, open, close }) {
   const [sveKategorije, setSveKategorije] = useState([]);
   const [kategorije, setKategorije] = useState([]);
 
+  const [defaultKat, setDefaulKat] = useState([]);
   const [slike, setSlike] = useState([]);
   let user = {};
   useEffect(() => {
@@ -52,6 +53,7 @@ function EditSlucaj({ p, open, close }) {
   }, []);
   useEffect(() => {
     if (p != null) {
+      setKategorije(p.kategorija.map((k) => k.id));
       setSlike(p.slike);
     }
   }, [p]);
@@ -265,7 +267,6 @@ function EditSlucaj({ p, open, close }) {
   const [imgsRemove, setImgsRemove] = useState("");
   const [kategorijeAdd, setKategorijeAdd] = useState("");
   const [kategorijeRemove, setKategorijRemove] = useState("");
-
   let navigate = useNavigate();
   const handleSnackbarClose = () => {
     setSnackbar(false);
@@ -291,7 +292,106 @@ function EditSlucaj({ p, open, close }) {
           <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
             Edit
           </Typography>
-          <Button autoFocus color="inherit" onClick={handleClose}>
+          <Button
+            color="inherit"
+            onClick={() => {
+              console.log(p.id);
+              console.log(naziv);
+              console.log(opis);
+              console.log(slike);
+              console.log(kategorije);
+              let currentCat = p.kategorija.map((k) => k.id);
+              console.log(currentCat);
+              let addedCat = kategorije.filter((v) => !currentCat.includes(v));
+              console.log(addedCat);
+              let removedCat = currentCat.filter(
+                (v) => !kategorije.includes(v)
+              );
+              console.log(removedCat);
+              let currentPics = p.slike;
+              console.log(currentPics);
+              let addedPics = slike.filter((v) => !currentPics.includes(v));
+              console.log(addedPics);
+              let removedPics = currentPics.filter((v) => !slike.includes(v));
+              console.log(removedPics);
+              let parametri = "";
+              if (naziv != null) parametri += "?naziv=" + naziv;
+              if (opis != null) {
+                if (parametri.length > 0) parametri += "&";
+                else parametri += "?";
+                parametri += "opis=" + opis;
+              }
+
+              if (removedCat.length > 0) {
+                removedCat.forEach((v) => {
+                  if (parametri.length > 0) parametri += "&";
+                  else parametri += "?";
+                  parametri += "idRemoveKategorija=" + v;
+                });
+              }
+              if (addedCat.length > 0) {
+                addedCat.forEach((v) => {
+                  if (parametri.length > 0) parametri += "&";
+                  else parametri += "?";
+                  parametri += "idAddKategorija=" + v;
+                });
+              }
+              fetch(`${BACKEND}Slucaj/Update/${p.id}${parametri}`, {
+                method: "PUT",
+              })
+                .then(() => {
+                  if (addedPics.length > 0) {
+                    fetch(`${BACKEND}Slucaj/Update/AddPictures/${p.id}`, {
+                      method: "PUT",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify(addedPics),
+                    })
+                      .then(() => {
+                        if (removedPics.length > 0) {
+                          fetch(
+                            `${BACKEND}Slucaj/Update/RemovePictures/${p.id}`,
+                            {
+                              method: "PUT",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify(removedPics),
+                            }
+                          )
+                            .then(() => {
+                              handleClose();
+                            })
+                            .catch(() => {})
+                            .finally(() => {});
+                        } else handleClose();
+                      })
+                      .catch((e) => {})
+                      .finally(() => {});
+                  } else {
+                    console.log("here");
+                    if (removedPics.length > 0) {
+                      console.log("fetch");
+                      fetch(`${BACKEND}Slucaj/Update/RemovePictures/${p.id}`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(removedPics),
+                      })
+                        .then(() => {
+                          handleClose();
+                        })
+                        .catch((e) => {
+                          console.log(e);
+                        })
+                        .finally(() => {});
+                    } else handleClose();
+                  }
+                })
+                .catch((e) => {
+                  console.log(e);
+                  //setError(e);
+                })
+                .finally(() => {});
+              return;
+            }}
+          >
             sacuvaj
           </Button>
         </Toolbar>
@@ -385,25 +485,14 @@ function EditSlucaj({ p, open, close }) {
           <Button>Dodaj sliku</Button>
         </ImagePicker>
         <FormLabel>Kategorije:</FormLabel>
-        <Button
-          onClick={() => {
-            console.log(sveKategorije);
-            console.log(kategorije);
-            console.log(p.kategorija.map((v) => v.id));
-          }}
-        >
-          test
-        </Button>
+
         <Box>
           <MultiSelect
             value={kategorije}
             onChange={(event, n) => {
               setKategorije(n);
             }}
-            defaultValue={() => {
-              if (p != null) p.kategorija.map((v) => v.id);
-              else return [];
-            }}
+            defaultValue={defaultKat}
           >
             {sveKategorije.map((k) => (
               <Option key={k.id} value={k.id}>
@@ -417,107 +506,6 @@ function EditSlucaj({ p, open, close }) {
         </Box>
       </Stack>
       {error && <Alert severity="error">{error}</Alert>}
-      <Box>
-        {loading ? (
-          <CircularProgress />
-        ) : (
-          <Button
-            onClick={() => {
-              if (latitude == null || longitude == null) {
-                setError("Latituda i longituda ne smeju biti prazne");
-                return;
-              }
-              let slucaj = { naziv, opis, slike };
-              setLoading(true);
-              let kategorijeQuery = "";
-              kategorije.forEach(
-                (e) => (kategorijeQuery += "&kategorijeIDs=" + e)
-              );
-              console.log(
-                `${BACKEND}Slucaj/Post?idKorisnika=${user.id}${kategorijeQuery}`
-              );
-              fetch(
-                `${BACKEND}Slucaj/Post?idKorisnika=${user.id}${kategorijeQuery}`,
-                {
-                  method: "POST",
-                  body: JSON.stringify(slucaj),
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                }
-              )
-                .then((response) => {
-                  if (response.ok) {
-                    response.json().then((id) => {
-                      console.log(id);
-                      let lokacija = { latitude, longitude, slucaj: {} };
-                      fetch(`${BACKEND}Lokacija/Post/${id}`, {
-                        method: "POST",
-                        body: JSON.stringify(lokacija),
-                        headers: {
-                          "Content-Type": "application/json",
-                        },
-                      })
-                        .then((response2) => {
-                          if (response2.ok) {
-                            let zivotinja = { ime, vrsta, slucaj: {} };
-                            fetch(
-                              `${BACKEND}Zivotinja/dodajzivotinju?idSlucaja=${id}`,
-                              {
-                                method: "POST",
-                                body: JSON.stringify(zivotinja),
-                                headers: {
-                                  "Content-Type": "application/json",
-                                },
-                              }
-                            )
-                              .then((response3) => {
-                                if (response3.ok) {
-                                  navigate(-1, { replace: true });
-                                } else {
-                                  fetch(`${BACKEND}Slucaj/Delete/${id}`, {
-                                    method: "DELETE",
-                                  }).catch((e) => console.log(e));
-                                  response3.text().then((e) => {
-                                    console.log(e);
-                                    setError(e);
-                                  });
-                                }
-                              })
-                              .catch((e) => {
-                                setError(e);
-                              });
-                          } else {
-                            fetch(`${BACKEND}Slucaj/Delete/${id}`, {
-                              method: "DELETE",
-                            }).catch((e) => console.log(e));
-                            response2.text().then((e) => {
-                              console.log(e);
-                              setError(e);
-                            });
-                          }
-                        })
-                        .catch((e) => {
-                          setError(e);
-                        });
-                    });
-                  } else {
-                    response.text().then((e) => {
-                      console.log(e);
-                      setError(e);
-                    });
-                  }
-                })
-                .catch((e) => {
-                  setError(e);
-                })
-                .finally(() => setLoading(false));
-            }}
-          >
-            Dodaj slucaj
-          </Button>
-        )}
-      </Box>
     </Dialog>
   );
 }
