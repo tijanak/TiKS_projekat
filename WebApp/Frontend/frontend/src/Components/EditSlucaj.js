@@ -384,8 +384,19 @@ function EditSlucaj({ p, open, close }) {
                 });
               }
               Promise.all(fetches.map((f) => fetch(f.url, f.options)))
-                .then(() => {
-                  handleClose();
+                .then((response) => {
+                  console.log(response);
+                  let errs = [];
+                  response.forEach((r) => {
+                    if (!r.ok) errs.push(r);
+                  });
+                  if (errs.length == 0) handleClose();
+
+                  return Promise.all(errs.map((e) => e.text()));
+                })
+                .then((t) => {
+                  console.log(t);
+                  setError(t);
                 })
                 .catch((e) => {})
                 .finally(() => {});
