@@ -118,7 +118,7 @@ namespace End_to_endTestovi
             await page.GetByRole(AriaRole.Button, new() { Name = "Evidentiraj" }).ClickAsync();
 
             await Expect(page.Locator("#root")).ToContainTextAsync("bez troskova");
-            await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/DodavanjeTrosakTest1.png" });
+            await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/DodavanjeTrosakTest2.png" });
 
         }
         [TearDown]

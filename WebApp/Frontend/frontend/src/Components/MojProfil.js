@@ -156,18 +156,26 @@ export default function MojProfil() {
             </DialogActions>
           </Dialog>
           <h1>MOJ PROFIL</h1>
-          <h2 className="username_label">{korisnik.username}</h2>
-          <Fab
-            className="edit_profile"
-            onClick={() => {
-              setOpen(true);
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-around",
+              flexWrap: "wrap",
             }}
-            color="secondary"
-            size="small"
-            aria-label="edit"
           >
-            <EditIcon />
-          </Fab>
+            <h2 className="username_label">{korisnik.username}</h2>
+            <Fab
+              className="edit_profile"
+              onClick={() => {
+                setOpen(true);
+              }}
+              color="secondary"
+              size="small"
+              aria-label="edit"
+            >
+              <EditIcon />
+            </Fab>
+          </Box>
           <Button
             color="error"
             variant="contained"
