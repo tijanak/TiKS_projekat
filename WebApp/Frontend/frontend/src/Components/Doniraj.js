@@ -162,6 +162,7 @@ export default function Doniraj(state){
 
     </Box>)||<>bez donacija</>}
     </Box>
+    <Box sx={{ display: 'flex', flexDirection: 'row',  justifyContent:'center'}}>
     <FormControl>
     <Typography variant="subtitle2" component="div">
             Doniraj
@@ -177,6 +178,6 @@ export default function Doniraj(state){
           <TextField id="outlined-basic" value={trosakTekst}label="Namena" variant="outlined" onChange={handlesetText}/>
           <Slider defaultValue={200} value ={trosak} aria-label="slider"  onChange={menjajTrosak} marks valueLabelDisplay="auto" min={200} max={5000} step={500}/> {trosak}
       <Button variant="contained" onClick={()=>EvidentirajTrosak()}  >Evidentiraj</Button>
-    </FormControl>
+    </FormControl></Box>
     </>);
 }

@@ -3,7 +3,7 @@ import BACKEND from "../config";
 import { useLocation } from "react-router-dom";
 
 import Card from "@mui/material/Card";
-import {ButtonGroup} from "@mui/material";
+import {ButtonGroup, CardActions} from "@mui/material";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
@@ -25,20 +25,29 @@ export function Novosti(state) {
       })
       .catch(error => console.log(error));
   }, [state.loading]);
+
+  const obrisi =(id)=>{
+    fetch(`${BACKEND}Novost/ukloninovost/${id}`, {method:"DELETE"})
+        .then(response=>{if(response.ok) return response.json()})
+        .then(d=>{console.log(d); state.setLoading(!state.loading)})
+        .catch(e=>console.log(e));
+  }
   return (
     <>
       {novosti&&novosti.length>0&&novosti.map(n=>(
       <Card variant="outlined" key={n.id}>
       <CardContent>
+      <CardActions>
         <ButtonGroup>
         <IconButton>
         <Edit/>
         </IconButton> 
-          <IconButton>
+          <IconButton onClick={()=>obrisi(n.id)}>
             
-            <Delete/>
+            <Delete />
             </IconButton> 
         </ButtonGroup>
+      </CardActions>
       <Typography gutterBottom variant="body2" color="text.secondary" component="div">
       {n.datum}
       </Typography>

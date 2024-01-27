@@ -28,12 +28,12 @@ export function Post() {
     <>
       {(post && (
 
-        <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent:'space-around', flexWrap: 'wrap'}}>
         
         <Card key={post.id}>
         
         <CardActions>
-          <Button size="small" onClick={() => {
+          <Button size="small" variant="contained" color="secondary"onClick={() => {
                     navigate("/doniraj", { state: { id_posta: post.id} });
                   }}>Doniraj</Button>
 
@@ -57,12 +57,14 @@ export function Post() {
         {post&&<Zivotinja id_posta={post.id} />}
       </Card>
       
-      <div>
+        <Card variant="" >
       <Typography variant="subtitle2" component="div">
             NOVOSTI
-          </Typography>
-      { post && <Novosti novost={post.id} loading={loading}></Novosti>} </div>
+      </Typography>
+      { post && <Novosti novost={post.id} loading={loading} setLoading={setLoading}></Novosti>} </Card>
+      <Card>
       <DodajNovost id_slucaja={post.id} loading={loading} setLoading={setLoading}/>
+      </Card>
       </Box>
       )) || <>ne ucitava post</>}
     </>

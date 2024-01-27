@@ -3,31 +3,31 @@ import BACKEND from "../config";
 import { TextField, Box, Button, Typography, Card, CardActions, CardContent } from "@mui/material";
 import { FormControl, Input, FormHelperText, InputLabel } from '@mui/material';
 import { ImagePicker } from "react-file-picker";
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 export default function DodajNovost(state){
 
   const [novost, setNovost] = useState(null);
   const [datum, setDatum] = useState(null);
-  const [tekst, setTekst] = useState("Unesi tekst");
+  const [tekst, setTekst] = useState(null);
   const [e, setE] = useState(false);
   const [e2, setE2] = useState(false);
   const [success, setSuccess] = useState("primary");
   const [slika, setSlika] = useState(null);
-  
+  const maxdatum = new Date().toISOString().substring(0,10);
   const DodajNovost =async ()=>{
     if(!novost || novost.length==0){
-      setTekst("Unesite tekst");
       setE(true);
     }
     if(!datum){
       setE2(true);
     }
-    if(novost&&datum&&slika){
+    if(novost&&datum){
     const n = {
       "id": 0,
       "tekst": novost,
-      "datum": datum,
-      "slika": slika,
+      "datum": datum?datum:new Date(),
+      "slika": slika?slika:"imgs/stockphoto.jpg",
       "slucaj": {
         "id": 0,
         "naziv": "string",
@@ -46,7 +46,8 @@ export default function DodajNovost(state){
       
       fetch(`${BACKEND}Novost/dodajnovost?id_slucaja=${state.id_slucaja}`, requestOptions)
       .then(response=>{if(response.ok) return response.json()})
-      .then(d=>{state.setLoading(!state.loading);setSuccess("success");console.log(d)})
+      .then(d=>{state.setLoading(!state.loading);setSuccess("success");setSlika(null);setDatum(null);setTekst(null);
+    setTimeout(()=>setSuccess("primary"),1000)})
       .catch(e=>console.log(e));
     }
     }
@@ -54,13 +55,14 @@ export default function DodajNovost(state){
 
   const handleSetText = (event)=>{
     setNovost(event.target.value);
+    setSuccess("primary");
     if(e&&novost&&novost.length>0) {
       setE(false);
-      setTekst("Unesite tekst");
     }
   }
 
   const handleSetDate = (event)=>{
+    setSuccess("primary");
     setDatum(event.target.value);
     if(e&&datum) {
       setE2(false);
@@ -73,13 +75,13 @@ export default function DodajNovost(state){
           </Typography>
       <TextField
             id="outlined"
-            label={tekst}
+            label="Unesi tekst"
             multiline
             maxRows={4}
             inputProps={{ maxLength: 500 }}
             onChange={handleSetText}
             error={e}
-            color={success}
+            value={tekst}
           />
           <Input
           variant="outlined"
@@ -88,10 +90,10 @@ export default function DodajNovost(state){
         slotProps={{
           input: {
             min: '2020-06-14',
-            max: new Date(),
+            max: maxdatum,
           },
-        }}
-        color={success}
+        }}  
+        value={datum}      
         onChange={handleSetDate}
       />
       <ImagePicker
@@ -105,11 +107,15 @@ export default function DodajNovost(state){
           onChange={(s) => {
             setSlika(s);
           }}
+          value={slika}
+          
           onError={(errMsg) => console.log(errMsg)}
+          
         >
           <Button>Dodaj sliku</Button>
         </ImagePicker>
-      <Button variant="contained" onClick={()=>DodajNovost()} >Podeli novost</Button>
+        
+      <Button variant="contained" color={success} onClick={()=>DodajNovost()} >{success=="success"&&<CheckCircleOutlineIcon/>|| "Podeli novost"}</Button>
     </FormControl>
     </>);
 }
