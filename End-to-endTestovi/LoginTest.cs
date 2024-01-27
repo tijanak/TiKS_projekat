@@ -63,14 +63,14 @@ namespace End_to_endTestovi
                     Password = "admin2",
                 }
             });
+
+            await page.GotoAsync("http://127.0.0.1:4000/");
         }
 
         [Test]
         [Order(1)]
         public async Task Test1()
         {
-
-            await page.GotoAsync("http://127.0.0.1:4000/");
             await page.Locator("input[type=\"text\"]").ClickAsync();
 
             await page.Locator("input[type=\"text\"]").FillAsync("admin");
@@ -88,7 +88,6 @@ namespace End_to_endTestovi
         [Order(2)]
         public async Task Test2()
         {
-            await page.GotoAsync("http://127.0.0.1:4000/");
             await page.Locator("input[type=\"text\"]").ClickAsync();
 
             await page.Locator("input[type=\"text\"]").FillAsync("admin");
@@ -113,6 +112,8 @@ namespace End_to_endTestovi
         [TearDown]
         public async Task Teardown()
         {
+            await using var response = await Request.DeleteAsync("Korisnik/uklonikorisnika/username/admin2");
+
             await page.CloseAsync();
             await browser.DisposeAsync();
         }

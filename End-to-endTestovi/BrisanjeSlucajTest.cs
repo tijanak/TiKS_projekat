@@ -20,7 +20,7 @@ namespace End_to_endTestovi
         {
             browser = await Playwright.Chromium.LaunchAsync(new()
             {
-                //Headless = false,
+               // Headless = false,
                 //SlowMo = 300
             });
 
@@ -91,7 +91,6 @@ namespace End_to_endTestovi
         }
 
         [Test]
-        [Order(1)]
         public async Task Test1()
         {
 
@@ -105,12 +104,6 @@ namespace End_to_endTestovi
             await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/BrisanjeSlucajTest1.png" });
             await Expect(page.Locator(".post-card")).ToHaveCountAsync(original - 1);
 
-        }
-        [Test]
-        [Order(2)]
-        public async Task Test2()
-        {
-            
         }
         [TearDown]
         public async Task Teardown()
