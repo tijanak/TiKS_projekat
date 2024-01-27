@@ -11,6 +11,7 @@ import Button from "@mui/material/Button";
 import Delete from "@mui/icons-material/Delete";
 import Edit from "@mui/icons-material/Edit";
 import IconButton from '@mui/joy/IconButton';
+import EditNovost from "./EditNovost";
 export function Novosti(state) {
   const [novosti, setNovosti] = useState(null);
   useEffect(() => {
@@ -34,12 +35,14 @@ export function Novosti(state) {
   }
   return (
     <>
+      
       {novosti&&novosti.length>0&&novosti.map(n=>(
       <Card variant="outlined" key={n.id}>
       <CardContent>
       <CardActions>
         <ButtonGroup>
-        <IconButton>
+        <IconButton >
+        <EditNovost novost={n}/>
         <Edit/>
         </IconButton> 
           <IconButton onClick={()=>obrisi(n.id)}>

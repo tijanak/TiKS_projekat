@@ -25,8 +25,8 @@ export default function DodajNovost(state) {
   const [slika, setSlika] = useState(null);
   const [reload, setReload] = useState(false);
   const maxdatum = new Date().toISOString().substring(0, 10);
-  console.log(datum);
-  console.log(novost);
+  // console.log(datum);
+  // console.log(novost);
   const DodajNovost = async () => {
     if (!novost || novost.length == 0) {
       setE(true);
@@ -85,7 +85,7 @@ export default function DodajNovost(state) {
   const handleSetDate = (event) => {
     setSuccess("primary");
     setDatum(event.target.value);
-    if (e && datum) {
+    if (e2 && datum) {
       setE2(false);
     }
   };
