@@ -2,26 +2,26 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace End_to_endTestovi
 {
-    [TestFixture]
-    public class BrisanjeSlucajTest : PageTest
+    public class DonacijaBrisanjeTest : PageTest
     {
+
+        private IAPIRequestContext Request;
         IPage page;
         IBrowser browser;
         int testSlucajId = 0;
-        private IAPIRequestContext Request;
         [SetUp]
         public async Task Setup()
         {
             browser = await Playwright.Chromium.LaunchAsync(new()
             {
-               // Headless = false,
-                //SlowMo = 300
+                //Headless = false,
+                //SlowMo = 1000
             });
 
             page = await browser.NewPageAsync(new()
@@ -43,6 +43,7 @@ namespace End_to_endTestovi
                 },
                 RecordVideoDir = Globals.vidDir,
             });
+
             var headers = new Dictionary<string, string>
         {
             { "Accept", "application/json" }
@@ -62,10 +63,10 @@ namespace End_to_endTestovi
                 Headers = headers2,
                 DataObject = new
                 {
-                    Naziv="Test",
-                    Opis="Test",
+                    Naziv = "Test",
+                    Opis = "Test",
                     Slike = new string[] { },
-                    Korisnik =new{ }
+                    Korisnik = new { }
                 }
             });
             var k = await response2.JsonAsync();
@@ -88,27 +89,32 @@ namespace End_to_endTestovi
 
             await page.GetByRole(AriaRole.Button, new() { Name = "Login" }).ClickAsync();
 
+
         }
 
+        
         [Test]
-        public async Task Test1()
+        [Order(1)]
+        public async Task Test2()
         {
+            await page.Locator($"#_{testSlucajId} .donate-btn").ClickAsync();
 
-            await Expect(page.Locator(".post-card").First).ToBeVisibleAsync();
-            
-            var original = await page.Locator(".post-card").CountAsync();
-            //var idPrvog = await page.EvaluateAsync("() => {return document.getElementsByClassName('post-card')[0]['id']}");
-            //Assert.IsNotNull(idPrvog);
-            await page.Locator($"#_{testSlucajId} .delete-btn").ClickAsync();
-            await Expect(page.Locator($"#_{testSlucajId}")).ToHaveCountAsync(0);
-            await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/BrisanjeSlucajTest1.png" });
-            await Expect(page.Locator(".post-card")).ToHaveCountAsync(original - 1);
+            await page.Locator(".MuiSlider-rail").First.ClickAsync();
+
+            await page.GetByRole(AriaRole.Button, new() { Name = "Doniraj" }).ClickAsync();
+
+            await Expect(page.GetByText("+ admin")).ToBeVisibleAsync();
+            await page.Locator("div").Filter(new() { HasTextRegex = new Regex("^Donacije") }).GetByRole(AriaRole.Button).First.ClickAsync();
+            await Expect(page.GetByText("+ admin")).Not.ToBeVisibleAsync();
+            await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/DonacijaBrisanjeTest1.png" });
+
 
         }
         [TearDown]
         public async Task Teardown()
         {
             await using var response2 = await Request.DeleteAsync("Slucaj/Delete/" + testSlucajId);
+
             await page.CloseAsync();
             await browser.DisposeAsync();
         }

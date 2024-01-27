@@ -91,6 +91,7 @@ function Main() {
               >
                 <CardActions>
                   <Button
+                    className="donate-btn"
                     size="small"
                     onClick={() => {
                       navigate("/doniraj", { state: { id_posta: p.id } });
@@ -148,7 +149,7 @@ function Main() {
                 </CardContent>
                 <CardActions>
                   <Button
-                  class="novosti-btn"
+                    class="novosti-btn"
                     size="small"
                     onClick={() => {
                       navigate("/post", { state: { post: p } });

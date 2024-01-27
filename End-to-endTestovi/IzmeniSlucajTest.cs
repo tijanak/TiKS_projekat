@@ -103,6 +103,8 @@ namespace End_to_endTestovi
             await page.GetByRole(AriaRole.Button, new() { Name = "sacuvaj" }).ClickAsync();
             
             await Expect(page.Locator($"#_{testSlucajId}").Locator(".naziv")).ToHaveTextAsync("novi naziv");
+
+            await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/IzmeniSlucajTest4.png" });
         }
         [Test]                  
         [Order(2)]
@@ -116,6 +118,8 @@ namespace End_to_endTestovi
 
             await page.GetByLabel("close").ClickAsync();
             await Expect(page.Locator($"#_{testSlucajId} .naziv")).ToHaveTextAsync("Test");
+
+            await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/IzmeniSlucajTest2.png" });
         }
         [Test]
         [Order(1)]
@@ -130,6 +134,8 @@ namespace End_to_endTestovi
             await page.GetByRole(AriaRole.Button, new() { Name = "sacuvaj" }).ClickAsync();
             
             await Expect(page.Locator($"#_{testSlucajId}").Locator(".opis")).ToHaveTextAsync("novi opis");
+            await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/IzmeniSlucajTest3.png" });
+
         }
         [Test]
         [Order(2)]
@@ -143,6 +149,8 @@ namespace End_to_endTestovi
 
             await page.GetByLabel("close").ClickAsync();
             await Expect(page.Locator($"#_{testSlucajId} .opis")).ToHaveTextAsync("Test");
+            await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/IzmeniSlucajTest4.png" });
+
         }
         [TearDown]
         public async Task Teardown()
