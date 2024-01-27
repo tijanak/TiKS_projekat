@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Box, Button, Typography, Card, CardActions, CardContent, FormControl, Slider } from "@mui/material";
+import { TextField, Paper, Box, Button, Typography, Card, CardActions, CardContent, FormControl, Slider } from "@mui/material";
 import BACKEND from "../config";
 import { useLocation } from "react-router-dom";
 import {useAuth} from "../App";
@@ -14,6 +14,7 @@ export default function Doniraj(state){
     const [loading, setLoading] =useState(false);
     const[trosakTekst, setTrosakTekst ]= useState("");
     const[loadingTrosak, setLoadingTrosak] = useState(false);
+    const[bojabilans,setBojaBilans]=useState('black');
     let auth = useAuth();
     let user =  auth.user;
     
@@ -105,7 +106,9 @@ export default function Doniraj(state){
         // console.log(`bilans je ${s}`);
         if(donacije&&donacije.length>0)
             donacije.map(d=>s+=d.kolicina);
-
+        if(s>0) setBojaBilans('green');
+        else if(s<0) setBojaBilans('darkred');
+        else setBojaBilans('black');
         setBilans(s);
     },[donacije,troskovi]);
 
@@ -139,30 +142,9 @@ export default function Doniraj(state){
     },[post, loading]);
 
     
-    return (<><Typography variant="h5">Bilans stanja: {bilans}din</Typography>
-    <Box sx={{ display: 'flex', flexDirection: 'row',  justifyContent:'space-around'}}>
-    {(troskovi&&troskovi.length>0&&
-    <Box> 
-        
-        <Typography variant="subtitle1">Troskovi</Typography>
-        {troskovi.map(t=>(
-            <>
-            <Typography>- {t.namena} {t.kolicina}</Typography>
-            </>))}
-
-    </Box>)||<>bez troskova</>}
-    {(donacije&&donacije.length>0&&
-    <Box> 
-        
-        <Typography variant="subtitle1">Donacije</Typography>
-        {donacije.map(t=>(
-            <>
-            <Typography>+ {t.korisnik.username} {t.kolicina}</Typography>
-            </>))}
-
-    </Box>)||<>bez donacija</>}
-    </Box>
-    <Box sx={{ display: 'flex', flexDirection: 'row',  justifyContent:'center'}}>
+    return (<>
+    <Box sx={{ display: 'flex', flexDirection: 'row',  justifyContent:'space-around', flexWrap:"wrap"}}>
+    <Box sx={{ display: 'flex', flexDirection: 'column'}}>
     <FormControl>
     <Typography variant="subtitle2" component="div">
             Doniraj
@@ -179,5 +161,33 @@ export default function Doniraj(state){
           <Slider defaultValue={200} value ={trosak} aria-label="slider"  onChange={menjajTrosak} marks valueLabelDisplay="auto" min={200} max={5000} step={500}/> {trosak}
       <Button variant="contained" onClick={()=>EvidentirajTrosak()}  >Evidentiraj</Button>
     </FormControl></Box>
+    <Box>
+      <Box>
+    <Typography color={bojabilans} variant="h5">Bilans stanja: {bilans}din</Typography>
+    </Box>
+    <Box sx={{ display: 'flex', flexDirection: 'row',  justifyContent:'space-between', flexBasis: 'auto' , flexWrap:"wrap"}}>
+    {(troskovi&&troskovi.length>0&&
+    <Box> 
+        
+        <Typography variant="subtitle2" color="darkred">Troskovi</Typography>
+        {troskovi.map(t=>(
+            <>
+            <Typography>- {t.namena} {t.kolicina}</Typography>
+            </>))}
+
+    </Box>)||<>bez troskova</>}
+    {(donacije&&donacije.length>0&&
+    <Box> 
+        
+        <Typography variant="subtitle2" color="green">Donacije</Typography>
+        {donacije.map(t=>(
+            <>
+            <Typography>+ {t.korisnik.username} {t.kolicina}</Typography>
+            </>))}
+
+    </Box>)||<>bez donacija</>}
+    </Box>
+    </Box>
+    </Box>
     </>);
 }
