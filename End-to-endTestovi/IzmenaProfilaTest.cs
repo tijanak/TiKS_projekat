@@ -19,7 +19,7 @@ namespace End_to_endTestovi
         {
             browser = await Playwright.Chromium.LaunchAsync(new()
             {
-                //Headless = false,
+                Headless = false,
                 //SlowMo = 1000
             });
 
@@ -140,6 +140,34 @@ namespace End_to_endTestovi
             await page.GetByRole(AriaRole.Button, new() { Name = "Odustani" }).ClickAsync();
             await Expect(page.Locator(".username_label")).ToContainTextAsync("admin");
             await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/IzmenaProfilaTest3.png" });
+
+        }
+        [Test]
+        [Order(4)]
+        public async Task Test4()
+        {
+            await Expect(page.Locator(".settings")).ToBeVisibleAsync();
+
+
+            await page.Locator(".settings").ClickAsync();
+
+            await page.GetByText("Profil").ClickAsync();
+
+            await Expect(page.Locator(".edit_profile")).ToBeVisibleAsync();
+            await page.Locator(".edit_profile").ClickAsync();
+
+            await Expect(page.GetByRole(AriaRole.Heading, new() { Name = "Promena podataka" })).ToBeVisibleAsync();
+
+            await page.GetByLabel("Password *").ClickAsync();
+
+            await page.GetByLabel("Password *").FillAsync("admin");
+
+           
+            await page.GetByRole(AriaRole.Button, new() { Name = "Sacuvaj" }).ClickAsync();
+            await Expect(page.Locator(".username_label")).ToContainTextAsync("admin");
+
+
+            await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/IzmenaProfilaTest4.png" });
 
         }
         [TearDown]
