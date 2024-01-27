@@ -3,7 +3,7 @@ import BACKEND from "../config";
 import { useLocation } from "react-router-dom";
 
 import Card from "@mui/material/Card";
-import {ButtonGroup, CardActions} from "@mui/material";
+import {ButtonGroup, CardActions, TextField} from "@mui/material";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
@@ -51,9 +51,7 @@ export function Novosti(state) {
       <Typography gutterBottom variant="body2" color="text.secondary" component="div">
       {n.datum}
       </Typography>
-      <Typography variant="body">
-      {n.tekst}
-        </Typography>
+      <Typography variant="body">{n.tekst}</Typography>
        </CardContent>
        <CardMedia
                 height="140"

@@ -24,7 +24,17 @@ public class TrosakController : ControllerBase
             return BadRequest(e);
         }
     }
-
+    [HttpGet("preuzmisvetroskove")]
+    public async Task<ActionResult> PreuzmiSveNovosti(){
+        try
+        {
+            return Ok(await Context.Troskovi.Include(n=>n.Slucaj).ToListAsync());
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
 
     [HttpGet("preuzmitroskove/{id_slucaja}")]
     public async Task<ActionResult> PreuzmiTroskove(int id_slucaja){
@@ -102,10 +112,10 @@ public class TrosakController : ControllerBase
             return BadRequest(e);
         }
     }
-    [HttpDelete]
+    [HttpDelete("obrisi")]
     public async Task<ActionResult> UkloniTrosak([FromQuery] int id){
         try{
-            var t = await Context.Troskovi.FindAsync(id);
+            var t = await Context.Troskovi.Where(t=>t.ID==id).FirstAsync();
             if(t==null){
                 return NotFound("Nema svakako");
             }
