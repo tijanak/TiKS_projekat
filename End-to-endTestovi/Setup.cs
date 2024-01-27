@@ -43,12 +43,21 @@ namespace End_to_endTestovi
             await using var response2 = await Request.PostAsync("Korisnik/dodajkorisnika", new APIRequestContextOptions() {Headers=headers2,
                 DataObject = new
                 {
+                    Id=0,
                     Username="admin",
                     Password="admin",
                 }
             });
-            var k = await response.TextAsync();
-
+            var k = await response.JsonAsync();
+                if(k.HasValue)
+            {
+                var j = k.GetValueOrDefault();
+                
+                   var id= j.GetProperty("id").GetInt32()+1;
+                Globals.adminId = id;
+                
+            }
+            
             /*string workingDirectory = Environment.CurrentDirectory;
             // or: Directory.GetCurrentDirectory() gives the same result
 

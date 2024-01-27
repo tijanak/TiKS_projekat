@@ -13,6 +13,8 @@ namespace End_to_endTestovi
     {
         IPage page;
         IBrowser browser;
+        int testSlucajId = 0;
+        private IAPIRequestContext Request;
         [SetUp]
         public async Task Setup()
         {
@@ -41,6 +43,40 @@ namespace End_to_endTestovi
                 },
                 RecordVideoDir = Globals.vidDir,
             });
+            var headers = new Dictionary<string, string>
+        {
+            { "Accept", "application/json" }
+        };
+            Request = await Playwright.APIRequest.NewContextAsync(new()
+            {
+                BaseURL = "http://localhost:5100",
+                ExtraHTTPHeaders = headers,
+                IgnoreHTTPSErrors = true
+            });
+            Dictionary<string, string> headers2 = new()
+        {
+            { "Content-Type", "application/json" }
+        };
+            await using var response2 = await Request.PostAsync("Slucaj/Post?idKorisnika="+Globals.adminId+"&kategorijeIDs=1", new APIRequestContextOptions()
+            {
+                Headers = headers2,
+                DataObject = new
+                {
+                    Naziv="Test",
+                    Opis="Test",
+                    Slike = new string[] { },
+                    Korisnik =new{ }
+                }
+            });
+            var k = await response2.JsonAsync();
+            if (k.HasValue)
+            {
+                var j = k.GetValueOrDefault();
+
+                var id = j.GetInt32();
+                testSlucajId = id;
+
+            }
             await page.GotoAsync("http://127.0.0.1:4000/");
             await page.Locator("input[type=\"text\"]").ClickAsync();
 
@@ -62,10 +98,10 @@ namespace End_to_endTestovi
             await Expect(page.Locator(".post-card").First).ToBeVisibleAsync();
             
             var original = await page.Locator(".post-card").CountAsync();
-            var idPrvog = await page.EvaluateAsync("() => {return document.getElementsByClassName('post-card')[0]['id']}");
-            Assert.IsNotNull(idPrvog);
-            await page.Locator($"#{idPrvog} .delete-btn").ClickAsync();
-            await Expect(page.Locator($"#{idPrvog}")).ToHaveCountAsync(0);
+            //var idPrvog = await page.EvaluateAsync("() => {return document.getElementsByClassName('post-card')[0]['id']}");
+            //Assert.IsNotNull(idPrvog);
+            await page.Locator($"#_{testSlucajId} .delete-btn").ClickAsync();
+            await Expect(page.Locator($"#_{testSlucajId}")).ToHaveCountAsync(0);
             await page.ScreenshotAsync(new() { Path = $"{Globals.scDir}/BrisanjeSlucajTest1.png" });
             await Expect(page.Locator(".post-card")).ToHaveCountAsync(original - 1);
 
@@ -79,6 +115,14 @@ namespace End_to_endTestovi
         [TearDown]
         public async Task Teardown()
         {
+            var headers = new Dictionary<string, string>
+        {
+            { "Accept", "application/json" }
+        };
+            await using var response2 = await Request.PostAsync("Slucaj/Delete/" + testSlucajId, new APIRequestContextOptions()
+            {
+                Headers = headers
+            });
             await page.CloseAsync();
             await browser.DisposeAsync();
         }

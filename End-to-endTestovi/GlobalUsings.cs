@@ -7,4 +7,5 @@ public static class Globals
 {
     public static readonly string vidDir = "../../../Videos";
     public static readonly string scDir = "../../../Slike";
+    public static int adminId = 0;
 }
