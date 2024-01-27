@@ -93,8 +93,12 @@ namespace End_to_endTestovi
             {
                 var j = k.GetValueOrDefault();
                 int id;
-                if (j.TryGetInt32(out id))
-                    Globals.kategorijaId.Add(id);
+                try
+                {
+                    if (j.TryGetInt32(out id))
+                        Globals.kategorijaId.Add(id);
+                }
+                catch (Exception e) { }
 
             }
             await using var response5 = await Request.PostAsync("Kategorija/Post", new APIRequestContextOptions()
@@ -112,8 +116,12 @@ namespace End_to_endTestovi
                 var j = k.GetValueOrDefault();
 
                 int id;
-                if (j.TryGetInt32(out id))
-                    Globals.kategorijaId.Add(id);
+                try
+                {
+                    if (j.TryGetInt32(out id))
+                        Globals.kategorijaId.Add(id);
+                }
+                catch (Exception e) { }
 
             }
 
@@ -158,15 +166,33 @@ namespace End_to_endTestovi
         [OneTimeTearDown]
         public async Task RunAfterAnyTests()
         {
-            await using var response = await Request.DeleteAsync("Korisnik/uklonikorisnika/username/admin");
-            foreach(int id in Globals.kategorijaId)
+            var headers = new Dictionary<string, string>
+        {
+            { "Accept", "application/json" }
+        };
+            using var playwright = await Playwright.CreateAsync();
+            Request = await playwright.APIRequest.NewContextAsync(new()
             {
-                await using var response2 = await Request.DeleteAsync("Kategorija/Delete/" + id);
-
+                BaseURL = "http://localhost:5100",
+                ExtraHTTPHeaders = headers,
+                IgnoreHTTPSErrors = true
+            });
+            foreach (int id in Globals.kategorijaId)
+            {
+                try
+                {
+                    await using var response2 = await Request.DeleteAsync("Kategorija/Delete/" + id);
+                    
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An error occurred: {ex.Message}");
+                    
+                }
             }
-            
 
-            await Request.DisposeAsync();
+            await using var response = await Request.DeleteAsync("Korisnik/uklonikorisnika/username/admin");
+
             /*try
             {
                 front.Kill();

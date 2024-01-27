@@ -296,8 +296,6 @@ function EditSlucaj({ p, open, close }) {
             color="inherit"
             onClick={() => {
               console.log(ime);
-              console.log(p.lokacija.id);
-              console.log(p.zivotinja.id);
               console.log(vrsta);
               console.log(latitude);
               console.log(longitude);
